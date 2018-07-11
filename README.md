@@ -1,5 +1,5 @@
 # Raetan
-Advacned Raytracer in C++
+Advanced Raytracer in C++
 
 ## Dependencies
 ...
