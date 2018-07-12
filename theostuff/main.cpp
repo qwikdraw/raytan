@@ -26,7 +26,7 @@ int	main(void)
 
 	glm::dvec3 pos = {0, 0, 0};
 	glm::dvec3 dir = {1, 0, 0};
-	Camera camera(pos, dir, glm::dvec3(0, 1, 0), 45, 1);
+	Camera camera(pos, dir, glm::dvec3(0, 1, 0), 80, 1);
 	
 	std::vector<unsigned char> image(1000 * 1000 * 4);
 
@@ -34,8 +34,8 @@ int	main(void)
 	{
 		for (int y = 0; y < 1000; y++)
 		{
-			double normalizedX = 1 / (double)(x - 500);
-			double normalizedY = 1 / (double)(y - 500);
+			double normalizedX = (x - 500) / 500.0;
+			double normalizedY = (y - 500) / 500.0;
 			RawPixel p = scene.CastRay(camera.GetRay(normalizedX, normalizedY), 10);
 
 			image[(x + 1000 * y) * 4 + 0] = (p.color.r + 1) * 120;
