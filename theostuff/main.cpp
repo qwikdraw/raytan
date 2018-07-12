@@ -15,7 +15,7 @@ public:
 	RawPixel CastRay(const Ray& ray, int)
 	{
 		RawPixel out;
-		out.color = normalize(ray.direction);
+		out.color = glm::normalize(ray.direction);
 		return out;
 	}
 };
@@ -38,10 +38,10 @@ int	main(void)
 			double normalizedY = 1 / (double)(y - 500);
 			RawPixel p = scene.CastRay(camera.GetRay(normalizedX, normalizedY), 10);
 
-			image[x + 1000 * y + 0] = p.color.r * 255;
-			image[x + 1000 * y + 1] = p.color.g * 255;
-			image[x + 1000 * y + 2] = p.color.b * 255;
-			image[x + 1000 * y + 3] = 255;
+			image[(x + 1000 * y) * 4 + 0] = (p.color.r + 1) * 120;
+			image[(x + 1000 * y) * 4 + 1] = (p.color.g + 1) * 120;
+			image[(x + 1000 * y) * 4 + 2] = (p.color.b + 1) * 120;
+			image[(x + 1000 * y) * 4 + 3] = 255;
 		}
 	}
 
