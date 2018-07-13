@@ -1,7 +1,7 @@
 #pragma once
 
-#define SCREENIMAGE_VERTEX_SHADER_PATH "shaders/screenImageVertex.glsl"
-#define SCREENIMAGE_FRAGMENT_SHADER_PATH "shaders/screenImageFrag.glsl"
+#define SCREENIMAGE_VERTEX_SHADER_PATH "src/shaders/screenImageVertex.glsl"
+#define SCREENIMAGE_FRAGMENT_SHADER_PATH "src/shaders/screenImageFrag.glsl"
 
 #include "Raetan.hpp"
 #include "ShadingProgram.hpp"
