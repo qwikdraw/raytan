@@ -45,7 +45,7 @@ Image2D::~Image2D(void)
 	delete _program;
 }
 
-void	Image2D::Render(std::vector<unsigned char> data, size_t width, size_t height)
+void	Image2D::Render(const std::vector<unsigned char>& data, size_t width, size_t height)
 {
 	glUseProgram(_program->ID());
 

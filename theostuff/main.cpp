@@ -1,24 +1,10 @@
 
-#include "Ray.hpp"
-#include "RawPixel.hpp"
-
 #include "Raetan.hpp"
+#include "ImagePipeline.hpp"
+#include "Scene.hpp"
 #include "Camera.hpp"
 #include "Window.hpp"
 #include "Image2D.hpp"
-
-
-// just making a test scene to check if rendering works
-class	Scene
-{
-public:
-	RawPixel CastRay(const Ray& ray, int)
-	{
-		RawPixel out;
-		out.color = glm::normalize(ray.direction);
-		return out;
-	}
-};
 
 int	main(void)
 {
@@ -28,26 +14,15 @@ int	main(void)
 	glm::dvec3 dir = {1, 0, 0};
 	Camera camera(pos, dir, glm::dvec3(0, 1, 0), 80, 1);
 	
-	std::vector<unsigned char> image(1000 * 1000 * 4);
+	Image im(1000, 1000);
 
-	for (int x = 0; x < 1000; x++)
-	{
-		for (int y = 0; y < 1000; y++)
-		{
-			double normalizedX = (x - 500) / 500.0;
-			double normalizedY = (y - 500) / 500.0;
-			RawPixel p = scene.CastRay(camera.GetRay(normalizedX, normalizedY), 10);
+	ImagePipeline::SceneToImage(scene, camera, im);
+//	ImagePipeline::Normalize(im, 0.5);
+	ImagePipeline::Finalize(im);	
 
-			image[(x + 1000 * y) * 4 + 0] = (p.color.r + 1) * 120;
-			image[(x + 1000 * y) * 4 + 1] = (p.color.g + 1) * 120;
-			image[(x + 1000 * y) * 4 + 2] = (p.color.b + 1) * 120;
-			image[(x + 1000 * y) * 4 + 3] = 255;
-		}
-	}
-
-	Window window(1000, 1000, "Raetan");
+	Window window(im.width, im.height, "Raetan");
 	Image2D imageDisplay;
-	imageDisplay.Render(image, 1000, 1000);
+	imageDisplay.Render(im.colors, im.width, im.height);
 
 	while (!window.ShouldClose())
 	{

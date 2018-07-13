@@ -14,3 +14,16 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext.hpp>
+
+struct	Ray
+{
+	glm::dvec3 origin;
+	glm::dvec3 direction;
+	double refractiveIndex;
+};
+
+struct	RawColor
+{
+	glm::dvec3 color;
+	double depth;
+};

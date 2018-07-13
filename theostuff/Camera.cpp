@@ -9,7 +9,7 @@ _position(pos)
 	_deviceToWorld = glm::inverse(perspective * lookAt);
 }
 
-Ray	Camera::GetRay(double x, double y)
+Ray	Camera::GetRay(double x, double y) const
 {
 	glm::dvec4 p = _deviceToWorld * glm::dvec4(x, y, 0, 1);
 	p /= p.w;

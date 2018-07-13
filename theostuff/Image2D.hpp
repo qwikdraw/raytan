@@ -25,7 +25,7 @@ public:
 	~Image2D(void);
 
 	//! renders and binds a texture
-	void	Render(std::vector<unsigned char> data, size_t width, size_t height);
+	void	Render(const std::vector<unsigned char>& data, size_t width, size_t height);
 	
 	//! renders with the previously bound texture
 	void	Render(void);
