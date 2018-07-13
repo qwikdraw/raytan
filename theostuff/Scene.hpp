@@ -9,6 +9,8 @@ class	Scene
 	{
 		RawColor out;
 		out.color = glm::normalize(ray.direction);
+		out.color += glm::dvec3(1);
+		out.color /= 2;
 		return out;
 	}
 };

@@ -8,8 +8,8 @@ void	IP::SceneToImage(const Scene& scene, const Camera& camera, Image& image, in
 	{
 		for (int x = 0; x < image.width; x++)
 		{
-			double normalizedX = ((double)x - image.width / 2.0) / (image.width / 2.0);
-			double normalizedY = ((double)y - image.height / 2.0) / (image.height / 2.0);
+			double normalizedX = (2 * x - image.width) / (double)image.width;
+			double normalizedY = (2 * y - image.height) / (double)image.height;
 			RawColor c = scene.TraceRay(camera.GetRay(normalizedX, normalizedY), recursionLvl);
 
 			image.raw.push_back(c);
@@ -28,13 +28,13 @@ void	IP::Normalize(Image& image, double gamma)
 		averageCol += raw.color / totalPixels;
 	}
 	
-	glm::dvec3 scaleFactor = averageCol * 2.0;
-	
+	double scaleFactor = (averageCol.r + averageCol.g + averageCol.b) * 2 / 3.0;
+
 	for (auto& raw : image.raw)
 	{
-		raw.color.r = std::min(raw.color.r / scaleFactor.r, 1.0);
-		raw.color.g = std::min(raw.color.g / scaleFactor.g, 1.0);
-		raw.color.b = std::min(raw.color.b / scaleFactor.b, 1.0);
+		raw.color.r = std::min(raw.color.r / scaleFactor, 1.0);
+		raw.color.g = std::min(raw.color.g / scaleFactor, 1.0);
+		raw.color.b = std::min(raw.color.b / scaleFactor, 1.0);
 	}
 }
 
