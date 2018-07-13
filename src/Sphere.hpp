@@ -10,6 +10,6 @@ class	Sphere : public IObject
 public:
 	Sphere(glm::dvec3 center, double radius);
 
-	glm::dvec3 Intersection(const Ray& ray) const;
-	RayResult MakeRayResult(const glm::dvec3& position, const Ray& ray) const;
+	double Intersection(const Ray& ray) const;
+	RayResult MakeRayResult(double distance, const Ray& ray) const;
 };

@@ -18,6 +18,6 @@ class   IObject
 public:
 	IObject() {}
 	virtual ~IObject() {}
-	virtual glm::dvec3 Intersection(const Ray& ray) const = 0;
-	virtual RayResult MakeRayResult(const glm::dvec3& position, const Ray& ray) const = 0;
+	virtual double Intersection(const Ray& ray) const = 0;
+	virtual RayResult MakeRayResult(double distance, const Ray& ray) const = 0;
 };

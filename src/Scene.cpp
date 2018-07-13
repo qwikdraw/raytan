@@ -28,59 +28,71 @@ RayResult	Scene::getRayResult(const Ray& ray) const
 {
 	double bestDist = INFINITY;
 	int bestIndex = -1;
-	glm::dvec3 bestPos;
 	
 	for (int i = 0; i < _objects.size(); i++)
 	{
-		glm::dvec3 p = _objects[i]->Intersection(ray);
-		glm::dvec3 l = p - ray.origin;
-		double distSqr = glm::dot(l, l);
+		double dist = _objects[i]->Intersection(ray);
 
-		if (distSqr < bestDist)
+		if (dist < bestDist)
 		{
-			bestDist = distSqr;
+			bestDist = dist;
 			bestIndex = i;
-			bestPos = p;
 		}
 	}
 
 	if (bestIndex == -1)
 	{
+		// a position containing infinity is a failed result
 		RayResult out;
 		out.position = glm::dvec3(INFINITY);
 		return out;
 	}
-	
-	return _objects[bestIndex]->MakeRayResult(bestPos, ray);
+
+	return _objects[bestIndex]->MakeRayResult(dist, ray);
 }
 
 // getDiffuse will also do shadow management
 
-RawColor	Scene::getDiffuse(const Ray & ray, const RayResult & rayResult) const
+RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 {
 	RawColor 	pixelColor = {{0.0, 0.0, 0.0}, 0};
 	Ray		lightRay;
-	glm::dvec3	distanceV;
+	glm::dvec3	lightVector;
 	double		dotValue;
 
-	if (IS_INFIN(rayResult.position)) // necessary? rayResult.position.x?
-		return (RawColor){{0.0, 0.0, 0.0}, 0.0};
-	for (auto & light : _lights)
+	for (auto& light : _lights)
 	{
-		distanceV = light.position - rayResult.position;
-		lightRay.direction = glm::normalize(distanceV);
+		lightVector = light.position - rayResult.position;
+		lightRay.direction = glm::normalize(lightVector);
 		lightRay.origin = rayResult.position + (lightRay.direction * 0.00001); // Offset
-		
-		if (!hasShadow(lightRay, light.position, glm::dot(distanceV, distanceV)))
-		{
-			dotValue = glm::dot(rayResult.normal, lightRay.direction);
-			if (dotValue < 0.0)
-				dotValue = 0.0;
-			pixelColor.color += (rayResult.color * dotValue);
-			pixelColor.color += (light.color * dotValue);
-		}
+
+		glm::dvec3 intensity = lightIntensity(lightRay, light, glm::length(lightVector));
+		if (intensity.r == 0 && intensity.g == 0 && intensity.b == 0)
+			continue;
+
+		dotValue = std::max(glm::dot(rayResult.normal, lightRay.direction), 0.0);
+		pixelColor.color += rayResult.color * intensity * dotValue;
 	}
 	return pixelColor;
+}
+
+glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double lightDist) const
+{
+	// inverse square falloff
+	glm::dvec3 intensity = light.color / (lightDist * lightDist);
+
+	for (auto object : _objects)
+	{
+		double dist = object->Intersection(ray);
+		if (dist < lightDist)
+		{
+			RayResult data = object->MakeRayResult(dist, ray);
+			if (data.refract == 0)
+				return glm::vec3(0, 0, 0);
+			intensity *= data.refract * data.diffuse * data.color;
+		}
+	}
+	return intentisy;
 }
 
 Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
@@ -128,7 +140,7 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
 
 	// The diffuse color
- 	RawColor diffusePart = getDiffuse(ray, rayResult);
+	RawColor diffusePart = getDiffuse(ray, rayResult);
 
  	// The reflect color
 	RawColor reflectPart = {{0.0, 0.0, 0.0}, 0};

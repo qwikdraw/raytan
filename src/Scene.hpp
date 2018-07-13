@@ -21,7 +21,10 @@ class Scene
 	std::vector<Light> _lights;
 
 	RayResult	getRayResult(const Ray&) const;
+
 	RawColor	getDiffuse(const Ray&, const RayResult&) const;
+	glm::dvec3	lightIntensity(const Ray&, const Light&, double lightDist) const;
+	
 	Ray		getRefract(const Ray&, const RayResult&) const;
 	Ray		getReflect(const Ray&, const RayResult&) const;
 
