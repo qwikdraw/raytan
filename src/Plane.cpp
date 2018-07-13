@@ -24,7 +24,10 @@ RayResult Plane::MakeRayResult(double distance, const Ray& ray) const
 	RayResult out;
 
 	out.position = ray.origin + ray.direction * distance;
-	out.normal = glm::normalize(out.position - _center);
+	if (glm::dot(ray.direction * -1, _normal) < 0)
+		out.normal = _normal * -1;
+	else
+		out.normal = _normal;
 	out.color = glm::dvec3(1, 0, 0);
 	out.diffuse = 1;
 	out.reflect = 0;
