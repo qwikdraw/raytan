@@ -16,8 +16,9 @@
 
 Scene::Scene(void)
 {
-	_objects.push_back(new Sphere(glm::dvec3(1, 0, 0), 0.2));
-	_lights.push_back((Light){{0, 0, 0}, {0, 1, 1}});
+	_objects.push_back(new Sphere(glm::dvec3(1, 0, 0), 0.1));
+	_objects.push_back(new Sphere(glm::dvec3(52, 0, 0), 50));
+	_lights.push_back((Light){{0.5, -0.3, 0}, {2, 2, 2}});
 }
 
 Scene::~Scene(void)
@@ -48,7 +49,7 @@ RayResult	Scene::getRayResult(const Ray& ray) const
 		return out;
 	}
 
-	return _objects[bestIndex]->MakeRayResult(dist, ray);
+	return _objects[bestIndex]->MakeRayResult(bestDist, ray);
 }
 
 // getDiffuse will also do shadow management
@@ -72,7 +73,7 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 
 		dotValue = std::max(glm::dot(rayResult.normal, lightRay.direction), 0.0);
 		pixelColor.color += rayResult.color * intensity * dotValue;
-	}
+	}	
 	return pixelColor;
 }
 
@@ -86,13 +87,14 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 		double dist = object->Intersection(ray);
 		if (dist < lightDist)
 		{
+			return glm::dvec3(0, 0, 0);
 			RayResult data = object->MakeRayResult(dist, ray);
 			if (data.refract == 0)
-				return glm::vec3(0, 0, 0);
+				return glm::dvec3(0, 0, 0);
 			intensity *= data.refract * data.diffuse * data.color;
 		}
 	}
-	return intentisy;
+	return intensity;
 }
 
 Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
@@ -103,30 +105,6 @@ Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
 Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 {
 	return (Ray){{0, 0, 0}, {0, 0, 0}, 0};
-}
-
-//	Iterates through each object,
-//	returns true if the ray hits one object,
-//	returns false if no objects were hit.
-
-bool	Scene::hasShadow(const Ray & ray, const glm::dvec3 & lightPos, double distance) const
-{
-	glm::dvec3	intersect;
-	glm::dvec3	shadowV;
-	double		shadowDist;
-
-	for (auto object : _objects)
-	{
-		intersect = object->Intersection(ray);
-		if (!IS_INFIN(intersect))
-		{
-			shadowV = intersect - lightPos;
-			shadowDist = glm::dot(shadowV, shadowV);
-			if (shadowDist < distance)
-				return true;
-		}
-	}
-	return false;
 }
 
 RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const

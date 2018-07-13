@@ -30,7 +30,7 @@ double Sphere::Intersection(const Ray& ray) const
 	double discrim = dist1 * dist1 - dot(temp, temp) + _radius * _radius;
 
 	if (discrim < 0)
-		return glm::dvec3(INFINITY);
+		return INFINITY;
 	discrim = sqrt(discrim);
 	dist2 = -dist1 - discrim;
 	dist1 = -dist1 + discrim;

@@ -28,8 +28,6 @@ class Scene
 	Ray		getRefract(const Ray&, const RayResult&) const;
 	Ray		getReflect(const Ray&, const RayResult&) const;
 
-	bool		hasShadow(const Ray&, const glm::dvec3& lightPos, double distance) const;
-
 	public:
 
 		Scene(void);
