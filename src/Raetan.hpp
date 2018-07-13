@@ -27,3 +27,9 @@ struct	RawColor
 	glm::dvec3 color;
 	double depth;
 };
+
+struct	Light
+{
+	glm::dvec3 position;
+	glm::dvec3 color;
+};
