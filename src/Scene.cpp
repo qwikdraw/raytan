@@ -12,26 +12,40 @@
 
 #include "Scene.hpp"
 
+Scene::Scene(void)
+{
+}
+
+Scene::~Scene(void)
+{
+}
+
+RayResult	Scene::getRayResult(const Ray& ray) const
+{
+	RayResult r;
+	return r;
+}
+
 // getDiffuse will also do shadow management
 
 RawColor	Scene::getDiffuse(const Ray & ray, const RayResult & rayResult) const
 {
-	RawColor 	pixelColor;
-	Ray			lightRay;
+	RawColor 	pixelColor = {{0.0, 0.0, 0.0}, 0};
+	Ray		lightRay;
 	glm::dvec3	distanceV;
 	double		dotValue;
 
 	if (rayResult.position.x == INFINITY) // necessary? rayResult.position.x?
-		return (RawColor){0, 0, 0, 0};
-	pixelColor.color = 0;
+		return (RawColor){{0.0, 0.0, 0.0}, 0.0};
 	for (auto & light : _lights)
 	{
 		distanceV = light.position - rayResult.position;
-		lightRay.normal = glm::normalize(distanceV);
-		lightRay.origin = rayResult.position + (lightRay.normal * 0.00001); // Offset
+		lightRay.direction = glm::normalize(distanceV);
+		lightRay.origin = rayResult.position + (lightRay.direction * 0.00001); // Offset
+		
 		if (!hasShadow(lightRay, light.position, glm::dot(distanceV, distanceV)))
 		{
-			dotValue = glm::dot(rayResult.normal, lightRay.normal);
+			dotValue = glm::dot(rayResult.normal, lightRay.direction);
 			if (dotValue < 0.0)
 				dotValue = 0.0;
 			pixelColor.color += (rayResult.color * dotValue);
@@ -41,14 +55,14 @@ RawColor	Scene::getDiffuse(const Ray & ray, const RayResult & rayResult) const
 	return pixelColor;
 }
 
-RawColor	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
+Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
 {
-	return (RawColor){0, 0, 0, 0};
+	return (Ray){{0, 0, 0}, {0, 0, 0}, 0};
 }
 
-RawColor	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
+Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 {
-	return (RawColor){0, 0, 0, 0};
+	return (Ray){{0, 0, 0}, {0, 0, 0}, 0};
 }
 
 //	Iterates through each object,
@@ -57,16 +71,16 @@ RawColor	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 
 bool	Scene::hasShadow(const Ray & ray, const glm::dvec3 & lightPos, double distance) const
 {
-	rayResult 	rayResult;
+	glm::dvec3	intersect;
 	glm::dvec3	shadowV;
 	double		shadowDist;
 
-	for (auto & object : _objects)
+	for (auto object : _objects)
 	{
-		rayResult = object.intersect(ray);
-		if (intersect.position.x != INFINITY)
+		intersect = object->Intersection(ray);
+		if (!IS_INFIN(intersect))
 		{
-			shadowV = intersect.position - lightPos;
+			shadowV = intersect - lightPos;
 			shadowDist = glm::dot(shadowV, shadowV);
 			if (shadowDist < distance)
 				return true;
@@ -75,40 +89,40 @@ bool	Scene::hasShadow(const Ray & ray, const glm::dvec3 & lightPos, double dista
 	return false;
 }
 
-RawColor	Scene::CastRay(const Ray & ray, int recursionLevel)
+RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 {
 	if (recursionLevel == -1)
-		return (RawColor){0, 0, 0, INFINITY};
+		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
 
 	// The point of Intersection
 	RayResult rayResult = getRayResult(ray);
 	if (IS_INFIN(rayResult.position))
-		return (RawColor){0, 0, 0, INFINITY};
+		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
 
 	// The diffuse color
  	RawColor diffusePart = getDiffuse(ray, rayResult);
 
  	// The reflect color
+	RawColor reflectPart;
  	if (rayResult.reflect > 0)
  	{
 		Ray reflection = getReflect(ray, rayResult);
-		RawColor reflectPart = CastRay(reflection, recursionLevel - 1);
-		;
+		reflectPart = TraceRay(reflection, recursionLevel - 1);
  	}
 
  	// The refract color
+	RawColor refractPart;
  	if (rayResult.refract > 0)
  	{
 		Ray refraction = getRefract(ray, rayResult);
-		RawColor refractPart = CastRay(refraction, recursionLevel - 1);
-		;
+		refractPart = TraceRay(refraction, recursionLevel - 1);
 	}
 
 	// Output color
 	RawColor output;
 	output.depth = glm::length(rayResult.position - ray.origin);
-    output.rawColor	= diffusePart.rawColor * rayRes.diffuse +
-		 			  reflectPart.rawColor * rayRes.reflect +
-		  			  refractPart.rawColor * rayRes.refract;
+	output.color = diffusePart.color * rayResult.diffuse +
+		       reflectPart.color * rayResult.reflect +
+		       refractPart.color * rayResult.refract;
 	return output;
 }

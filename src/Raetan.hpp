@@ -15,6 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext.hpp>
 
+#define IS_INFIN(a) (a.x == INFINITY)
+
 struct	Ray
 {
 	glm::dvec3 origin;
