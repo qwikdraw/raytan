@@ -12,8 +12,12 @@
 
 #include "Scene.hpp"
 
+#include "Sphere.hpp"
+
 Scene::Scene(void)
 {
+	_objects.push_back(new Sphere(glm::dvec3(1, 0, 0), 0.2));
+	_lights.push_back((Light){{0, 0, 0}, {0, 1, 1}});
 }
 
 Scene::~Scene(void)
@@ -22,8 +26,32 @@ Scene::~Scene(void)
 
 RayResult	Scene::getRayResult(const Ray& ray) const
 {
-	RayResult r;
-	return r;
+	double bestDist = INFINITY;
+	int bestIndex = -1;
+	glm::dvec3 bestPos;
+	
+	for (int i = 0; i < _objects.size(); i++)
+	{
+		glm::dvec3 p = _objects[i]->Intersection(ray);
+		glm::dvec3 l = p - ray.origin;
+		double distSqr = glm::dot(l, l);
+
+		if (distSqr < bestDist)
+		{
+			bestDist = distSqr;
+			bestIndex = i;
+			bestPos = p;
+		}
+	}
+
+	if (bestIndex == -1)
+	{
+		RayResult out;
+		out.position = glm::dvec3(INFINITY);
+		return out;
+	}
+	
+	return _objects[bestIndex]->MakeRayResult(bestPos, ray);
 }
 
 // getDiffuse will also do shadow management
@@ -35,7 +63,7 @@ RawColor	Scene::getDiffuse(const Ray & ray, const RayResult & rayResult) const
 	glm::dvec3	distanceV;
 	double		dotValue;
 
-	if (rayResult.position.x == INFINITY) // necessary? rayResult.position.x?
+	if (IS_INFIN(rayResult.position)) // necessary? rayResult.position.x?
 		return (RawColor){{0.0, 0.0, 0.0}, 0.0};
 	for (auto & light : _lights)
 	{
@@ -103,7 +131,7 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
  	RawColor diffusePart = getDiffuse(ray, rayResult);
 
  	// The reflect color
-	RawColor reflectPart;
+	RawColor reflectPart = {{0.0, 0.0, 0.0}, 0};
  	if (rayResult.reflect > 0)
  	{
 		Ray reflection = getReflect(ray, rayResult);
@@ -111,7 +139,7 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
  	}
 
  	// The refract color
-	RawColor refractPart;
+	RawColor refractPart = {{0.0, 0.0, 0.0}, 0};
  	if (rayResult.refract > 0)
  	{
 		Ray refraction = getRefract(ray, rayResult);

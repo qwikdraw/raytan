@@ -12,12 +12,12 @@ int	main(void)
 
 	glm::dvec3 pos = {0, 0, 0};
 	glm::dvec3 dir = {1, 0, 0};
-	Camera camera(pos, dir, glm::dvec3(0, 1, 0), 80, 1);
+	Camera camera(pos, dir, glm::dvec3(0, 1, 0), 45, 1);
 	
 	Image im(1000, 1000);
 
 	ImagePipeline::SceneToImage(scene, camera, im);
-	ImagePipeline::Normalize(im, 0.5);
+	ImagePipeline::Normalize(im, 1);
 	ImagePipeline::Finalize(im);	
 
 	Window window(1000, 1000, "Raetan");
