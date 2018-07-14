@@ -1,6 +1,8 @@
 #!/bin/sh
 
-brew install pkg-config glm glfw sfml wget
+brew install glfw --HEAD
+brew install pkg-config glm sfml wget
+export LD_LIBRARY_PATH=~/.brew/lib
 mkdir -p lib
 cd lib
 mkdir -p lodepng
