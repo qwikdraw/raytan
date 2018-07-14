@@ -23,7 +23,7 @@ $(NAME): $(OBJ)
 	@$(CC) $(FLAGS) $^ $(FRAMEWORKS) $(MY_INC) $(GLFW_INC) $(GLFW_LINK) -o $(NAME)
 	@echo SUCCESS!
 
-%.o: %.cpp %.hpp
+%.o: %.cpp %.hpp src/Raetan.hpp
 	@echo compiling... $@
 	@$(CC) $(FLAGS) $(MY_INC) $(GLFW_INC) -c -o $@ $< 
 
