@@ -28,8 +28,8 @@ RayResult Plane::MakeRayResult(double distance, const Ray& ray) const
 		out.normal = _normal * -1.0;
 	
 	out.color = glm::dvec3(1, 1, 1);
-	out.diffuse = 0.05;
-	out.reflect = 0.95;
+	out.diffuse = 1;
+	out.reflect = 0;
 	out.refract = 0;
 	out.refractiveIndex = 1;
 	return out;

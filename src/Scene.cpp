@@ -20,7 +20,7 @@ Scene::Scene(void)
 	_objects.push_back(new Sphere(glm::dvec3(1, 0, 0), 0.1));
 	_objects.push_back(new Plane(glm::dvec3(2, 0, 0), glm::dvec3(1, 0, 0)));
 	_objects.push_back(new Plane(glm::dvec3(-2, 0, 0), glm::dvec3(1, 0, 0)));
-	_lights.push_back((Light){{0.5, -0.3, 0}, {2, 2, 2}});
+	_lights.push_back((Light){{0.5, -1, 0}, {2, 2, 2}});
 }
 
 Scene::~Scene(void)
@@ -89,11 +89,10 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 		double dist = object->Intersection(ray);
 		if (dist < lightDist)
 		{
-			return glm::dvec3(0, 0, 0);
 			RayResult data = object->MakeRayResult(dist, ray);
 			if (data.refract == 0)
 				return glm::dvec3(0, 0, 0);
-			intensity *= data.refract * data.diffuse * data.color;
+			intensity *= data.refract * (1.0 - data.diffuse * (glm::dvec3(1) - data.color));
 		}
 	}
 	return intensity;
@@ -101,14 +100,34 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 
 Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
 {
-	return (Ray){{0, 0, 0}, {0, 0, 0}, 0};
+	glm::dvec3 normal;
+	double ratio;
+	
+	if (glm::dot(ray.direction, rayResult.normal) > 0)
+	{
+		normal = rayResult.normal * -1.0;
+		ratio = rayResult.refractiveIndex / 1;
+	}
+	else
+	{
+		normal = rayResult.normal;
+		ratio = 1 / rayResult.refractiveIndex;
+	}
+
+	Ray out;
+	out.direction = glm::normalize(glm::refract(ray.direction, normal, ratio));
+	out.origin = rayResult.position + out.direction * 0.00001; // Offset
+	out.refractiveIndex = rayResult.refractiveIndex;
+	return out;
 }
 
 Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 {
 	Ray out;
 	out.direction = glm::normalize(glm::reflect(ray.direction, rayResult.normal));
-	out.origin = ray.origin + out.direction * 0.00001; // Offset
+	out.origin = rayResult.position + out.direction * 0.00001; // Offset
+	
+	out.refractiveIndex = ray.refractiveIndex;
 	return out;
 }
 

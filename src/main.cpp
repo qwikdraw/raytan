@@ -16,7 +16,7 @@ int	main(void)
 	
 	Image im(1000, 1000);
 
-	ImagePipeline::SceneToImage(scene, camera, im);
+	ImagePipeline::SceneToImage(scene, camera, im, 2);
 	ImagePipeline::Normalize(im, 0.5);
 	ImagePipeline::Finalize(im);	
 
