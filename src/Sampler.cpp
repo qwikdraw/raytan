@@ -15,11 +15,8 @@ void	Sampler::Load(const std::string& filepath)
 glm::dvec3	Sampler::Color(double x, double y) const
 {
 	glm::dvec3 out;
-	unsigned xIndex = glm::round(_width * glm::clamp(x, 0.0, 1.0));
-	unsigned yIndex = glm::round(_height * glm::clamp(y, 0.0, 1.0));
-
-	xIndex = std::min(xIndex, _width - 1);
-	yIndex = std::min(yIndex, _height - 1);
+	unsigned xIndex = glm::round((_width - 1) * glm::clamp(x, 0.0, 1.0));
+	unsigned yIndex = glm::round((_height - 1) * glm::clamp(y, 0.0, 1.0));
 
 	out.r = _imageData[(xIndex + _width * yIndex) * 4 + 0];
 	out.g =	_imageData[(xIndex + _width * yIndex) * 4 + 1];	
