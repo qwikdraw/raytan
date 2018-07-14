@@ -1,4 +1,4 @@
-# Raetan
+# Raytan
 Advanced Raytracer in C++
 
 ## Dependencies
