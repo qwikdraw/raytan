@@ -29,7 +29,7 @@ $(NAME): $(OBJ)
 
 src/main.o : src/main.cpp
 	@echo compiling... $@
-	@$(CC) $(FLAGS) $(MY_INC) $(GLFW_INC) -c -o $@ $< 
+	@$(CC) $(FLAGS) -c -o $@ $< $(MY_INC) $(GLFW_INC)
 
 clean:
 	@echo cleaning object files...
