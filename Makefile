@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/13 17:38:03 by lkaser           ###   ########.fr        #
+#    Updated: 2018/07/13 19:04:07 by lkaser           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(LIST)))
 DEP = $(OBJ:%.o=%.d)
 
 CPPFLAGS = -std=c++14 -Wall -Wextra -Werror \
-$(shell pkg-config --cflags glfw3 glm) \
+$(shell pkg-config --cflags glfw3 glm sfml-window sfml-graphics sfml-system) \
 -I lib/entt/src \
 -I lib/lodepng \
 -I lib/irrklang/include \
@@ -34,7 +34,7 @@ $(shell pkg-config --cflags glfw3 glm) \
 #-fsanitize=undefined -fsanitize=address
 
 LDFLAGS = -flto=thin -framework OpenGl \
-$(shell pkg-config --libs glfw3 glm) \
+$(shell pkg-config --libs glfw3 glm sfml-window sfml-graphics sfml-system) \
 -L lib/lodepng -llodepng \
 #-fsanitize=undefined -fsanitize=address
 
