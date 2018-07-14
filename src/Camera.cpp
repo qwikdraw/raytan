@@ -18,6 +18,5 @@ Ray	Camera::GetRay(double x, double y) const
 	
 	out.origin = _position;
 	out.direction = glm::normalize(glm::dvec3(p) - _position);
-	out.refractiveIndex = 1;
 	return out;
 }

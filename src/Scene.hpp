@@ -1,16 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Scene.hpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/07/11 15:51:41 by bpierce           #+#    #+#             */
+/*   Updated: 2018/07/12 21:22:34 by bpierce          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include "Raetan.hpp"
+#include "IObject.hpp"
 
-class	Scene
+class Scene
 {
+	std::vector<IObject*> _objects;
+	std::vector<Light> _lights;
+
+	RayResult	getRayResult(const Ray&) const;
+
+	RawColor	getDiffuse(const Ray&, const RayResult&) const;
+	glm::dvec3	lightIntensity(const Ray&, const Light&, double lightDist) const;
+	
+	Ray		getRefract(const Ray&, const RayResult&) const;
+	Ray		getReflect(const Ray&, const RayResult&) const;
+
 	public:
-	RawColor TraceRay(const Ray& ray, int) const
-	{
-		RawColor out;
-		out.color = glm::normalize(ray.direction);
-		out.color += glm::dvec3(1);
-		out.color /= 2;
-		return out;
-	}
+
+		Scene(void);
+		virtual ~Scene(void);
+
+		RawColor	TraceRay(const Ray&, int recursionLevel) const;
 };
