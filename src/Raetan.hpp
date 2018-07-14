@@ -21,7 +21,6 @@ struct	Ray
 {
 	glm::dvec3 origin;
 	glm::dvec3 direction;
-	double refractiveIndex;
 };
 
 struct	RawColor

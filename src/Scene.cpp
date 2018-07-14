@@ -117,7 +117,6 @@ Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
 	Ray out;
 	out.direction = glm::normalize(glm::refract(ray.direction, normal, ratio));
 	out.origin = rayResult.position + out.direction * 0.00001; // Offset
-	out.refractiveIndex = rayResult.refractiveIndex;
 	return out;
 }
 
@@ -126,8 +125,6 @@ Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 	Ray out;
 	out.direction = glm::normalize(glm::reflect(ray.direction, rayResult.normal));
 	out.origin = rayResult.position + out.direction * 0.00001; // Offset
-	
-	out.refractiveIndex = ray.refractiveIndex;
 	return out;
 }
 
