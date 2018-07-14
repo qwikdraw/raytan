@@ -17,7 +17,7 @@ int	main(void)
 	Image im(1000, 1000);
 
 	ImagePipeline::SceneToImage(scene, camera, im);
-	ImagePipeline::Normalize(im, 1);
+	ImagePipeline::Normalize(im, 0.5);
 	ImagePipeline::Finalize(im);	
 
 	Window window(1000, 1000, "Raetan");

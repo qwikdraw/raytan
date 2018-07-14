@@ -7,16 +7,13 @@ _normal(normal)
 
 double Plane::Intersection(const Ray& ray) const
 {
-	double		denom;
-	glm::dvec3	subtract;
-	double		dist;
-
-	denom = glm::dot(_normal, ray.direction);
-	if (glm::abs(denom) < 0.0001)
+	double dist = glm::dot(ray.direction, _normal);
+	if (dist == 0)
 		return INFINITY;
-	subtract = ray.origin - _center;
-	dist = glm::dot(subtract, ray.direction) / denom;
-	return (dist > 0 ? dist : INFINITY);
+	dist = glm::dot(_center - ray.origin, _normal) / dist;
+	if (dist < 0)
+		return INFINITY;
+	return dist;
 }
 
 RayResult Plane::MakeRayResult(double distance, const Ray& ray) const
@@ -24,13 +21,15 @@ RayResult Plane::MakeRayResult(double distance, const Ray& ray) const
 	RayResult out;
 
 	out.position = ray.origin + ray.direction * distance;
-	if (glm::dot(ray.direction * -1, _normal) < 0)
-		out.normal = _normal * -1;
-	else
+
+	if (glm::dot(ray.direction, _normal) < 0)
 		out.normal = _normal;
-	out.color = glm::dvec3(1, 0, 0);
-	out.diffuse = 1;
-	out.reflect = 0;
+	else
+		out.normal = _normal * -1.0;
+	
+	out.color = glm::dvec3(1, 1, 1);
+	out.diffuse = 0.05;
+	out.reflect = 0.95;
 	out.refract = 0;
 	out.refractiveIndex = 1;
 	return out;

@@ -13,11 +13,13 @@
 #include "Scene.hpp"
 
 #include "Sphere.hpp"
+#include "Plane.hpp"
 
 Scene::Scene(void)
 {
 	_objects.push_back(new Sphere(glm::dvec3(1, 0, 0), 0.1));
-	_objects.push_back(new Sphere(glm::dvec3(52, 0, 0), 50));
+	_objects.push_back(new Plane(glm::dvec3(2, 0, 0), glm::dvec3(1, 0, 0)));
+	_objects.push_back(new Plane(glm::dvec3(-2, 0, 0), glm::dvec3(1, 0, 0)));
 	_lights.push_back((Light){{0.5, -0.3, 0}, {2, 2, 2}});
 }
 
@@ -104,7 +106,10 @@ Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
 
 Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 {
-	return (Ray){{0, 0, 0}, {0, 0, 0}, 0};
+	Ray out;
+	out.direction = glm::normalize(glm::reflect(ray.direction, rayResult.normal));
+	out.origin = ray.origin + out.direction * 0.00001; // Offset
+	return out;
 }
 
 RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
@@ -118,7 +123,11 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
 
 	// The diffuse color
-	RawColor diffusePart = getDiffuse(ray, rayResult);
+	RawColor diffusePart = {{0.0, 0.0, 0.0}, 0};
+	if (rayResult.diffuse > 0)
+	{
+		diffusePart = getDiffuse(ray, rayResult);
+	}
 
  	// The reflect color
 	RawColor reflectPart = {{0.0, 0.0, 0.0}, 0};

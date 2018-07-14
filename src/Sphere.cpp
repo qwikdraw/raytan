@@ -43,9 +43,9 @@ RayResult Sphere::MakeRayResult(double distance, const Ray& ray) const
 
 	out.position = ray.origin + ray.direction * distance;
 	out.normal = glm::normalize(out.position - _center);
-	out.color = glm::dvec3(1, 0, 0);
-	out.diffuse = 1;
-	out.reflect = 0;
+	out.color = glm::dvec3(1, 0.1, 0.2);
+	out.diffuse = 0.1;
+	out.reflect = 0.9;
 	out.refract = 0;
 	out.refractiveIndex = 1;
 
