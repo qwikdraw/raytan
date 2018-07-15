@@ -1,19 +1,21 @@
 #include "Plane.hpp"
 
-Plane::Plane(glm::dvec3 center, glm::dvec3 normal) :
-_center(center),
-_normal(normal)
-{}
-
 double Plane::Intersection(const Ray& ray) const
 {
-	double dist = glm::dot(ray.direction, _normal);
+	double dist = glm::dot(ray.direction, normal);
 	if (dist == 0)
 		return INFINITY;
-	dist = glm::dot(_center - ray.origin, _normal) / dist;
+	dist = glm::dot(center - ray.origin, normal) / dist;
 	if (dist < 0)
 		return INFINITY;
 	return dist;
+}
+
+static void	uv_map(double& x, double& y, const glm::dvec3& position, const glm::dvec3& center)
+{
+	// ill do later
+	x = 0.5;
+	y = 0.5;
 }
 
 RayResult Plane::MakeRayResult(double distance, const Ray& ray) const
@@ -21,16 +23,23 @@ RayResult Plane::MakeRayResult(double distance, const Ray& ray) const
 	RayResult out;
 
 	out.position = ray.origin + ray.direction * distance;
-
-	if (glm::dot(ray.direction, _normal) < 0)
-		out.normal = _normal;
+	if (glm::dot(ray.direction, normal) < 0)
+		out.normal = normal;
 	else
-		out.normal = _normal * -1.0;
+		out.normal = normal * -1.0;
+
+	if (colorSampler.Empty())
+		out.color = color;
+	else
+	{
+		double x, y;
+		uv_map(x, y, out.position, center);
+		out.color = colorSampler.Color(x, y);
+	}
 	
-	out.color = glm::dvec3(1, 1, 1);
-	out.diffuse = 1;
-	out.reflect = 0;
-	out.refract = 0;
-	out.refractiveIndex = 1;
+	out.diffuse = diffuse;
+	out.reflect = reflect;
+	out.refract = refract;
+	out.refractiveIndex = refractiveIndex;
 	return out;
 }

@@ -17,10 +17,30 @@
 
 Scene::Scene(void)
 {
-	_objects.push_back(new Sphere(glm::dvec3(1, 0, 0), 0.1));
-	_objects.push_back(new Plane(glm::dvec3(2, 0, 0), glm::dvec3(1, 0, 0)));
-	_objects.push_back(new Plane(glm::dvec3(-2, 0, 0), glm::dvec3(1, 0, 0)));
-	_lights.push_back((Light){{0.5, -1, 0}, {2, 2, 2}});
+	Sphere *s1 = new Sphere;
+	s1->center = glm::dvec3(1, 0, 0.1);
+	s1->radius = 0.1;
+	s1->color = glm::dvec3(1, 1, 1);
+	s1->refractiveIndex = 2;
+	s1->diffuse = 0.2;
+	s1->reflect = 0.4;
+	s1->refract = 0.4;
+	s1->color = glm::dvec3(0.9, 0.5, 0.8);
+	s1->colorSampler.Load("image.png");
+	_objects.push_back(s1);
+
+	Plane *p1 = new Plane;
+	p1->center = glm::dvec3(2, 0, 0);
+	p1->normal = glm::dvec3(1, 0, 0);
+	p1->refractiveIndex = 2;
+	p1->diffuse = 0.5;
+	p1->reflect = 0.5;
+	p1->refract = 0;
+	p1->color = glm::dvec3(1, 1, 0.5);
+//	p1->colorSampler.Load("image.png");
+	_objects.push_back(p1);
+	
+	_lights.push_back((Light){{0, -0.5, 0.5}, {1, 1, 1}});
 }
 
 Scene::~Scene(void)
@@ -32,7 +52,7 @@ RayResult	Scene::getRayResult(const Ray& ray) const
 	double bestDist = INFINITY;
 	int bestIndex = -1;
 	
-	for (int i = 0; i < _objects.size(); i++)
+	for (size_t i = 0; i < _objects.size(); i++)
 	{
 		double dist = _objects[i]->Intersection(ray);
 

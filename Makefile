@@ -16,7 +16,11 @@ Image2D \
 ImagePipeline \
 ShadingProgram \
 Window \
-main
+main \
+Scene \
+Sphere \
+Plane \
+Sampler
 
 SRC_DIR = src
 OBJ_DIR = obj
@@ -25,12 +29,12 @@ SRC = $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(LIST)))
 OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(LIST)))
 DEP = $(OBJ:%.o=%.d)
 
-CPPFLAGS = -std=c++14 -Wall -Wextra -Werror \
+CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
 $(shell pkg-config --cflags glfw3 glm sfml-window sfml-graphics sfml-system) \
 -I lib/entt/src \
 -I lib/lodepng \
 -I lib/irrklang/include \
--g -flto=thin -O3 -march=native \
+-g -flto=thin -O3 \
 #-fsanitize=undefined -fsanitize=address
 
 LDFLAGS = -flto=thin -framework OpenGl \
