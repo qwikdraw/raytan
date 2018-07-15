@@ -6,18 +6,19 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/14 19:29:32 by lkaser           ###   ########.fr        #
+#    Updated: 2018/07/14 20:50:45 by twalton          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = RT
-LIST = Camera \
+LIST = main \
+Camera \
 ImagePipeline \
 Plane \
 Scene \
 Sphere \
 Sampler \
-main
+IObject
 
 SRC_DIR = src
 OBJ_DIR = obj
@@ -27,14 +28,14 @@ OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(LIST)))
 DEP = $(OBJ:%.o=%.d)
 
 CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
-$(shell PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig \
+$(shell PKG_CONFIG_PATH=~/.brew/opt/qt/lib/pkgconfig \
 pkg-config --cflags glfw3 glm Qt5Core Qt5Gui Qt5Widgets) \
 -I lib/lodepng \
 -O3 -flto=thin \
 #-g -fsanitize=undefined -fsanitize=address
 
 LDFLAGS = -framework OpenGl \
-$(shell PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig \
+$(shell PKG_CONFIG_PATH=~/.brew/opt/qt/lib/pkgconfig \
 pkg-config --libs glfw3 glm Qt5Core Qt5Gui Qt5Widgets) \
 -L lib/lodepng -llodepng -flto=thin \
 #-fsanitize=undefined -fsanitize=address
