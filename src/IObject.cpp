@@ -5,7 +5,7 @@ RayResult	IObject::MakeRayResult(double distance, const Ray& ray) const
 	RayResult out;
 
 	out.position = ray.origin + ray.direction * distance;
-	out.normal = normal(distance, ray);
+	out.normal = findNormal(out.position, ray);
 
 	glm::dvec2 uv;
 	if (materialSampler || colorSampler || normalSampler)
@@ -30,16 +30,17 @@ RayResult	IObject::MakeRayResult(double distance, const Ray& ray) const
 	if (colorSampler)
 	{
 		glm::dvec4 sample = colorSampler->Color(uv.x, uv.y);
-		out.color = sample.xyz;
+		out.color = glm::vec3(sample);
 	}
 	else
 	{
 		out.color = color;
 	}
 
-	if (normalSampler)
-	{
-		glm::dvec4 sample = normalSampler->Color(uv.x, uv.y);
-		
-	}
+//	if (normalSampler)
+//	{
+//		//stuff
+//	}
+
+	return out;
 }

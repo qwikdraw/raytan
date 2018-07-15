@@ -26,7 +26,11 @@ Scene::Scene(void)
 	s1->reflect = 0.4;
 	s1->refract = 0.4;
 	s1->color = glm::dvec3(0.9, 0.5, 0.8);
-	s1->colorSampler.Load("image.png");
+	
+	s1->colorSampler = new Sampler("image.png");
+	s1->materialSampler = new Sampler("image.png");
+	s1->normalSampler = nullptr;
+	
 	_objects.push_back(s1);
 
 	Plane *p1 = new Plane;
@@ -37,7 +41,11 @@ Scene::Scene(void)
 	p1->reflect = 0.5;
 	p1->refract = 0;
 	p1->color = glm::dvec3(1, 1, 0.5);
-//	p1->colorSampler.Load("image.png");
+
+	p1->colorSampler = nullptr;
+	p1->materialSampler = nullptr;
+	p1->normalSampler = nullptr;
+	
 	_objects.push_back(p1);
 	
 	_lights.push_back((Light){{0, -0.5, 0.5}, {1, 1, 1}});

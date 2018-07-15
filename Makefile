@@ -11,13 +11,14 @@
 # **************************************************************************** #
 
 NAME = RT
-LIST = Camera \
+LIST = main \
+Camera \
 ImagePipeline \
 Plane \
 Scene \
 Sphere \
 Sampler \
-main
+IObject
 
 SRC_DIR = src
 OBJ_DIR = obj
