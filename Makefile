@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/14 19:18:41 by lkaser           ###   ########.fr        #
+#    Updated: 2018/07/14 19:29:32 by lkaser           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,6 @@ OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(LIST)))
 DEP = $(OBJ:%.o=%.d)
 
 CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
-
 $(shell PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig \
 pkg-config --cflags glfw3 glm Qt5Core Qt5Gui Qt5Widgets) \
 -I lib/lodepng \
