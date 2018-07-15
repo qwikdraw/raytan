@@ -1,12 +1,14 @@
+#include <QApplication>
+#include <QLabel>
+#include <QImage>
+#include <QPixmap>
 
 #include "Raetan.hpp"
 #include "ImagePipeline.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
-#include "Window.hpp"
-#include "Image2D.hpp"
 
-int	main(void)
+int	main(int argc, char *argv[])
 {
 	Scene scene;
 
@@ -20,15 +22,11 @@ int	main(void)
 	ImagePipeline::Normalize(im, 0.5);
 	ImagePipeline::Finalize(im);	
 
-	Window window(1000, 1000, "Raetan");
-	Image2D imageDisplay;
-	imageDisplay.Render(im.colors, im.width, im.height);
-
-	while (!window.ShouldClose())
-	{
-		window.Clear();
-		imageDisplay.Render();
-		window.Render();
-	}
-	window.Close();
+	// QT Stuff.
+	QApplication a(argc, argv);
+	QImage Result(im.colors.data(), im.width, im.height, QImage::Format_RGB32);
+	QLabel label;
+	label.setPixmap(QPixmap::fromImage(Result));
+	label.show();
+	return a.exec();
 }
