@@ -40,7 +40,6 @@ void	IP::Normalize(Image& image, double gamma)
 
 void	IP::Finalize(Image& image)
 {
-/*
 	for (auto& raw : image.raw)
 	{
 		image.colors.push_back(raw.color.b * 255);
@@ -48,7 +47,7 @@ void	IP::Finalize(Image& image)
 		image.colors.push_back(raw.color.r * 255);
 		image.colors.push_back(255);
 	}
-*/
+/*
 	for (auto raw = image.raw.end(); raw != image.raw.begin();)
 	{
 	    --raw;
@@ -57,5 +56,6 @@ void	IP::Finalize(Image& image)
 		image.colors.push_back(raw->color.r * 255);
 		image.colors.push_back(255);
 	}
+*/
 	image.raw.clear();
 }
