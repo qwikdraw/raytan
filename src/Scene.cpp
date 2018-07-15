@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/12 21:23:28 by bpierce          ###   ########.fr       */
+/*   Updated: 2018/07/13 19:36:24 by lkaser           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ RayResult	Scene::getRayResult(const Ray& ray) const
 	double bestDist = INFINITY;
 	int bestIndex = -1;
 	
-	for (size_t i = 0; i < _objects.size(); i++)
+	for (unsigned i = 0; i < _objects.size(); i++)
 	{
 		double dist = _objects[i]->Intersection(ray);
 
