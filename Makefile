@@ -16,6 +16,7 @@ ImagePipeline \
 Plane \
 Scene \
 Sphere \
+Sampler \
 main
 
 SRC_DIR = src
@@ -26,6 +27,7 @@ OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(LIST)))
 DEP = $(OBJ:%.o=%.d)
 
 CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
+
 $(shell PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig \
 pkg-config --cflags glfw3 glm Qt5Core Qt5Gui Qt5Widgets) \
 -I lib/lodepng \
