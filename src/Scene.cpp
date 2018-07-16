@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/12 21:23:28 by bpierce          ###   ########.fr       */
+/*   Updated: 2018/07/14 21:23:23 by bpierce          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,33 +14,46 @@
 
 #include "Sphere.hpp"
 #include "Plane.hpp"
+#include "Cylinder.hpp"
 
 Scene::Scene(void)
 {
-	Sphere *s1 = new Sphere;
-	s1->center = glm::dvec3(1, 0, 0.1);
-	s1->radius = 0.1;
-	s1->color = glm::dvec3(1, 1, 1);
-	s1->refractiveIndex = 2;
-	s1->diffuse = 0.2;
-	s1->reflect = 0.4;
-	s1->refract = 0.4;
-	s1->color = glm::dvec3(0.9, 0.5, 0.8);
-	s1->colorSampler.Load("image.png");
-	_objects.push_back(s1);
-
-	Plane *p1 = new Plane;
-	p1->center = glm::dvec3(2, 0, 0);
-	p1->normal = glm::dvec3(1, 0, 0);
-	p1->refractiveIndex = 2;
-	p1->diffuse = 0.5;
-	p1->reflect = 0.5;
-	p1->refract = 0;
-	p1->color = glm::dvec3(1, 1, 0.5);
-//	p1->colorSampler.Load("image.png");
-	_objects.push_back(p1);
+//	Sphere *s1 = new Sphere;
+//	s1->center = glm::dvec3(1, 0, 0.1);
+//	s1->radius = 0.1;
+//	s1->color = glm::dvec3(1, 1, 1);
+//	s1->refractiveIndex = 2;
+//	s1->diffuse = 0.2;
+//	s1->reflect = 0.4;
+//	s1->refract = 0.4;
+//	s1->color = glm::dvec3(0.9, 0.5, 0.8);
+//	s1->colorSampler.Load("image.png");
+//	_objects.push_back(s1);
+//
+//	Plane *p1 = new Plane;
+//	p1->center = glm::dvec3(2, 0, 0);
+//	p1->normal = glm::dvec3(1, 0, 0);
+//	p1->refractiveIndex = 2;
+//	p1->diffuse = 0.5;
+//	p1->reflect = 0.5;
+//	p1->refract = 0;
+//	p1->color = glm::dvec3(1, 1, 0.5);
+/*	p1->colorSampler.Load("image.png"); */
+//	_objects.push_back(p1);
 	
-	_lights.push_back((Light){{0, -0.5, 0.5}, {1, 1, 1}});
+	Cylinder *c1 = new Cylinder;
+	c1->center = glm::dvec3(2, 0.3, 0.3);
+	c1->radius = 0.2;
+	c1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
+	c1->color = glm::dvec3(1, 1, 1);
+	c1->refractiveIndex = 2;
+	c1->diffuse = 0.2;
+	c1->reflect = 0;
+	c1->refract = 0;
+//	c1->colorSampler.Load("image.png");
+	_objects.push_back(c1);
+//	_lights.push_back((Light){{0, -0.5, 0.5}, {1, 1, 1}});
+	_lights.push_back((Light){{0, -0.5, 0.5}, {4, 4, 4}});
 }
 
 Scene::~Scene(void)

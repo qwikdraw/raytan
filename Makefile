@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/13 19:04:07 by lkaser           ###   ########.fr        #
+#    Updated: 2018/07/14 20:35:44 by bpierce          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ main \
 Scene \
 Sphere \
 Plane \
+Cylinder \
 Sampler
 
 SRC_DIR = src
@@ -35,12 +36,12 @@ $(shell pkg-config --cflags glfw3 glm sfml-window sfml-graphics sfml-system) \
 -I lib/lodepng \
 -I lib/irrklang/include \
 -g -flto=thin -O3 \
-#-fsanitize=undefined -fsanitize=address
+-fsanitize=undefined -fsanitize=address
 
 LDFLAGS = -flto=thin -framework OpenGl \
 $(shell pkg-config --libs glfw3 glm sfml-window sfml-graphics sfml-system) \
 -L lib/lodepng -llodepng \
-#-fsanitize=undefined -fsanitize=address
+-fsanitize=undefined -fsanitize=address
 
 all: $(OBJ_DIR) $(NAME)
 
