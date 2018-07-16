@@ -1,44 +1,56 @@
 #include "IObject.hpp"
 
-RayResult	IObject::MakeRayResult(double distance, const Ray& ray) const
+std::pair<double, IObject*>	IObject::Intersection(const Ray& ray) const
+{
+	auto dists = findDistances(ray);	
+	std::pair<double, IObject*> bestPair(INFINITY, nullptr);
+	
+	for (auto& pair : dists)
+	{
+		if (pair.first < bestPair.first && pair.first > 0)
+			bestPair = pair;
+	}
+	return bestPair;
+}
+
+RayResult	IObject::MakeRayResult(double distance, const Ray& ray, IObject* ref) const
 {
 	RayResult out;
 
 	out.position = ray.origin + ray.direction * distance;
-	out.normal = findNormal(out.position, ray);
+	out.normal = ref->findNormal(out.position, ray);
 
 	glm::dvec2 uv;
-	if (materialSampler || colorSampler || normalSampler)
-		uv = uvMap(out.position, out.normal);
+	if (ref->materialSampler || ref->colorSampler || ref->normalSampler)
+		uv = ref->uvMap(out.position, out.normal);
 
-	if (materialSampler)
+	if (ref->materialSampler)
 	{
-		glm::dvec4 sample = materialSampler->Color(uv.x, uv.y);
-		glm::dvec3 material = glm::normalize(glm::dvec3(sample) + glm::dvec3(0.0001));
-		out.diffuse = material.r;
-		out.reflect = material.g;
-		out.refract = material.b;
-		out.refractiveIndex = sample.a * 3;
+		glm::dvec4 sample = ref->materialSampler->Color(uv.x, uv.y);
+		out.diffuse = sample.r;
+		out.reflect = sample.g;
+		out.refract = sample.b;
+		out.refractiveIndex = sample.a;
 	}
 	else
 	{
-		out.diffuse = diffuse;
-		out.reflect = reflect;
-		out.refract = refract;
-		out.refractiveIndex = refractiveIndex;
+		out.diffuse = ref->diffuse;
+		out.reflect = ref->reflect;
+		out.refract = ref->refract;
+		out.refractiveIndex = ref->refractiveIndex;
 	}
 
-	if (colorSampler)
+	if (ref->colorSampler)
 	{
-		glm::dvec4 sample = colorSampler->Color(uv.x, uv.y);
+		glm::dvec4 sample = ref->colorSampler->Color(uv.x, uv.y);
 		out.color = glm::vec3(sample);
 	}
 	else
 	{
-		out.color = color;
+		out.color = ref->color;
 	}
 
-//	if (normalSampler)
+//	if (ref->normalSampler)
 //	{
 //		//stuff
 //	}
