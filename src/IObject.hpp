@@ -17,14 +17,15 @@ struct  RayResult
 class   IObject
 {
 protected:
+	virtual std::vector<std::pair<double, IObject*>> findDistances(const Ray& ray) const = 0;
 	virtual glm::dvec3 findNormal(const glm::dvec3& intersection, const Ray& ray) const = 0;
 	virtual glm::dvec2 uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const = 0;
 	
 public:
 	IObject() {}
 	virtual ~IObject() {}
-	virtual double Intersection(const Ray& ray) const = 0;
-	RayResult MakeRayResult(double distance, const Ray& ray) const;
+	std::pair<double, IObject*> Intersection(const Ray& ray) const;
+	RayResult MakeRayResult(double distance, const Ray& ray, IObject*) const;
 
 	glm::dvec3 center;
 	glm::dvec3 direction;

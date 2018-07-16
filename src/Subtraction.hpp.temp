@@ -1,14 +1,13 @@
 #pragma once
 
-#include "Raetan.hpp"
-#include "IObject.hpp"
-
-class	Sphere : public IObject
+class	Subtraction : public IObject
 {
-	std::vector<std::pair<double, IObject*>> findDistances(const Ray& ray) const;
+	IObject const* _positive;
+	IObject const* _negative;
+	
 	glm::dvec3 findNormal(const glm::dvec3& intersection, const Ray& ray) const;
 	glm::dvec2 uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const;
-
 public:
-	double radius;
+	Subtraction(IObject *positive, IObject *negative);
+	double Intersection(const Ray& ray) const;
 };
