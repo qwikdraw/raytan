@@ -18,6 +18,7 @@ Plane \
 Scene \
 Sphere \
 Cylinder \
+Cone \
 Sampler \
 IObject
 

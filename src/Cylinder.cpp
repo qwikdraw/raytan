@@ -31,7 +31,7 @@ glm::dvec2		Cylinder::solveQuadratic(double a, double b, double c) const
 	return (root);
 }
 
-glm::dvec3		Cylinder::normal(glm::dvec3 intersection, const Ray& ray) const
+glm::dvec3		Cylinder::findNormal(const glm::dvec3& intersection, const Ray& ray) const
 {
 
 	glm::dvec3 normal = intersection - center;
@@ -40,7 +40,12 @@ glm::dvec3		Cylinder::normal(glm::dvec3 intersection, const Ray& ray) const
 
 	normal = center + (vector * dist);
 
-	return (glm::normalize(intersection - normal));
+	return glm::normalize(intersection - normal);
+}
+
+glm::dvec2		Cylinder::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const
+{
+	return glm::dvec2(0.5, 0.5); // Will  update later
 }
 
 double 			Cylinder::Intersection(const Ray& ray) const
@@ -63,12 +68,12 @@ double 			Cylinder::Intersection(const Ray& ray) const
 	// Calculate the distance
 	glm::dvec2 root = solveQuadratic(a, b, c);
 	double distance = 0;
-	if (root.x > 0.0001 && root.x < root.y)
+	if (root.x > 0.0 && root.x < root.y)
 		distance = root.x;
-	if (root.y > 0.0001 && root.y < root.x)
+	if (root.y > 0.0 && root.y < root.x)
 		distance = root.y;
 
-	return (distance != 0 ? distance : INFINITY);
+	return distance != 0 ? distance : INFINITY;
 }
 
 RayResult Cylinder::MakeRayResult(double distance, const Ray& ray) const
@@ -76,7 +81,7 @@ RayResult Cylinder::MakeRayResult(double distance, const Ray& ray) const
 	RayResult out;
 
 	out.position = ray.origin + (ray.direction * distance);
-	out.normal = normal(out.position, ray);
+	out.normal = findNormal(out.position, ray);
 	out.color = color;
 	out.diffuse = diffuse;
 	out.reflect = reflect;

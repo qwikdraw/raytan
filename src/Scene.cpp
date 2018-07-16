@@ -15,12 +15,13 @@
 #include "Sphere.hpp"
 #include "Plane.hpp"
 #include "Cylinder.hpp"
+#include "Cone.hpp"
 
 Scene::Scene(void)
 {
 
 	Sphere *s1 = new Sphere;
-	s1->center = glm::dvec3(1, 0, 0.1);
+	s1->center = glm::dvec3(1, -0.2, 0);
 	s1->radius = 0.1;
 	s1->color = glm::dvec3(1, 1, 1);
 	s1->refractiveIndex = 2;
@@ -29,8 +30,8 @@ Scene::Scene(void)
 	s1->refract = 0.4;
 	s1->color = glm::dvec3(0.9, 0.5, 0.8);
 	
-	s1->colorSampler = new Sampler("image.png");
-	s1->materialSampler = new Sampler("image.png");
+	s1->colorSampler = nullptr;
+	s1->materialSampler = nullptr;
 	s1->normalSampler = nullptr;
 	
 	_objects.push_back(s1);
@@ -47,21 +48,39 @@ Scene::Scene(void)
 	p1->colorSampler = nullptr;
 	p1->materialSampler = nullptr;
 	p1->normalSampler = nullptr;
-	
+
 	_objects.push_back(p1);
-	
-	Cylinder *c1 = new Cylinder;
-	c1->center = glm::dvec3(2, 0.3, 0.3);
-	c1->radius = 0.2;
-	c1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
-	c1->color = glm::dvec3(1, 1, 1);
-	c1->refractiveIndex = 2;
-	c1->diffuse = 0.2;
-	c1->reflect = 0;
-	c1->refract = 0;
-//	c1->colorSampler.Load("image.png");
-	_objects.push_back(c1);
-//	_lights.push_back((Light){{0, -0.5, 0.5}, {1, 1, 1}});
+
+	// Cylinder *c1 = new Cylinder;
+	// c1->center = glm::dvec3(2, 0.3, 0.3);
+	// c1->radius = 0.2;
+	// c1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
+	// c1->color = glm::dvec3(1, 1, 1);
+	// c1->refractiveIndex = 2;
+	// c1->diffuse = 0.2;
+	// c1->reflect = 0;
+	// c1->refract = 0;
+	// c1->colorSampler = nullptr;
+	// c1->materialSampler = nullptr;
+	// c1->normalSampler = nullptr;
+
+	// _objects.push_back(c1);
+
+	Cone *co1 = new Cone;
+	co1->center = glm::dvec3(2, 0.3, 0.3);
+	co1->angle = 0.7;
+	co1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
+	co1->color = glm::dvec3(0.3, 0.7, 0.4);
+	co1->refractiveIndex = 0;
+	co1->diffuse = 0.2;
+	co1->reflect = 0.1;
+	co1->refract = 0;
+	co1->colorSampler = nullptr;
+	co1->materialSampler = nullptr;
+	co1->normalSampler = nullptr;
+
+	_objects.push_back(co1);
+
 	_lights.push_back((Light){{0, -0.5, 0.5}, {4, 4, 4}});
 
 }
