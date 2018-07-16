@@ -10,14 +10,15 @@ RayResult	IObject::MakeRayResult(double distance, const Ray& ray) const
 	glm::dvec2 uv;
 	if (materialSampler || colorSampler || normalSampler)
 		uv = uvMap(out.position, out.normal);
-	
+
 	if (materialSampler)
 	{
 		glm::dvec4 sample = materialSampler->Color(uv.x, uv.y);
-		out.diffuse = sample.r;
-		out.reflect = sample.g;
-		out.refract = sample.b;
-		out.refractiveIndex = sample.a;
+		glm::dvec3 material = glm::normalize(glm::dvec3(sample) + glm::dvec3(0.0001));
+		out.diffuse = material.r;
+		out.reflect = material.g;
+		out.refract = material.b;
+		out.refractiveIndex = sample.a * 3;
 	}
 	else
 	{
