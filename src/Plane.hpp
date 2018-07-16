@@ -9,6 +9,4 @@ class	Plane : public IObject
 	glm::dvec2 uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const;
 public:
 	double		Intersection(const Ray& ray) const;
-
-	glm::dvec3 normal;
 };
