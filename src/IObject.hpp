@@ -27,7 +27,8 @@ public:
 	RayResult MakeRayResult(double distance, const Ray& ray) const;
 
 	glm::dvec3 center;
-	
+	glm::dvec3 direction;
+
 	double diffuse;
 	double reflect;
 	double refract;

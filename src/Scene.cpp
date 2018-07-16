@@ -19,6 +19,8 @@ Scene::Scene(void)
 {
 	Sphere *s1 = new Sphere;
 	s1->center = glm::dvec3(1, 0, 0.1);
+	s1->direction = glm::dvec3(0, 0, 1);
+	
 	s1->radius = 0.1;
 	s1->color = glm::dvec3(1, 1, 1);
 	s1->refractiveIndex = 2;
@@ -28,17 +30,18 @@ Scene::Scene(void)
 	s1->color = glm::dvec3(0.9, 0.5, 0.8);
 	
 	s1->colorSampler = new Sampler("image.png");
-	s1->materialSampler = new Sampler("image.png");
+	s1->materialSampler = new Sampler("mat.png");
 	s1->normalSampler = nullptr;
 	
 	_objects.push_back(s1);
 
 	Plane *p1 = new Plane;
 	p1->center = glm::dvec3(2, 0, 0);
-	p1->normal = glm::dvec3(1, 0, 0);
+	p1->direction = glm::dvec3(1, 0, 0);
+
 	p1->refractiveIndex = 2;
-	p1->diffuse = 0.5;
-	p1->reflect = 0.5;
+	p1->diffuse = 1;
+	p1->reflect = 0;
 	p1->refract = 0;
 	p1->color = glm::dvec3(1, 1, 0.5);
 
@@ -101,7 +104,7 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 		if (intensity.r == 0 && intensity.g == 0 && intensity.b == 0)
 			continue;
 
-		dotValue = std::max(glm::dot(rayResult.normal, lightRay.direction), 0.0);
+		dotValue = glm::abs(glm::dot(rayResult.normal, lightRay.direction));
 		pixelColor.color += rayResult.color * intensity * dotValue;
 	}	
 	return pixelColor;
