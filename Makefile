@@ -6,22 +6,20 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/14 20:35:44 by bpierce          ###   ########.fr        #
+#    Updated: 2018/07/14 20:50:45 by twalton          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = RT
-LIST = Camera \
-Image2D \
+LIST = main \
+Camera \
 ImagePipeline \
-ShadingProgram \
-Window \
-main \
+Plane \
 Scene \
 Sphere \
-Plane \
 Cylinder \
-Sampler
+Sampler \
+IObject
 
 SRC_DIR = src
 OBJ_DIR = obj
@@ -31,22 +29,23 @@ OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(LIST)))
 DEP = $(OBJ:%.o=%.d)
 
 CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
-$(shell pkg-config --cflags glfw3 glm sfml-window sfml-graphics sfml-system) \
--I lib/entt/src \
+$(shell PKG_CONFIG_PATH=~/.brew/opt/qt/lib/pkgconfig \
+pkg-config --cflags glfw3 glm Qt5Core Qt5Gui Qt5Widgets) \
 -I lib/lodepng \
--I lib/irrklang/include \
--g -flto=thin -O3 \
--fsanitize=undefined -fsanitize=address
+-O3 -flto=thin \
+#-g -fsanitize=undefined -fsanitize=address
 
-LDFLAGS = -flto=thin -framework OpenGl \
-$(shell pkg-config --libs glfw3 glm sfml-window sfml-graphics sfml-system) \
--L lib/lodepng -llodepng \
--fsanitize=undefined -fsanitize=address
+LDFLAGS = -framework OpenGl \
+$(shell PKG_CONFIG_PATH=~/.brew/opt/qt/lib/pkgconfig \
+pkg-config --libs glfw3 glm Qt5Core Qt5Gui Qt5Widgets) \
+-L lib/lodepng -llodepng -flto=thin \
+#-fsanitize=undefined -fsanitize=address
 
 all: $(OBJ_DIR) $(NAME)
 
 $(NAME): lib/lodepng/liblodepng.a $(OBJ)
 	@printf "\e[32;1mLinking.. \e[0m\n"
+	@export PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig
 	@clang++ $(LDFLAGS) -o $@ $^
 	@printf "\e[32;1mCreated:\e[0m %s\n" $(NAME)
 

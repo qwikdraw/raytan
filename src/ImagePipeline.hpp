@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #include "Raetan.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
@@ -12,7 +14,7 @@ struct	Image
 	int width;
 	int height;
 	std::vector<RawColor> raw;
-	std::vector<unsigned char> colors;
+	std::vector<uint8_t> colors;
 };
 
 namespace	ImagePipeline

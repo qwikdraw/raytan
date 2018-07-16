@@ -6,7 +6,11 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2018/07/14 21:23:23 by bpierce          ###   ########.fr       */
+=======
+/*   Updated: 2018/07/13 19:36:24 by lkaser           ###   ########.fr       */
+>>>>>>> b2b2502d509c7330662c2a2a0460ea6880933427
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +22,37 @@
 
 Scene::Scene(void)
 {
-//	Sphere *s1 = new Sphere;
-//	s1->center = glm::dvec3(1, 0, 0.1);
-//	s1->radius = 0.1;
-//	s1->color = glm::dvec3(1, 1, 1);
-//	s1->refractiveIndex = 2;
-//	s1->diffuse = 0.2;
-//	s1->reflect = 0.4;
-//	s1->refract = 0.4;
-//	s1->color = glm::dvec3(0.9, 0.5, 0.8);
-//	s1->colorSampler.Load("image.png");
-//	_objects.push_back(s1);
-//
-//	Plane *p1 = new Plane;
-//	p1->center = glm::dvec3(2, 0, 0);
-//	p1->normal = glm::dvec3(1, 0, 0);
-//	p1->refractiveIndex = 2;
-//	p1->diffuse = 0.5;
-//	p1->reflect = 0.5;
-//	p1->refract = 0;
-//	p1->color = glm::dvec3(1, 1, 0.5);
-/*	p1->colorSampler.Load("image.png"); */
-//	_objects.push_back(p1);
+
+	Sphere *s1 = new Sphere;
+	s1->center = glm::dvec3(1, 0, 0.1);
+	s1->radius = 0.1;
+	s1->color = glm::dvec3(1, 1, 1);
+	s1->refractiveIndex = 2;
+	s1->diffuse = 0.2;
+	s1->reflect = 0.4;
+	s1->refract = 0.4;
+	s1->color = glm::dvec3(0.9, 0.5, 0.8);
+	
+	s1->colorSampler = new Sampler("image.png");
+	s1->materialSampler = new Sampler("image.png");
+	s1->normalSampler = nullptr;
+	
+	_objects.push_back(s1);
+
+	Plane *p1 = new Plane;
+	p1->center = glm::dvec3(2, 0, 0);
+	p1->normal = glm::dvec3(1, 0, 0);
+	p1->refractiveIndex = 2;
+	p1->diffuse = 0.5;
+	p1->reflect = 0.5;
+	p1->refract = 0;
+	p1->color = glm::dvec3(1, 1, 0.5);
+
+	p1->colorSampler = nullptr;
+	p1->materialSampler = nullptr;
+	p1->normalSampler = nullptr;
+	
+	_objects.push_back(p1);
 	
 	Cylinder *c1 = new Cylinder;
 	c1->center = glm::dvec3(2, 0.3, 0.3);
@@ -54,6 +67,7 @@ Scene::Scene(void)
 	_objects.push_back(c1);
 //	_lights.push_back((Light){{0, -0.5, 0.5}, {1, 1, 1}});
 	_lights.push_back((Light){{0, -0.5, 0.5}, {4, 4, 4}});
+
 }
 
 Scene::~Scene(void)
@@ -65,7 +79,7 @@ RayResult	Scene::getRayResult(const Ray& ray) const
 	double bestDist = INFINITY;
 	int bestIndex = -1;
 	
-	for (size_t i = 0; i < _objects.size(); i++)
+	for (unsigned i = 0; i < _objects.size(); i++)
 	{
 		double dist = _objects[i]->Intersection(ray);
 
