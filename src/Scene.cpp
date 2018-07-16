@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/14 21:23:23 by bpierce          ###   ########.fr       */
+/*   Updated: 2018/07/16 16:49:49 by bpierce          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ Scene::Scene(void)
 {
 
 	Sphere *s1 = new Sphere;
-	s1->center = glm::dvec3(1, -0.2, 0);
+	s1->center = glm::dvec3(1, 0, 0.1);
+	s1->direction = glm::dvec3(0, 0, 1);
+	
 	s1->radius = 0.1;
 	s1->color = glm::dvec3(1, 1, 1);
 	s1->refractiveIndex = 2;
@@ -30,18 +32,19 @@ Scene::Scene(void)
 	s1->refract = 0.4;
 	s1->color = glm::dvec3(0.9, 0.5, 0.8);
 	
-	s1->colorSampler = nullptr;
-	s1->materialSampler = nullptr;
+	s1->colorSampler = new Sampler("image.png");
+	s1->materialSampler = new Sampler("mat.png");
 	s1->normalSampler = nullptr;
 	
 	_objects.push_back(s1);
 
 	Plane *p1 = new Plane;
 	p1->center = glm::dvec3(2, 0, 0);
-	p1->normal = glm::dvec3(1, 0, 0);
+	p1->direction = glm::dvec3(1, 0, 0);
+
 	p1->refractiveIndex = 2;
-	p1->diffuse = 0.5;
-	p1->reflect = 0.5;
+	p1->diffuse = 1;
+	p1->reflect = 0;
 	p1->refract = 0;
 	p1->color = glm::dvec3(1, 1, 0.5);
 
@@ -91,16 +94,16 @@ Scene::~Scene(void)
 
 RayResult	Scene::getRayResult(const Ray& ray) const
 {
-	double bestDist = INFINITY;
+	std::pair<double, IObject*> bestPair(INFINITY, nullptr);
 	int bestIndex = -1;
 	
 	for (unsigned i = 0; i < _objects.size(); i++)
 	{
-		double dist = _objects[i]->Intersection(ray);
+		auto distPair = _objects[i]->Intersection(ray);
 
-		if (dist < bestDist)
+		if (distPair.first < bestPair.first)
 		{
-			bestDist = dist;
+			bestPair = distPair;
 			bestIndex = i;
 		}
 	}
@@ -113,7 +116,7 @@ RayResult	Scene::getRayResult(const Ray& ray) const
 		return out;
 	}
 
-	return _objects[bestIndex]->MakeRayResult(bestDist, ray);
+	return _objects[bestIndex]->MakeRayResult(bestPair.first, ray, bestPair.second);
 }
 
 // getDiffuse will also do shadow management
@@ -135,7 +138,7 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 		if (intensity.r == 0 && intensity.g == 0 && intensity.b == 0)
 			continue;
 
-		dotValue = std::max(glm::dot(rayResult.normal, lightRay.direction), 0.0);
+		dotValue = glm::abs(glm::dot(rayResult.normal, lightRay.direction));
 		pixelColor.color += rayResult.color * intensity * dotValue;
 	}	
 	return pixelColor;
@@ -148,10 +151,11 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 
 	for (auto object : _objects)
 	{
-		double dist = object->Intersection(ray);
+		auto pair = object->Intersection(ray);
+		double dist = pair.first;
 		if (dist < lightDist)
 		{
-			RayResult data = object->MakeRayResult(dist, ray);
+			RayResult data = object->MakeRayResult(dist, ray, pair.second);
 			if (data.refract == 0)
 				return glm::dvec3(0, 0, 0);
 			intensity *= data.refract * (1.0 - data.diffuse * (glm::dvec3(1) - data.color));

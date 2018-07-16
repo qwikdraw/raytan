@@ -1,5 +1,25 @@
 #include "Sphere.hpp"
 
+std::vector<std::pair<double, IObject*>> Sphere::findDistances(const Ray& ray) const
+{
+	glm::dvec3 temp = ray.origin - center;
+	double dist1 = dot(ray.direction, temp);
+	double dist2;
+	double discrim = dist1 * dist1 - dot(temp, temp) + radius * radius;
+
+	if (discrim < 0)
+		return std::vector<std::pair<double, IObject*>>();
+	discrim = sqrt(discrim);
+	dist2 = -dist1 - discrim;
+	dist1 = -dist1 + discrim;
+
+	std::vector<std::pair<double, IObject*>> out;
+
+	out.push_back(std::pair<double, IObject*>(dist2, (IObject*)this));
+	out.push_back(std::pair<double, IObject*>(dist1, (IObject*)this));
+	return out;
+}
+
 glm::dvec3 Sphere::findNormal(const glm::dvec3& intersection, const Ray& ray) const
 {
 	return glm::normalize(intersection - center);
@@ -15,36 +35,4 @@ glm::dvec2 Sphere::uvMap(const glm::dvec3&, const glm::dvec3& normal) const
 	out.y = out.y / 3.1415;
 
 	return out;
-}
-
-static double	closest_dist(double dist1, double dist2)
-{
-	if (dist1 < dist2)
-	{
-		if (dist1 > 0)
-			return (dist1);
-		if (dist2 > 0)
-			return (dist2);
-		return (INFINITY);
-	}
-	if (dist2 > 0)
-		return (dist2);
-	if (dist1 > 0)
-		return (dist1);
-	return (INFINITY);
-}
-
-double Sphere::Intersection(const Ray& ray) const
-{
-	glm::dvec3 temp = ray.origin - center;
-	double dist1 = dot(ray.direction, temp);
-	double dist2;
-	double discrim = dist1 * dist1 - dot(temp, temp) + radius * radius;
-
-	if (discrim < 0)
-		return INFINITY;
-	discrim = sqrt(discrim);
-	dist2 = -dist1 - discrim;
-	dist1 = -dist1 + discrim;
-	return closest_dist(dist1, dist2);
 }
