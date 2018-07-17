@@ -18,7 +18,7 @@ void	RP::SceneToImage(const Scene& scene, const Camera& camera, Image* image, QP
 	}
 }
 
-void	RP::Normalize(Image* image, double gamma)
+void	RP::NormalizeColor(Image* image, double gamma)
 {
 	glm::dvec3 averageCol;
 	double totalPixels = image->width * image->height;
@@ -39,7 +39,7 @@ void	RP::Normalize(Image* image, double gamma)
 	}
 }
 
-void	RP::Finalize(Image* image)
+void	RP::ImageToRGB32(Image* image)
 {
 	for (auto& raw : image->raw)
 	{
