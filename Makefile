@@ -23,7 +23,8 @@ Cylinder \
 Cone \
 Cube \
 Sampler \
-IObject
+IObject \
+Subtraction
 
 SRC_DIR = src
 OBJ_DIR = obj

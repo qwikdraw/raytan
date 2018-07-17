@@ -17,6 +17,7 @@
 #include "Cylinder.hpp"
 #include "Cone.hpp"
 #include "Cube.hpp"
+#include "Subtraction.hpp"
 
 Scene::Scene(void)
 {
@@ -28,16 +29,34 @@ Scene::Scene(void)
 	s1->radius = 0.1;
 	s1->color = glm::dvec3(1, 1, 1);
 	s1->refractiveIndex = 2;
-	s1->diffuse = 0.6;
-	s1->reflect = 0.4;
-	s1->refract = 0.0;
+	s1->diffuse = 1;
+	s1->reflect = 0;
+	s1->refract = 0;
 	s1->color = glm::dvec3(0.9, 0.5, 0.8);
 	
-	s1->colorSampler = new Sampler("assets/image.png");
-	s1->materialSampler = new Sampler("assets/mat.png");
+	s1->colorSampler = new Sampler("image.png");
+	s1->materialSampler = nullptr;//new Sampler("mat.png");
 	s1->normalSampler = nullptr;
+
+	Sphere *s2 = new Sphere;
+        s2->center = glm::dvec3(0.9, 0, 0.12);
+        s2->direction = glm::dvec3(0, 0, 1);
+
+        s2->radius = 0.05;
+        s2->color = glm::dvec3(1, 1, 1);
+        s2->refractiveIndex = 2;
+        s2->diffuse = 1;
+        s2->reflect = 0;
+        s2->refract = 0;
+        s2->color = glm::dvec3(0.9, 0.5, 0.8);
+
+        s2->colorSampler = new Sampler("image.png");
+        s2->materialSampler = nullptr;//new Sampler("mat.png");
+        s2->normalSampler = nullptr;
+
+	Subtraction *sub = new Subtraction(s1, s2);
 	
-	_objects.push_back(s1);
+	_objects.push_back(sub);
 
 	Plane *p1 = new Plane;
 	p1->center = glm::dvec3(2, 0, 0);

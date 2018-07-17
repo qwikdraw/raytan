@@ -16,6 +16,7 @@ struct  RayResult
 
 class   IObject
 {
+	friend class Subtraction;
 protected:
 	virtual std::vector<std::pair<double, IObject*>> findDistances(const Ray& ray) const = 0;
 	virtual glm::dvec3 findNormal(const glm::dvec3& intersection, const Ray& ray) const = 0;
