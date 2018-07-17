@@ -13,7 +13,7 @@ docs/xml
 docs/html
 *__pycache__
 *.pyc
-run.sh
+*.moc.cpp
 
 # Compiled Object files
 *.slo

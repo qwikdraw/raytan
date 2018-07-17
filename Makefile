@@ -6,14 +6,16 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/16 18:31:44 by bpierce          ###   ########.fr        #
+#    Updated: 2018/07/17 11:13:58 by lkaser           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = RT
 LIST = main \
+Window \
+Window.moc \
 Camera \
-ImagePipeline \
+RenderPipeline \
 Plane \
 Scene \
 Sphere \
@@ -31,15 +33,17 @@ OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(LIST)))
 DEP = $(OBJ:%.o=%.d)
 
 CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
-$(shell PKG_CONFIG_PATH=~/.brew/opt/qt/lib/pkgconfig \
-pkg-config --cflags glfw3 glm Qt5Core Qt5Gui Qt5Widgets) \
--I lib/lodepng \
--O3 -flto=thin \
+-O3 -flto=thin $(INCLUDES)\
 #-g -fsanitize=undefined -fsanitize=address
+
+INCLUDES = $(shell PKG_CONFIG_PATH=~/.brew/opt/qt/lib/pkgconfig \
+pkg-config --cflags glm Qt5Core Qt5Gui Qt5Widgets) \
+-I lib/lodepng \
+-I lib/json
 
 LDFLAGS = -framework OpenGl \
 $(shell PKG_CONFIG_PATH=~/.brew/opt/qt/lib/pkgconfig \
-pkg-config --libs glfw3 glm Qt5Core Qt5Gui Qt5Widgets) \
+pkg-config --libs glm Qt5Core Qt5Gui Qt5Widgets) \
 -L lib/lodepng -llodepng -flto=thin \
 #-fsanitize=undefined -fsanitize=address
 
@@ -59,6 +63,9 @@ $(OBJ_DIR):
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@printf "\e[34;1mCompiling: \e[0m%s\n" $<
 	@clang++ $(CPPFLAGS) -MMD -c $< -o $@
+
+$(SRC_DIR)/%.moc.cpp: $(SRC_DIR)/%.h
+	@moc $(INCLUDES) $< -o $@
 
 lib/lodepng/liblodepng.a: lib/lodepng/lodepng.cpp
 	@printf "\e[35;1mCompiling Dependency: \e[0m%s\n" $<

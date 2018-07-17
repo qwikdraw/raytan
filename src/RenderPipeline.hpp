@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <QProgressBar>
 
 #include "Raetan.hpp"
 #include "Scene.hpp"
@@ -17,14 +18,14 @@ struct	Image
 	std::vector<uint8_t> colors;
 };
 
-namespace	ImagePipeline
+namespace	RenderPipeline
 {
 	// fills the image with raw color values
-	void	SceneToImage(const Scene&, const Camera&, Image&, int recursionLvl = 10);
+	void	SceneToImage(const Scene&, const Camera&, Image*, QProgressBar& pro, int recursionLvl = 10);
 
 	// normalizes the raw color values so they lie between 0 and 1
-	void	Normalize(Image&, double gamma);
+	void	NormalizeColor(Image*, double gamma);
 
-	// converts the raw color values to rgba unsigned char values
-	void	Finalize(Image&);
+	// converts the raw color values to 32 bit rgba values
+	void	ImageToRGB32(Image*);
 };
