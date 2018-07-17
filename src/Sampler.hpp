@@ -1,7 +1,7 @@
 #pragma once
 
 #include "lodepng.h"
-#include "Raetan.hpp"
+#include "Raytan.hpp"
 
 class	Sampler
 {

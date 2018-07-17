@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <QProgressBar>
 
-#include "Raetan.hpp"
+#include "Raytan.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
 

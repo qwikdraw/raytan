@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/17 11:13:58 by lkaser           ###   ########.fr        #
+#    Updated: 2018/07/17 13:48:32 by lkaser           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,18 +32,16 @@ SRC = $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(LIST)))
 OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(LIST)))
 DEP = $(OBJ:%.o=%.d)
 
+INCLUDES = $(shell pkg-config --cflags glm Qt5Core Qt5Gui Qt5Widgets) \
+-I lib/lodepng \
+-I lib/json
+
 CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
 -O3 -flto=thin $(INCLUDES)\
 #-g -fsanitize=undefined -fsanitize=address
 
-INCLUDES = $(shell PKG_CONFIG_PATH=~/.brew/opt/qt/lib/pkgconfig \
-pkg-config --cflags glm Qt5Core Qt5Gui Qt5Widgets) \
--I lib/lodepng \
--I lib/json
-
 LDFLAGS = -framework OpenGl \
-$(shell PKG_CONFIG_PATH=~/.brew/opt/qt/lib/pkgconfig \
-pkg-config --libs glm Qt5Core Qt5Gui Qt5Widgets) \
+$(shell pkg-config --libs glm Qt5Core Qt5Gui Qt5Widgets) \
 -L lib/lodepng -llodepng -flto=thin \
 #-fsanitize=undefined -fsanitize=address
 

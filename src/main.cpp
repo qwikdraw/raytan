@@ -1,7 +1,7 @@
 #include <QApplication>
 
 #include "Window.h"
-#include "Raetan.hpp"
+#include "Raytan.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
 

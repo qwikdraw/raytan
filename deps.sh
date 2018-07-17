@@ -1,6 +1,7 @@
 #!/bin/sh
 
 brew install pkg-config glm qt wget
+brew link --force qt
 mkdir -p lib
 cd lib
 mkdir -p lodepng
