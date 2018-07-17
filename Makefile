@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/14 20:50:45 by twalton          ###   ########.fr        #
+#    Updated: 2018/07/16 18:31:44 by bpierce          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,9 @@ ImagePipeline \
 Plane \
 Scene \
 Sphere \
+Cylinder \
+Cone \
+Cube \
 Sampler \
 IObject
 
@@ -67,7 +70,7 @@ clean:
 	@rm -f $(OBJ)
 	@rm -f lib/lodepng/lodepng.o
 
-fclean:
+fclean: clean
 	@printf "\e[31;1mFull Cleaning..\e[0m\n"
 	@rm -rf $(OBJ_DIR)
 	@rm -f $(NAME)

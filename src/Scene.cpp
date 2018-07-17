@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/13 19:36:24 by lkaser           ###   ########.fr       */
+/*   Updated: 2018/07/16 16:49:49 by bpierce          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,13 @@
 
 #include "Sphere.hpp"
 #include "Plane.hpp"
+#include "Cylinder.hpp"
+#include "Cone.hpp"
+#include "Cube.hpp"
 
 Scene::Scene(void)
 {
+
 	Sphere *s1 = new Sphere;
 	s1->center = glm::dvec3(1, 0, 0.1);
 	s1->direction = glm::dvec3(0, 0, 1);
@@ -48,10 +52,56 @@ Scene::Scene(void)
 	p1->colorSampler = nullptr;
 	p1->materialSampler = nullptr;
 	p1->normalSampler = nullptr;
-	
+
 	_objects.push_back(p1);
-	
-	_lights.push_back((Light){{0, -0.5, 0.5}, {1, 1, 1}});
+
+	Cylinder *c1 = new Cylinder;
+	c1->center = glm::dvec3(2, 0.3, 0.3);
+	c1->radius = 0.2;
+	c1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
+	c1->color = glm::dvec3(1, 1, 1);
+	c1->refractiveIndex = 2;
+	c1->diffuse = 1;
+	c1->reflect = 0;
+	c1->refract = 0;
+	c1->colorSampler = nullptr;
+	c1->materialSampler = nullptr;
+	c1->normalSampler = nullptr;
+
+	_objects.push_back(c1);
+
+	Cone *co1 = new Cone;
+	co1->center = glm::dvec3(1.7, -0.3, -0.3);
+	co1->angle = 20;
+	co1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
+	co1->color = glm::dvec3(0.3, 0.7, 0.4);
+	co1->refractiveIndex = 0;
+	co1->diffuse = 0.2;
+	co1->reflect = 0.1;
+	co1->refract = 0.7;
+	co1->colorSampler = nullptr;
+	co1->materialSampler = nullptr;
+	co1->normalSampler = nullptr;
+
+	_objects.push_back(co1);
+
+	Cube *cu1 = new Cube;
+	cu1->center = glm::dvec3(1.2, -0.3, -0.3);
+	cu1->boundary[0] = glm::dvec3(-0.1, -0.1, -0.1); // Min x, y, z
+	cu1->boundary[1] = glm::dvec3(0.1, 0.1, 0.1); // Max x, y, z
+	cu1->color = glm::dvec3(0.5, 0.1, 0.8);
+	cu1->refractiveIndex = 3;
+	cu1->diffuse = 0.5;
+	cu1->reflect = 0;
+	cu1->refract = 0.5;
+	cu1->colorSampler = nullptr;
+	cu1->materialSampler = nullptr;
+	cu1->normalSampler = nullptr;
+
+	_objects.push_back(cu1);
+
+	_lights.push_back((Light){{0, -0.5, 0.5}, {4, 4, 4}});
+
 }
 
 Scene::~Scene(void)
