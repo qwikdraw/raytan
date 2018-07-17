@@ -14,6 +14,7 @@ docs/html
 *__pycache__
 *.pyc
 *.moc.cpp
+render.png
 
 # Compiled Object files
 *.slo

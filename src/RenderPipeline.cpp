@@ -14,8 +14,9 @@ void	RP::SceneToImage(const Scene& scene, const Camera& camera, Image* image, QP
 			RawColor c = scene.TraceRay(camera.GetRay(normalizedX, normalizedY), recursionLvl);
 			image->raw.push_back(c);
 		}
-		pro.setValue(1 + 100.0 * (y / (double)image->height));
+		//pro.setValue(1 + 100.0 * (y / (double)image->height));
 	}
+	(void)pro;
 }
 
 void	RP::NormalizeColor(Image* image, double gamma)

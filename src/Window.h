@@ -20,6 +20,7 @@ class Window : public QWidget
 	QLabel	_label;
 	QProgressBar _progressBar;
 	void	render(int width = 1024, int height = 1024);
+	void    saveRender(void);
 public:
 	explicit Window(Scene& s, Camera& c);
 };
