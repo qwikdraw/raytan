@@ -14,6 +14,4 @@ class	Cube : public IObject
 public:
 	// [0] is min, [1] is max
 	glm::dvec3	boundary[2];
-
-	RayResult MakeRayResult(double distance, const Ray& ray) const;
 };

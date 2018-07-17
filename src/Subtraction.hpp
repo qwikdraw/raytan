@@ -20,4 +20,5 @@ class	Subtraction : public IObject
 	glm::dvec2 uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const;
 public:
 	Subtraction(IObject *positive, IObject *negative);
+	RayResult MakeRayResult(double distance, const Ray& ray, IObject*) const;
 };

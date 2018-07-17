@@ -111,6 +111,16 @@ std::vector<std::pair<double, IObject*>> Subtraction::findDistances(const Ray& r
 			insideP = false;
 			break;
 		default:
+
+			for (auto& edge : edges)
+			{
+				std::cout << "edge: ";
+				std::cout << std::get<0>(edge) << " "
+					  << std::get<1>(edge) << " "
+					  << std::get<2>(edge) << " "
+					  << std::get<3>(edge) << std::endl;
+			}
+			
 			std::cout << insideP << " " << insideN << " " << std::get<2>(edge) << " "
 				  << std::get<3>(edge) << std::endl;
 			assert(!"badly defined shape");
@@ -130,4 +140,52 @@ glm::dvec2 Subtraction::uvMap(const glm::dvec3&, const glm::dvec3&) const
 {
 	assert(!"dummy function was called");
 	return glm::dvec2(0, 0);	
+}
+
+RayResult Subtraction::MakeRayResult(double distance, const Ray& ray, IObject* ref) const
+{
+	RayResult out;
+
+	out.position = ray.origin + ray.direction * distance;
+	out.normal = ref->findNormal(out.position, ray);
+
+	if (ref == _negative)
+		out.normal = -out.normal;
+
+	glm::dvec2 uv;
+	if (ref->materialSampler || ref->colorSampler || ref->normalSampler)
+		uv = ref->uvMap(out.position, out.normal);
+
+	if (ref->materialSampler)
+	{
+		glm::dvec4 sample = ref->materialSampler->Color(uv.x, uv.y);
+		out.diffuse = sample.r;
+		out.reflect = sample.g;
+		out.refract = sample.b;
+		out.refractiveIndex = sample.a;
+	}
+	else
+	{
+		out.diffuse = ref->diffuse;
+		out.reflect = ref->reflect;
+		out.refract = ref->refract;
+		out.refractiveIndex = ref->refractiveIndex;
+	}
+
+	if (ref->colorSampler)
+	{
+		glm::dvec4 sample = ref->colorSampler->Color(uv.x, uv.y);
+		out.color = glm::vec3(sample);
+	}
+	else
+	{
+		out.color = ref->color;
+	}
+
+//	if (ref->normalSampler)
+//	{
+//		//stuff
+//	}
+
+	return out;
 }

@@ -26,35 +26,33 @@ Scene::Scene(void)
 	s1->center = glm::dvec3(1, 0, 0.1);
 	s1->direction = glm::dvec3(0, 0, 1);
 	
-	s1->radius = 0.1;
+	s1->radius = 0.2;
 	s1->color = glm::dvec3(1, 1, 1);
-	s1->refractiveIndex = 2;
-	s1->diffuse = 1;
+	s1->refractiveIndex = 1.0;
+	s1->diffuse = 0;
 	s1->reflect = 0;
-	s1->refract = 0;
+	s1->refract = 1;
 	s1->color = glm::dvec3(0.9, 0.5, 0.8);
 	
-	s1->colorSampler = new Sampler("image.png");
+	s1->colorSampler = new Sampler("assets/image.png");
 	s1->materialSampler = nullptr;//new Sampler("mat.png");
 	s1->normalSampler = nullptr;
 
-	Sphere *s2 = new Sphere;
-        s2->center = glm::dvec3(0.96, 0, 0.17);
-        s2->direction = glm::dvec3(0, 0, 1);
+	Plane *p2 = new Plane;
+        p2->center = glm::dvec3(1, 0, 0.1);
+        p2->direction = glm::normalize(glm::dvec3(1, 0, 1));
 
-        s2->radius = 0.1;
-        s2->color = glm::dvec3(1, 1, 1);
-        s2->refractiveIndex = 2;
-        s2->diffuse = 0.2;
-        s2->reflect = 0;
-        s2->refract = 0.8;
-        s2->color = glm::dvec3(0.9, 0.5, 0.8);
+        p2->refractiveIndex = 1.0;
+        p2->diffuse = 0;
+        p2->reflect = 0;
+        p2->refract = 1;
+        p2->color = glm::dvec3(1, 0, 0.5);
 
-        s2->colorSampler = new Sampler("image.png");
-        s2->materialSampler = nullptr;//new Sampler("mat.png");
-        s2->normalSampler = nullptr;
+        p2->colorSampler = nullptr;
+        p2->materialSampler = nullptr;
+        p2->normalSampler = nullptr;
 
-	Subtraction *sub = new Subtraction(s1, s2);
+	Subtraction *sub = new Subtraction(s1, p2);
 	
 	_objects.push_back(sub);
 
@@ -88,36 +86,6 @@ Scene::Scene(void)
 	c1->normalSampler = nullptr;
 
 	_objects.push_back(c1);
-
-	Cone *co1 = new Cone;
-	co1->center = glm::dvec3(1.7, -0.3, -0.3);
-	co1->angle = 20;
-	co1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
-	co1->color = glm::dvec3(0.3, 0.7, 0.4);
-	co1->refractiveIndex = 0;
-	co1->diffuse = 0.2;
-	co1->reflect = 0.1;
-	co1->refract = 0.7;
-	co1->colorSampler = nullptr;
-	co1->materialSampler = nullptr;
-	co1->normalSampler = nullptr;
-
-	_objects.push_back(co1);
-
-	Cube *cu1 = new Cube;
-	cu1->center = glm::dvec3(1.2, -0.3, -0.3);
-	cu1->boundary[0] = glm::dvec3(-0.1, -0.1, -0.1); // Min x, y, z
-	cu1->boundary[1] = glm::dvec3(0.1, 0.1, 0.1); // Max x, y, z
-	cu1->color = glm::dvec3(0.5, 0.1, 0.8);
-	cu1->refractiveIndex = 3;
-	cu1->diffuse = 0.5;
-	cu1->reflect = 0;
-	cu1->refract = 0.5;
-	cu1->colorSampler = nullptr;
-	cu1->materialSampler = nullptr;
-	cu1->normalSampler = nullptr;
-
-	_objects.push_back(cu1);
 
 	_lights.push_back((Light){{0, -0.5, 0.5}, {4, 4, 4}});
 
@@ -165,9 +133,12 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 
 	for (auto& light : _lights)
 	{
+		double offset = 0.00001;
+		if (glm::dot(ray.direction, rayResult.normal) > 0)
+			offset = -offset;
 		lightVector = light.position - rayResult.position;
 		lightRay.direction = glm::normalize(lightVector);
-		lightRay.origin = rayResult.position + (lightRay.direction * 0.00001); // Offset
+		lightRay.origin = rayResult.position + (rayResult.normal * offset);
 
 		glm::dvec3 intensity = lightIntensity(lightRay, light, glm::length(lightVector));
 		if (intensity.r == 0 && intensity.g == 0 && intensity.b == 0)
@@ -199,6 +170,17 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 	return intensity;
 }
 
+static glm::dvec3 refract(const glm::dvec3& I, const glm::dvec3& N, double eta)
+{
+	double NdotI = glm::dot(N, I);
+	double cosi = glm::clamp(NdotI, -1.0, 1.0);	
+	double k = 1 - eta * eta * (1 - cosi * cosi);
+
+	if (k < 0)
+		return glm::reflect(I, N);
+	return eta * I + (eta * cosi - glm::sqrt(k)) * N;
+}
+
 Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
 {
 	glm::dvec3 normal;
@@ -216,7 +198,7 @@ Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
 	}
 
 	Ray out;
-	out.direction = glm::normalize(glm::refract(ray.direction, normal, ratio));
+	out.direction = glm::normalize(refract(ray.direction, normal, ratio));
 	out.origin = rayResult.position + out.direction * 0.00001; // Offset
 	return out;
 }

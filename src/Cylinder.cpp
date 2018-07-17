@@ -1,12 +1,5 @@
 #include "Cylinder.hpp"
 
-// Cylinder::Cylinder(glm::dvec3 center, double radius, glm::dvec3 vector) :
-// _center(center),
-// _radius(radius),
-// _vector(vector)
-// {}
-
-
 glm::dvec2		Cylinder::solveQuadratic(double a, double b, double c) const
 {
 	glm::dvec2	root;
@@ -74,20 +67,5 @@ std::vector<std::pair<double, IObject*>> Cylinder::findDistances(const Ray& ray)
 	out.push_back(p);
 	p.first = root.y;
 	out.push_back(p);
-	return out;
-}
-
-RayResult Cylinder::MakeRayResult(double distance, const Ray& ray) const
-{
-	RayResult out;
-
-	out.position = ray.origin + (ray.direction * distance);
-	out.normal = findNormal(out.position, ray);
-	out.color = color;
-	out.diffuse = diffuse;
-	out.reflect = reflect;
-	out.refract = refract;
-	out.refractiveIndex = refractiveIndex;
-
 	return out;
 }

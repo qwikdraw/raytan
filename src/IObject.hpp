@@ -25,8 +25,8 @@ protected:
 public:
 	IObject() {}
 	virtual ~IObject() {}
-	std::pair<double, IObject*> Intersection(const Ray& ray) const;
-	RayResult MakeRayResult(double distance, const Ray& ray, IObject*) const;
+	virtual std::pair<double, IObject*> Intersection(const Ray& ray) const;
+	virtual RayResult MakeRayResult(double distance, const Ray& ray, IObject*) const;
 
 	glm::dvec3 center;
 	glm::dvec3 direction;

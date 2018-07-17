@@ -68,18 +68,3 @@ std::vector<std::pair<double, IObject*>> Cone::findDistances(const Ray& ray) con
 	out.push_back(p);
 	return out;
 }
-
-RayResult Cone::MakeRayResult(double distance, const Ray& ray) const
-{
-	RayResult out;
-
-	out.position = ray.origin + (ray.direction * distance);
-	out.normal = findNormal(out.position, ray);
-	out.color = color;
-	out.diffuse = diffuse;
-	out.reflect = reflect;
-	out.refract = refract;
-	out.refractiveIndex = refractiveIndex;
-
-	return out;
-}
