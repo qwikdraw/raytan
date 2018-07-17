@@ -1,5 +1,4 @@
 #include "RenderPipeline.hpp"
-#include <iostream>
 
 namespace RP = RenderPipeline;
 

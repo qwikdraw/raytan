@@ -1,5 +1,5 @@
 #include "Window.h"
-#include "Raetan.hpp"
+#include "Raytan.hpp"
 #include "RenderPipeline.hpp"
 #include <QSlider>
 #include <QVBoxLayout>

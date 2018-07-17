@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Raetan.hpp"
+#include "Raytan.hpp"
 #include "IObject.hpp"
 
 class	Sphere : public IObject
