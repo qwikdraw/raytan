@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/17 11:14:24 by lkaser           ###   ########.fr       */
+/*   Updated: 2018/07/17 11:15:35 by lkaser           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ Scene::Scene(void)
 	s1->refract = 0.0;
 	s1->color = glm::dvec3(0.9, 0.5, 0.8);
 	
-	s1->colorSampler = new Sampler("image.png");
-	s1->materialSampler = new Sampler("mat.png");
+	s1->colorSampler = new Sampler("assets/image.png");
+	s1->materialSampler = new Sampler("assets/mat.png");
 	s1->normalSampler = nullptr;
 	
 	_objects.push_back(s1);
