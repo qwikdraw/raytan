@@ -111,7 +111,9 @@ std::vector<std::pair<double, IObject*>> Subtraction::findDistances(const Ray& r
 			insideP = false;
 			break;
 		default:
-			std::cout << "bad shape ray" << std::endl;
+			std::cout << insideP << " " << insideN << " " << std::get<2>(edge) << " "
+				  << std::get<3>(edge) << std::endl;
+			assert(!"badly defined shape");
 			break;
 		}
 	}
