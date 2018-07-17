@@ -39,15 +39,15 @@ Scene::Scene(void)
 	s1->normalSampler = nullptr;
 
 	Sphere *s2 = new Sphere;
-        s2->center = glm::dvec3(0.9, 0, 0.12);
+        s2->center = glm::dvec3(0.96, 0, 0.17);
         s2->direction = glm::dvec3(0, 0, 1);
 
-        s2->radius = 0.05;
+        s2->radius = 0.1;
         s2->color = glm::dvec3(1, 1, 1);
         s2->refractiveIndex = 2;
-        s2->diffuse = 1;
+        s2->diffuse = 0.2;
         s2->reflect = 0;
-        s2->refract = 0;
+        s2->refract = 0.8;
         s2->color = glm::dvec3(0.9, 0.5, 0.8);
 
         s2->colorSampler = new Sampler("image.png");

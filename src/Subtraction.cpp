@@ -57,14 +57,22 @@ std::vector<std::pair<double, IObject*>> Subtraction::findDistances(const Ray& r
 	bool insideN = false;
 
 	// checking if ray starts off inside an object
+	bool toggle1 = false;
+	bool toggle2 = false;
 	for (auto& edge : edges)
 	{
-		if (std::get<0>(edge) > 0)
+		if (std::get<2>(edge) && !toggle1)
+		{
+			insideP = !std::get<3>(edge);
+			toggle1 = true;
+		}		
+		if (!std::get<2>(edge) && !toggle2)
+		{
+			insideN = !std::get<3>(edge);
+			toggle2 = true;
+		}
+		if (toggle1 && toggle2)
 			break;
-		if (std::get<2>(edge))
-			insideP = std::get<3>(edge);
-		if (!std::get<2>(edge))
-			insideN = std::get<3>(edge);
 	}
 
 	std::vector<std::pair<double, IObject*>> out;
@@ -72,27 +80,6 @@ std::vector<std::pair<double, IObject*>> Subtraction::findDistances(const Ray& r
 	{
 		int event = insideP + 2 * insideN + 4 * std::get<2>(edge) + 8 * std::get<3>(edge);
 
-		std::cout << insideP << " " << insideN << " " << std::get<2>(edge) << " "
-			  << std::get<3>(edge) << std::endl;
-
-		std::cout << "positive: ";
-		for (auto& x : p)
-		{
-			std::cout << x.first << " ";
-		}
-		std::cout << std::endl << "negative: ";
-		for (auto& x : n)
-		{
-			std::cout << x.first << " ";
-		}
-		std::cout << std::endl;
-
-		std::cout << "info: " << std::endl;
-		for (auto& x : edges)
-		{
-			std::cout << std::get<0>(x) << " " << std::get<2>(x) << " " << std::get<3>(x) << std::endl;
-		}
-		
 		switch(event)
 		{
 		case(0b1001):
@@ -124,7 +111,8 @@ std::vector<std::pair<double, IObject*>> Subtraction::findDistances(const Ray& r
 			insideP = false;
 			break;
 		default:
-			assert(!"shape badly defined");
+			std::cout << "bad shape ray" << std::endl;
+			break;
 		}
 	}
 	return out;	
