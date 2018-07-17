@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/16 16:49:49 by bpierce          ###   ########.fr       */
+/*   Updated: 2018/07/17 11:14:24 by lkaser           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ Scene::Scene(void)
 	s1->radius = 0.1;
 	s1->color = glm::dvec3(1, 1, 1);
 	s1->refractiveIndex = 2;
-	s1->diffuse = 0.2;
+	s1->diffuse = 0.6;
 	s1->reflect = 0.4;
-	s1->refract = 0.4;
+	s1->refract = 0.0;
 	s1->color = glm::dvec3(0.9, 0.5, 0.8);
 	
 	s1->colorSampler = new Sampler("image.png");
