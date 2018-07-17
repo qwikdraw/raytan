@@ -1,7 +1,6 @@
 #pragma once
 
 #define GLM_ENABLE_EXPERIMENTAL
-#define GLFW_INCLUDE_GLCOREARB
 
 #include <string>
 #include <sstream>
