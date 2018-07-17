@@ -48,7 +48,7 @@ glm::dvec2		Cylinder::uvMap(const glm::dvec3& intersection, const glm::dvec3& no
 	return glm::dvec2(0.5, 0.5); // Will  update later
 }
 
-double 			Cylinder::Intersection(const Ray& ray) const
+std::vector<std::pair<double, IObject*>> Cylinder::findDistances(const Ray& ray) const
 {
 	// Get a
 	double dot = glm::dot(ray.direction, vector);
@@ -65,15 +65,16 @@ double 			Cylinder::Intersection(const Ray& ray) const
 	// Get c
 	double c = glm::dot(b_temp, b_temp) - (radius * radius);
 
-	// Calculate the distance
+	// Return all distances
 	glm::dvec2 root = solveQuadratic(a, b, c);
-	double distance = 0;
-	if (root.x > 0.0 && root.x < root.y)
-		distance = root.x;
-	if (root.y > 0.0 && root.y < root.x)
-		distance = root.y;
-
-	return distance != 0 ? distance : INFINITY;
+	std::pair<double, IObject*> p;
+	p.first = root.x;
+	p.second = (IObject*)this;
+	std::vector<std::pair<double, IObject*>> out;
+	out.push_back(p);
+	p.first = root.y;
+	out.push_back(p);
+	return out;
 }
 
 RayResult Cylinder::MakeRayResult(double distance, const Ray& ray) const

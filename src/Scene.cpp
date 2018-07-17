@@ -54,23 +54,23 @@ Scene::Scene(void)
 
 	_objects.push_back(p1);
 
-	// Cylinder *c1 = new Cylinder;
-	// c1->center = glm::dvec3(2, 0.3, 0.3);
-	// c1->radius = 0.2;
-	// c1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
-	// c1->color = glm::dvec3(1, 1, 1);
-	// c1->refractiveIndex = 2;
-	// c1->diffuse = 0.2;
-	// c1->reflect = 0;
-	// c1->refract = 0;
-	// c1->colorSampler = nullptr;
-	// c1->materialSampler = nullptr;
-	// c1->normalSampler = nullptr;
+	Cylinder *c1 = new Cylinder;
+	c1->center = glm::dvec3(2, 0.3, 0.3);
+	c1->radius = 0.2;
+	c1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
+	c1->color = glm::dvec3(1, 1, 1);
+	c1->refractiveIndex = 2;
+	c1->diffuse = 0.2;
+	c1->reflect = 0;
+	c1->refract = 0;
+	c1->colorSampler = nullptr;
+	c1->materialSampler = nullptr;
+	c1->normalSampler = nullptr;
 
-	// _objects.push_back(c1);
+	_objects.push_back(c1);
 
 	Cone *co1 = new Cone;
-	co1->center = glm::dvec3(2, 0.3, 0.3);
+	co1->center = glm::dvec3(1.7, -0.3, -0.3);
 	co1->angle = 0.7;
 	co1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
 	co1->color = glm::dvec3(0.3, 0.7, 0.4);
