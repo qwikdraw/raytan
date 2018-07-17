@@ -19,6 +19,7 @@ Scene \
 Sphere \
 Cylinder \
 Cone \
+Cube \
 Sampler \
 IObject
 

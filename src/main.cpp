@@ -12,9 +12,9 @@ int	main(int argc, char *argv[])
 {
 	Scene scene;
 
-	glm::dvec3 pos = {0, 0, 0};
+	glm::dvec3 pos = {-1.3, 0, 0.4};
 	glm::dvec3 dir = {1, 0, 0};
-	Camera camera(pos, dir, glm::dvec3(0, 1, 0), 45, 1);
+	Camera camera(pos, glm::normalize(dir), glm::dvec3(0, 1, 0), 45, 1);
 	
 	Image im(1000, 1000);
 
