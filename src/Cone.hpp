@@ -14,6 +14,4 @@ class	Cone : public IObject
 public:
 	double			angle;
 	glm::dvec3		vector;
-
-	RayResult MakeRayResult(double distance, const Ray& ray) const;
 };

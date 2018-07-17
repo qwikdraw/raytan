@@ -16,6 +16,7 @@ struct  RayResult
 
 class   IObject
 {
+	friend class Subtraction;
 protected:
 	virtual std::vector<std::pair<double, IObject*>> findDistances(const Ray& ray) const = 0;
 	virtual glm::dvec3 findNormal(const glm::dvec3& intersection, const Ray& ray) const = 0;
@@ -24,8 +25,8 @@ protected:
 public:
 	IObject() {}
 	virtual ~IObject() {}
-	std::pair<double, IObject*> Intersection(const Ray& ray) const;
-	RayResult MakeRayResult(double distance, const Ray& ray, IObject*) const;
+	virtual std::pair<double, IObject*> Intersection(const Ray& ray) const;
+	virtual RayResult MakeRayResult(double distance, const Ray& ray, IObject*) const;
 
 	glm::dvec3 center;
 	glm::dvec3 direction;

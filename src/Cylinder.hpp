@@ -14,9 +14,4 @@ class	Cylinder : public IObject
 public:
 	double			radius;
 	glm::dvec3		vector;
-
-	// Cylinder(glm::dvec3 center, double radius, glm::dvec3 vector);
-
-	// double Intersection(const Ray& ray) const;
-	RayResult MakeRayResult(double distance, const Ray& ray) const;
 };
