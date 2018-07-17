@@ -26,14 +26,14 @@ glm::dvec2		Cone::solveQuadratic(double a, double b, double c) const
 
 glm::dvec3		Cone::findNormal(const glm::dvec3& intersection, const Ray& ray) const
 {
-	double dist = glm::length(intersection - center) / glm::cos(angle);
+	double dist = glm::length(intersection - center) / glm::cos(glm::radians(angle));
 	glm::dvec3 tmpVector = intersection - center;
 
 	if (glm::dot(tmpVector, vector) < 0)
 		dist = -dist;
 	tmpVector = center + (vector * dist);
-	tmpVector = glm::normalize(intersection - tmpVector);
-	return tmpVector;
+
+	return glm::normalize(intersection - tmpVector);
 }
 
 glm::dvec2		Cone::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const
@@ -45,7 +45,8 @@ std::vector<std::pair<double, IObject*>> Cone::findDistances(const Ray& ray) con
 {
 	// Get a
 	double tmpA = glm::dot(ray.direction, vector);
-	double cos2 = angle * angle;
+	double cos2 = glm::cos(glm::radians(angle));
+	cos2 = cos2 * cos2;
 	double a = tmpA * tmpA - cos2;
 
 	// Get b

@@ -71,7 +71,7 @@ Scene::Scene(void)
 
 	Cone *co1 = new Cone;
 	co1->center = glm::dvec3(1.7, -0.3, -0.3);
-	co1->angle = 0.7;
+	co1->angle = 80;
 	co1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
 	co1->color = glm::dvec3(0.3, 0.7, 0.4);
 	co1->refractiveIndex = 0;
