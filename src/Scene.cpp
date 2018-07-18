@@ -12,84 +12,9 @@
 
 #include "Scene.hpp"
 
-#include "Sphere.hpp"
-#include "Plane.hpp"
-#include "Cylinder.hpp"
-#include "Cone.hpp"
-#include "Cube.hpp"
-#include "Subtraction.hpp"
-
 Scene::Scene(void)
 {
-	_ambient = glm::dvec3(0.05, 0.05, 0.05);
-	
-	Sphere *s1 = new Sphere;
-	s1->center = glm::dvec3(1, 0, 0.1);
-	s1->direction = glm::dvec3(0, 0, 1);
-	
-	s1->radius = 0.2;
-	s1->color = glm::dvec3(1, 1, 1);
-	s1->refractiveIndex = 1.0;
-	s1->diffuse = 1;
-	s1->reflect = 0;
-	s1->refract = 0;
-	s1->color = glm::dvec3(0.9, 0.5, 0.8);
-	
-	s1->colorSampler = new Sampler("assets/image.png");
-	s1->materialSampler = nullptr;//new Sampler("mat.png");
-	s1->normalSampler = nullptr;
-
-	Plane *p2 = new Plane;
-        p2->center = glm::dvec3(1, 0, 0.1);
-        p2->direction = glm::normalize(glm::dvec3(1, 0, 2));
-
-        p2->refractiveIndex = 1.0;
-        p2->diffuse = 1;
-        p2->reflect = 0;
-        p2->refract = 0;
-        p2->color = glm::dvec3(1, 0, 0.5);
-
-        p2->colorSampler = nullptr;
-        p2->materialSampler = nullptr;
-        p2->normalSampler = nullptr;
-
-	Subtraction *sub = new Subtraction(s1, p2);
-	
-	_objects.push_back(sub);
-
-	Plane *p1 = new Plane;
-	p1->center = glm::dvec3(2, 0, 0);
-	p1->direction = glm::dvec3(1, 0, 0);
-
-	p1->refractiveIndex = 2;
-	p1->diffuse = 1;
-	p1->reflect = 0;
-	p1->refract = 0;
-	p1->color = glm::dvec3(1, 1, 0.5);
-
-	p1->colorSampler = nullptr;
-	p1->materialSampler = nullptr;
-	p1->normalSampler = nullptr;
-
-	_objects.push_back(p1);
-
-	Cylinder *c1 = new Cylinder;
-	c1->center = glm::dvec3(2, 0.3, 0.3);
-	c1->radius = 0.2;
-	c1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
-	c1->color = glm::dvec3(1, 1, 1);
-	c1->refractiveIndex = 2;
-	c1->diffuse = 1;
-	c1->reflect = 0;
-	c1->refract = 0;
-	c1->colorSampler = nullptr;
-	c1->materialSampler = nullptr;
-	c1->normalSampler = nullptr;
-
-	_objects.push_back(c1);
-
-	lights.push_back((Light){{0, -0.5, 0.5}, {4, 4, 4}});
-
+	_ambient = glm::dvec3(0.0);
 }
 
 Scene::~Scene(void)
