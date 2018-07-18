@@ -3,6 +3,8 @@
 #include "Raytan.hpp"
 #include "IObject.hpp"
 
+
+//defines a sphere centered at the origin with a radius.
 class	Sphere : public IObject
 {
 	std::vector<std::pair<double, IObject*>> findDistances(const Ray& ray) const;

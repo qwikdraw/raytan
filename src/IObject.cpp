@@ -2,9 +2,26 @@
 
 constexpr glm::dvec3 IObject::direction;
 
+Ray	IObject::rayTransform(const Ray& ray) const
+{
+	Ray out;
+
+	out.origin = ray.origin - position;
+	
+	out.direction = glm::rotateX(ray.direction, glm::radians(-rotation.x));
+	out.direction = glm::rotateY(out.direction, glm::radians(-rotation.y));
+	out.direction = glm::rotateZ(out.direction, glm::radians(-rotation.z));
+
+	out.origin = glm::rotateX(out.origin, glm::radians(-rotation.x));
+	out.origin = glm::rotateY(out.origin, glm::radians(-rotation.y));
+	out.origin = glm::rotateZ(out.origin, glm::radians(-rotation.z));
+
+	return out;
+}
+
 std::pair<double, IObject*>	IObject::Intersection(const Ray& ray) const
 {
-	auto dists = findDistances(ray);	
+	auto dists = findDistances(rayTransform(ray));	
 	std::pair<double, IObject*> bestPair(INFINITY, nullptr);
 	
 	for (auto& pair : dists)
@@ -18,13 +35,15 @@ std::pair<double, IObject*>	IObject::Intersection(const Ray& ray) const
 RayResult	IObject::MakeRayResult(double distance, const Ray& ray, IObject* ref) const
 {
 	RayResult out;
-
+	Ray transformedRay = rayTransform(ray);
+	glm::dvec3 transformI = transformedRay.origin + transformedRay.direction * distance;
+	
 	out.position = ray.origin + ray.direction * distance;
-	out.normal = ref->findNormal(out.position, ray);
+	out.normal = ref->findNormal(transformI, transformedRay);
 
 	glm::dvec2 uv;
 	if (ref->material.materialSampler || ref->material.colorSampler || ref->material.normalSampler)
-		uv = ref->uvMap(out.position, out.normal);
+		uv = ref->uvMap(transformI, out.normal);
 
 	if (ref->material.materialSampler)
 	{

@@ -4,6 +4,7 @@
 #include "IObject.hpp"
 #include "Sampler.hpp"
 
+// defines an axis alligned cuboid with boundary[] denoting bounding coordinates
 class	Cube : public IObject
 {
 	glm::dvec2	solveQuadratic(double a, double b, double c) const;

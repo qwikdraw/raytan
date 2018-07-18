@@ -5,7 +5,7 @@ std::vector<std::pair<double, IObject*>> Plane::findDistances(const Ray& ray) co
 	double dist = glm::dot(ray.direction, direction);
 	if (dist == 0)
 		return std::vector<std::pair<double, IObject*>>();
-	dist = glm::dot(position - ray.origin, direction) / dist;
+	dist = glm::dot(-ray.origin, direction) / dist;
 
 	std::pair<double, IObject*> p;
 	p.first = dist;
@@ -18,7 +18,7 @@ std::vector<std::pair<double, IObject*>> Plane::findDistances(const Ray& ray) co
 
 glm::dvec3 Plane::findNormal(const glm::dvec3& intersection, const Ray& ray) const
 {
-		return direction;
+	return direction;
 }
 
 
