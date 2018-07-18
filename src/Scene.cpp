@@ -21,7 +21,8 @@
 
 Scene::Scene(void)
 {
-
+	_ambient = glm::dvec3(0.05, 0.05, 0.05);
+	
 	Sphere *s1 = new Sphere;
 	s1->center = glm::dvec3(1, 0, 0.1);
 	s1->direction = glm::dvec3(0, 0, 1);
@@ -29,9 +30,9 @@ Scene::Scene(void)
 	s1->radius = 0.2;
 	s1->color = glm::dvec3(1, 1, 1);
 	s1->refractiveIndex = 1.0;
-	s1->diffuse = 0;
+	s1->diffuse = 1;
 	s1->reflect = 0;
-	s1->refract = 1;
+	s1->refract = 0;
 	s1->color = glm::dvec3(0.9, 0.5, 0.8);
 	
 	s1->colorSampler = new Sampler("assets/image.png");
@@ -40,12 +41,12 @@ Scene::Scene(void)
 
 	Plane *p2 = new Plane;
         p2->center = glm::dvec3(1, 0, 0.1);
-        p2->direction = glm::normalize(glm::dvec3(1, 0, 1));
+        p2->direction = glm::normalize(glm::dvec3(1, 0, 2));
 
         p2->refractiveIndex = 1.0;
-        p2->diffuse = 0;
+        p2->diffuse = 1;
         p2->reflect = 0;
-        p2->refract = 1;
+        p2->refract = 0;
         p2->color = glm::dvec3(1, 0, 0.5);
 
         p2->colorSampler = nullptr;
@@ -87,7 +88,7 @@ Scene::Scene(void)
 
 	_objects.push_back(c1);
 
-	_lights.push_back((Light){{0, -0.5, 0.5}, {4, 4, 4}});
+	lights.push_back((Light){{0, -0.5, 0.5}, {4, 4, 4}});
 
 }
 
@@ -129,9 +130,8 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 	RawColor 	pixelColor = {{0.0, 0.0, 0.0}, 0};
 	Ray		lightRay;
 	glm::dvec3	lightVector;
-	double		dotValue;
 
-	for (auto& light : _lights)
+	for (auto& light : lights)
 	{
 		double offset = 0.00001;
 		if (glm::dot(ray.direction, rayResult.normal) > 0)
@@ -141,12 +141,11 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 		lightRay.origin = rayResult.position + (rayResult.normal * offset);
 
 		glm::dvec3 intensity = lightIntensity(lightRay, light, glm::length(lightVector));
-		if (intensity.r == 0 && intensity.g == 0 && intensity.b == 0)
-			continue;
-
-		dotValue = glm::abs(glm::dot(rayResult.normal, lightRay.direction));
-		pixelColor.color += rayResult.color * intensity * dotValue;
-	}	
+		intensity *= glm::abs(glm::dot(rayResult.normal, lightRay.direction));
+		intensity = glm::max(intensity, _ambient);
+		
+		pixelColor.color += rayResult.color * intensity;
+	}
 	return pixelColor;
 }
 
@@ -251,4 +250,26 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 		       reflectPart.color * rayResult.reflect +
 		       refractPart.color * rayResult.refract;
 	return output;
+}
+
+void	Scene::SetAmbient(glm::dvec3 color)
+{
+	_ambient = color;
+}
+
+void	Scene::AddObject(IObject* o)
+{
+	_objects.push_back(o);
+}
+
+void	Scene::RemoveObject(IObject* o)
+{
+	for (size_t i = 0; i < _objects.size(); i++)
+	{
+		if (_objects[i] == o)
+		{
+			_objects.erase(_objects.begin() + i);
+			return;
+		}
+	}
 }
