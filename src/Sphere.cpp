@@ -2,7 +2,7 @@
 
 std::vector<std::pair<double, IObject*>> Sphere::findDistances(const Ray& ray) const
 {
-	glm::dvec3 temp = ray.origin - center;
+	glm::dvec3 temp = ray.origin - position;
 	double dist1 = dot(ray.direction, temp);
 	double dist2;
 	double discrim = dist1 * dist1 - dot(temp, temp) + radius * radius;
@@ -22,7 +22,7 @@ std::vector<std::pair<double, IObject*>> Sphere::findDistances(const Ray& ray) c
 
 glm::dvec3 Sphere::findNormal(const glm::dvec3& intersection, const Ray& ray) const
 {
-	return glm::normalize(intersection - center);
+	return glm::normalize(intersection - position);
 }
 
 glm::dvec2 Sphere::uvMap(const glm::dvec3&, const glm::dvec3& normal) const

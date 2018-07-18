@@ -27,7 +27,7 @@ glm::dvec2		Cube::solveQuadratic(double a, double b, double c) const
 glm::dvec3		Cube::findNormal(const glm::dvec3& intersection, const Ray& ray) const
 {
 	// Getting the first vector from center to intersection point
-	glm::dvec3 pVec = intersection - center;
+	glm::dvec3 pVec = intersection - position;
 
 	// Grab the 'divisor' vectors
 	glm::dvec3 divisor = glm::abs(boundary[0] - boundary[1]) / 2.0;
@@ -52,12 +52,12 @@ std::vector<std::pair<double, IObject*>> Cube::findDistances(const Ray& ray) con
 	glm::dvec3 inverse_direction = 1.0 / ray.direction;
 
 	// Calculating the min and max distance of points hit on cube
-	double x1 = (center.x + boundary[0].x - ray.origin.x) * inverse_direction.x;
-	double x2 = (center.x + boundary[1].x - ray.origin.x) * inverse_direction.x;
-	double y1 = (center.y + boundary[0].y - ray.origin.y) * inverse_direction.y;
-	double y2 = (center.y + boundary[1].y - ray.origin.y) * inverse_direction.y;
-	double z1 = (center.z + boundary[0].z - ray.origin.z) * inverse_direction.z;
-	double z2 = (center.z + boundary[1].z - ray.origin.z) * inverse_direction.z;
+	double x1 = (position.x + boundary[0].x - ray.origin.x) * inverse_direction.x;
+	double x2 = (position.x + boundary[1].x - ray.origin.x) * inverse_direction.x;
+	double y1 = (position.y + boundary[0].y - ray.origin.y) * inverse_direction.y;
+	double y2 = (position.y + boundary[1].y - ray.origin.y) * inverse_direction.y;
+	double z1 = (position.z + boundary[0].z - ray.origin.z) * inverse_direction.z;
+	double z2 = (position.z + boundary[1].z - ray.origin.z) * inverse_direction.z;
 
 	double minDist = glm::max(glm::max(glm::min(x1, x2), glm::min(y1, y2)), glm::min(z1, z2));
 	double maxDist = glm::min(glm::min(glm::max(x1, x2), glm::max(y1, y2)), glm::max(z1, z2));

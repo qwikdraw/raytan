@@ -153,12 +153,12 @@ RayResult Subtraction::MakeRayResult(double distance, const Ray& ray, IObject* r
 		out.normal = -out.normal;
 
 	glm::dvec2 uv;
-	if (ref->materialSampler || ref->colorSampler || ref->normalSampler)
+	if (ref->material.materialSampler || ref->material.colorSampler || ref->material.normalSampler)
 		uv = ref->uvMap(out.position, out.normal);
-
-	if (ref->materialSampler)
+	
+	if (ref->material.materialSampler)
 	{
-		glm::dvec4 sample = ref->materialSampler->Color(uv.x, uv.y);
+		glm::dvec4 sample = ref->material.materialSampler->Color(uv.x, uv.y);
 		out.diffuse = sample.r;
 		out.reflect = sample.g;
 		out.refract = sample.b;
@@ -166,20 +166,20 @@ RayResult Subtraction::MakeRayResult(double distance, const Ray& ray, IObject* r
 	}
 	else
 	{
-		out.diffuse = ref->diffuse;
-		out.reflect = ref->reflect;
-		out.refract = ref->refract;
-		out.refractiveIndex = ref->refractiveIndex;
+		out.diffuse = ref->material.diffuse;
+		out.reflect = ref->material.reflect;
+		out.refract = ref->material.refract;
+		out.refractiveIndex = ref->material.refractiveIndex;
 	}
 
-	if (ref->colorSampler)
+	if (ref->material.colorSampler)
 	{
-		glm::dvec4 sample = ref->colorSampler->Color(uv.x, uv.y);
+		glm::dvec4 sample = ref->material.colorSampler->Color(uv.x, uv.y);
 		out.color = glm::vec3(sample);
 	}
 	else
 	{
-		out.color = ref->color;
+		out.color = ref->material.color;
 	}
 
 //	if (ref->normalSampler)

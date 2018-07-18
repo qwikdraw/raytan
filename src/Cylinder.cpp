@@ -27,11 +27,11 @@ glm::dvec2		Cylinder::solveQuadratic(double a, double b, double c) const
 glm::dvec3		Cylinder::findNormal(const glm::dvec3& intersection, const Ray& ray) const
 {
 
-	glm::dvec3 normal = intersection - center;
+	glm::dvec3 normal = intersection - position;
 
 	double dist = glm::dot(normal, vector);
 
-	normal = center + (vector * dist);
+	normal = position + (vector * dist);
 
 	return glm::normalize(intersection - normal);
 }
@@ -50,7 +50,7 @@ std::vector<std::pair<double, IObject*>> Cylinder::findDistances(const Ray& ray)
 	double a = glm::dot(a_temp, a_temp);
 
 	// Get b
-	glm::dvec3 delta_p = ray.origin - center;
+	glm::dvec3 delta_p = ray.origin - position;
 	tmp = vector * glm::dot(delta_p, vector);
 	glm::dvec3 b_temp = delta_p - tmp;
 	double b = 2 * glm::dot(a_temp, b_temp);

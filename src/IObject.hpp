@@ -14,6 +14,18 @@ struct  RayResult
 	double refractiveIndex;
 };
 
+struct	Material
+{
+	double diffuse;
+	double reflect;
+	double refract;
+	double refractiveIndex;
+	Sampler *materialSampler;
+	glm::dvec3 color;
+	Sampler *colorSampler;
+	Sampler *normalSampler;
+};
+
 class   IObject
 {
 	friend class Subtraction;
@@ -28,17 +40,10 @@ public:
 	virtual std::pair<double, IObject*> Intersection(const Ray& ray) const;
 	virtual RayResult MakeRayResult(double distance, const Ray& ray, IObject*) const;
 
-	glm::dvec3 center;
-	glm::dvec3 direction;
+	static constexpr glm::dvec3 direction = {0, 1, 0};
+	
+	glm::dvec3 position;
+	glm::dvec3 rotation;
 
-	double diffuse;
-	double reflect;
-	double refract;
-	double refractiveIndex;
-	Sampler *materialSampler;
-
-	glm::dvec3 color;
-	Sampler *colorSampler;
-
-	Sampler *normalSampler;
+	Material material;
 };
