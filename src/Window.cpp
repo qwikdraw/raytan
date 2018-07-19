@@ -1,15 +1,19 @@
-#include "Window.h"
-#include "Raytan.hpp"
-#include "RenderPipeline.hpp"
 #include <QSlider>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QPixmap>
 #include <QFileDialog>
+#include <QtConcurrent>
+#include <QFuture>
+
+#include "Window.h"
+#include "Raytan.hpp"
+#include "RenderPipeline.hpp"
 #include "lodepng.h"
 
 Window::Window(Scene& s, Camera& c) :
-	QWidget(), _layout(), _scene(s), _camera(c), _image(NULL), _label(), _progressBar()
+	QWidget(), _layout(), _scene(s), _camera(c),
+	_image(NULL), _watcher(NULL), _label(), _progressBar()
 {
 	setLayout(&_layout);
 
@@ -20,10 +24,19 @@ Window::Window(Scene& s, Camera& c) :
 	rightColumn->setLayout(l);
 
 
-	QSlider* slider = new QSlider(Qt::Horizontal);
-	slider->setTickInterval(10);
-	slider->setSingleStep(1);
-	l->addWidget(slider);
+	QLabel* bouncesLabel = new QLabel(tr("Ray Bounces"));
+	l->addWidget(bouncesLabel);
+
+	QSlider* bouncesSlider = new QSlider(Qt::Horizontal);
+	bouncesSlider->setTickInterval(5);
+	bouncesSlider->setSingleStep(1);
+	bouncesSlider->setMaximum(100);
+	bouncesSlider->setMinimum(0);
+	bouncesSlider->setValue(20);
+	l->addWidget(bouncesSlider);
+	connect(bouncesSlider, &QAbstractSlider::sliderReleased, [this, bouncesSlider]{
+		this->_bounces = bouncesSlider->value();
+	});
 
 	// Render Button
 	QPushButton* renderButton = new QPushButton(tr("Render"));
@@ -50,17 +63,36 @@ Window::Window(Scene& s, Camera& c) :
 
 void	Window::render(int width, int height)
 {
-	if (_image)
-		delete	_image;
-	
-	_progressBar.setValue(0);
-	_image = new Image(width, height);
-	RenderPipeline::SceneToImage(_scene, _camera, _image, _progressBar, 10);
-	RenderPipeline::NormalizeColor(_image, 0.5);
-	RenderPipeline::ImageToRGB32(_image);
-	QImage qim(_image->colors.data(), _image->width, _image->height, QImage::Format_RGB32);
+	if (_watcher && _watcher->isFinished())
+	{
+		delete _watcher;
+		_watcher = NULL;
+	}
+	else if (_watcher)
+		return;
+
+	QFuture<Image*> renderTask = QtConcurrent::run([this, width, height](){
+		Image* im = new Image(width, height);
+		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
+		RenderPipeline::NormalizeColor(im, 0.5);
+		RenderPipeline::ImageToRGB32(im);
+		return im;
+	});
+
+	_watcher = new QFutureWatcher<Image*>(this);
+	connect(_watcher, SIGNAL(finished()), this, SLOT(setImage()));
+	_watcher->setFuture(renderTask);
+	connect(this, SIGNAL(progressUpdate(int)), &_progressBar, SLOT(setValue(int)), Qt::QueuedConnection);
+}
+
+void	Window::setImage(void)
+{
+	Image* im = _watcher->result();
+	QImage qim(im->colors.data(), im->width, im->height, QImage::Format_RGBA8888);
 	_label.setPixmap(QPixmap::fromImage(qim));
-	_progressBar.setValue(100);
+	if (_image)
+		delete _image;
+	_image = im;
 }
 
 void	Window::saveRender(void)
@@ -71,6 +103,8 @@ void	Window::saveRender(void)
 	state.encoder.text_compression = 1;
 	state.decoder.color_convert = 0;
 	std::string filename = QFileDialog::getSaveFileName(this, tr("Save File"), "render", tr("PNG (*.png)")).toStdString();
+	if (filename == "")
+		return;
 	std::vector<uint8_t> buffer;
 	unsigned error = lodepng::encode(buffer, _image->colors, _image->width, _image->height, state);
 	if(error)
