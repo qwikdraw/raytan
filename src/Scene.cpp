@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/17 11:15:35 by lkaser           ###   ########.fr       */
+/*   Updated: 2018/07/19 13:06:44 by lkaser           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,10 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 static glm::dvec3 refract(const glm::dvec3& I, const glm::dvec3& N, double eta)
 {
 	double NdotI = glm::dot(N, I);
-	double cosi = glm::clamp(NdotI, -1.0, 1.0);	
-	double k = 1 - eta * eta * (1 - cosi * cosi);
+	double cosi = -glm::clamp(NdotI, -1.0, 1.0);	
+	double k = 1.0 - eta * eta * (1.0 - cosi * cosi);
 
-	if (k < 0)
+	if (k < 0.0)
 		return glm::reflect(I, N);
 	return eta * I + (eta * cosi - glm::sqrt(k)) * N;
 }
@@ -113,12 +113,12 @@ Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
 	if (glm::dot(ray.direction, rayResult.normal) > 0)
 	{
 		normal = rayResult.normal * -1.0;
-		ratio = rayResult.refractiveIndex / 1;
+		ratio = rayResult.refractiveIndex;
 	}
 	else
 	{
 		normal = rayResult.normal;
-		ratio = 1 / rayResult.refractiveIndex;
+		ratio = 1.0 / rayResult.refractiveIndex;
 	}
 
 	Ray out;
