@@ -4,6 +4,7 @@
 #include "IObject.hpp"
 #include "Sampler.hpp"
 
+// defines a infinite cylinder centered at origin with IObject::direction as its axis
 class	Cylinder : public IObject
 {
 	glm::dvec2	solveQuadratic(double a, double b, double c) const;
@@ -13,5 +14,4 @@ class	Cylinder : public IObject
 
 public:
 	double			radius;
-	glm::dvec3		vector;
 };

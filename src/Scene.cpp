@@ -12,83 +12,9 @@
 
 #include "Scene.hpp"
 
-#include "Sphere.hpp"
-#include "Plane.hpp"
-#include "Cylinder.hpp"
-#include "Cone.hpp"
-#include "Cube.hpp"
-#include "Subtraction.hpp"
-
 Scene::Scene(void)
 {
-
-	Sphere *s1 = new Sphere;
-	s1->center = glm::dvec3(1, 0, 0.1);
-	s1->direction = glm::dvec3(0, 0, 1);
-	
-	s1->radius = 0.2;
-	s1->color = glm::dvec3(1, 1, 1);
-	s1->refractiveIndex = 1.0;
-	s1->diffuse = 0;
-	s1->reflect = 0;
-	s1->refract = 1;
-	s1->color = glm::dvec3(0.9, 0.5, 0.8);
-	
-	s1->colorSampler = new Sampler("assets/image.png");
-	s1->materialSampler = nullptr;//new Sampler("mat.png");
-	s1->normalSampler = nullptr;
-
-	Plane *p2 = new Plane;
-        p2->center = glm::dvec3(1, 0, 0.1);
-        p2->direction = glm::normalize(glm::dvec3(1, 0, 1));
-
-        p2->refractiveIndex = 1.0;
-        p2->diffuse = 0;
-        p2->reflect = 0;
-        p2->refract = 1;
-        p2->color = glm::dvec3(1, 0, 0.5);
-
-        p2->colorSampler = nullptr;
-        p2->materialSampler = nullptr;
-        p2->normalSampler = nullptr;
-
-	Subtraction *sub = new Subtraction(s1, p2);
-	
-	_objects.push_back(sub);
-
-	Plane *p1 = new Plane;
-	p1->center = glm::dvec3(2, 0, 0);
-	p1->direction = glm::dvec3(1, 0, 0);
-
-	p1->refractiveIndex = 2;
-	p1->diffuse = 1;
-	p1->reflect = 0;
-	p1->refract = 0;
-	p1->color = glm::dvec3(1, 1, 0.5);
-
-	p1->colorSampler = nullptr;
-	p1->materialSampler = nullptr;
-	p1->normalSampler = nullptr;
-
-	_objects.push_back(p1);
-
-	Cylinder *c1 = new Cylinder;
-	c1->center = glm::dvec3(2, 0.3, 0.3);
-	c1->radius = 0.2;
-	c1->vector = glm::normalize(glm::dvec3(0.1, 0.3, 0.7));
-	c1->color = glm::dvec3(1, 1, 1);
-	c1->refractiveIndex = 2;
-	c1->diffuse = 1;
-	c1->reflect = 0;
-	c1->refract = 0;
-	c1->colorSampler = nullptr;
-	c1->materialSampler = nullptr;
-	c1->normalSampler = nullptr;
-
-	_objects.push_back(c1);
-
-	_lights.push_back((Light){{0, -0.5, 0.5}, {4, 4, 4}});
-
+	_ambient = glm::dvec3(0.0);
 }
 
 Scene::~Scene(void)
@@ -129,9 +55,8 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 	RawColor 	pixelColor = {{0.0, 0.0, 0.0}, 0};
 	Ray		lightRay;
 	glm::dvec3	lightVector;
-	double		dotValue;
 
-	for (auto& light : _lights)
+	for (auto& light : lights)
 	{
 		double offset = 0.00001;
 		if (glm::dot(ray.direction, rayResult.normal) > 0)
@@ -141,12 +66,11 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 		lightRay.origin = rayResult.position + (rayResult.normal * offset);
 
 		glm::dvec3 intensity = lightIntensity(lightRay, light, glm::length(lightVector));
-		if (intensity.r == 0 && intensity.g == 0 && intensity.b == 0)
-			continue;
-
-		dotValue = glm::abs(glm::dot(rayResult.normal, lightRay.direction));
-		pixelColor.color += rayResult.color * intensity * dotValue;
-	}	
+		intensity *= glm::abs(glm::dot(rayResult.normal, lightRay.direction));
+		intensity = glm::max(intensity, _ambient);
+		
+		pixelColor.color += rayResult.color * intensity;
+	}
 	return pixelColor;
 }
 
@@ -214,7 +138,7 @@ Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 {
 	if (recursionLevel == -1)
-		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
+		return (RawColor){{0.0, 1.0, 0.0}, INFINITY};
 
 	// The point of Intersection
 	RayResult rayResult = getRayResult(ray);
@@ -251,4 +175,26 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 		       reflectPart.color * rayResult.reflect +
 		       refractPart.color * rayResult.refract;
 	return output;
+}
+
+void	Scene::SetAmbient(glm::dvec3 color)
+{
+	_ambient = color;
+}
+
+void	Scene::AddObject(IObject* o)
+{
+	_objects.push_back(o);
+}
+
+void	Scene::RemoveObject(IObject* o)
+{
+	for (size_t i = 0; i < _objects.size(); i++)
+	{
+		if (_objects[i] == o)
+		{
+			_objects.erase(_objects.begin() + i);
+			return;
+		}
+	}
 }

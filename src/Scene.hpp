@@ -18,7 +18,7 @@
 class Scene
 {
 	std::vector<IObject*> _objects;
-	std::vector<Light> _lights;
+	glm::dvec3 _ambient;
 
 	RayResult	getRayResult(const Ray&) const;
 
@@ -28,10 +28,15 @@ class Scene
 	Ray		getRefract(const Ray&, const RayResult&) const;
 	Ray		getReflect(const Ray&, const RayResult&) const;
 
-	public:
+public:
 
-		Scene(void);
-		virtual ~Scene(void);
+	Scene(void);
+	virtual ~Scene(void);
 
-		RawColor	TraceRay(const Ray&, int recursionLevel) const;
+	RawColor	TraceRay(const Ray&, int recursionLevel) const;
+	void		SetAmbient(glm::dvec3 color);
+	void		AddObject(IObject*);
+	void		RemoveObject(IObject*);
+
+	std::vector<Light> lights;
 };

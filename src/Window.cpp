@@ -55,7 +55,7 @@ void	Window::render(int width, int height)
 	
 	_progressBar.setValue(0);
 	_image = new Image(width, height);
-	RenderPipeline::SceneToImage(_scene, _camera, _image, _progressBar, 100);
+	RenderPipeline::SceneToImage(_scene, _camera, _image, _progressBar, 10);
 	RenderPipeline::NormalizeColor(_image, 0.5);
 	RenderPipeline::ImageToRGB32(_image);
 	QImage qim(_image->colors.data(), _image->width, _image->height, QImage::Format_RGB32);

@@ -4,6 +4,7 @@
 #include "IObject.hpp"
 #include "Sampler.hpp"
 
+// defines a infinite cone centered at origin, with IObject::direction as its axis
 class	Cone : public IObject
 {
 	glm::dvec2	solveQuadratic(double a, double b, double c) const;
@@ -13,5 +14,4 @@ class	Cone : public IObject
 
 public:
 	double			angle;
-	glm::dvec3		vector;
 };
