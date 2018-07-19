@@ -45,6 +45,10 @@ RayResult	IObject::MakeRayResult(double distance, const Ray& ray, IObject* ref) 
 	if (ref->material.materialSampler || ref->material.colorSampler || ref->material.normalSampler)
 		uv = ref->uvMap(transformI, out.normal);
 
+	out.normal = glm::rotateZ(out.normal, glm::radians(rotation.z));
+        out.normal = glm::rotateY(out.normal, glm::radians(rotation.y));
+        out.normal = glm::rotateX(out.normal, glm::radians(rotation.x));
+	
 	if (ref->material.materialSampler)
 	{
 		glm::dvec4 sample = ref->material.materialSampler->Color(uv.x, uv.y);

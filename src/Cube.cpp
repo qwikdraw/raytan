@@ -26,6 +26,24 @@ glm::dvec2		Cube::solveQuadratic(double a, double b, double c) const
 
 glm::dvec3		Cube::findNormal(const glm::dvec3& intersection, const Ray& ray) const
 {
+	glm::dvec3 absI = glm::abs(intersection);
+
+	if (absI.x > absI.y && absI.x > absI.z && intersection.x < 0)
+		return glm::dvec3(-1, 0, 0);
+	if (absI.x > absI.y && absI.x > absI.z && intersection.x > 0)
+		return glm::dvec3(1, 0, 0);
+	if (absI.y > absI.x && absI.y > absI.z && intersection.y < 0)
+		return glm::dvec3(0, -1, 0);
+	if (absI.y > absI.x && absI.y > absI.z && intersection.y > 0)
+		return glm::dvec3(0, 1, 0);
+	if (intersection.z < 0)
+		return glm::dvec3(0, 0, -1);
+	return glm::dvec3(0, 0, 1);
+/*
+
+
+
+	
 	// Getting the first vector from center to intersection point
 	glm::dvec3 pVec = intersection;
 
@@ -33,12 +51,13 @@ glm::dvec3		Cube::findNormal(const glm::dvec3& intersection, const Ray& ray) con
 	glm::dvec3 divisor = glm::abs(boundary[0] - boundary[1]) / 2.0;
 
 	// Calculate the normal vector
-	glm::dvec3 normal;
-	normal.x = (int)((pVec.x / divisor.x) * 1.00001);
-	normal.y = (int)((pVec.y / divisor.y) * 1.00001);
-	normal.z = (int)((pVec.z / divisor.z) * 1.00001);
+	glm::dvec3 normal =  glm::round(pVec);
+//	normal.x = (int)(pVec.x * 1.0001 / divisor.x);
+//	normal.y = (int)(pVec.y * 1.0001 / divisor.y);
+//	normal.z = (int)(pVec.z * 1.0001 / divisor.z);
 
 	return glm::normalize(normal);
+*/
 }
 
 glm::dvec2		Cube::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const
@@ -52,12 +71,12 @@ std::vector<std::pair<double, IObject*>> Cube::findDistances(const Ray& ray) con
 	glm::dvec3 inverse_direction = 1.0 / ray.direction;
 
 	// Calculating the min and max distance of points hit on cube
-	double x1 = (boundary[0].x - ray.origin.x) * inverse_direction.x;
-	double x2 = (boundary[1].x - ray.origin.x) * inverse_direction.x;
-	double y1 = (boundary[0].y - ray.origin.y) * inverse_direction.y;
-	double y2 = (boundary[1].y - ray.origin.y) * inverse_direction.y;
-	double z1 = (boundary[0].z - ray.origin.z) * inverse_direction.z;
-	double z2 = (boundary[1].z - ray.origin.z) * inverse_direction.z;
+	double x1 = (-size.x / 2.0 - ray.origin.x) * inverse_direction.x;
+	double x2 = (size.x / 2.0 - ray.origin.x) * inverse_direction.x;
+	double y1 = (-size.y / 2.0 - ray.origin.y) * inverse_direction.y;
+	double y2 = (size.y / 2.0 - ray.origin.y) * inverse_direction.y;
+	double z1 = (-size.z / 2.0 - ray.origin.z) * inverse_direction.z;
+	double z2 = (size.z / 2.0 - ray.origin.z) * inverse_direction.z;
 
 	double minDist = glm::max(glm::max(glm::min(x1, x2), glm::min(y1, y2)), glm::min(z1, z2));
 	double maxDist = glm::min(glm::min(glm::max(x1, x2), glm::max(y1, y2)), glm::max(z1, z2));

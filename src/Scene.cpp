@@ -138,7 +138,7 @@ Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 {
 	if (recursionLevel == -1)
-		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
+		return (RawColor){{0.0, 1.0, 0.0}, INFINITY};
 
 	// The point of Intersection
 	RayResult rayResult = getRayResult(ray);
