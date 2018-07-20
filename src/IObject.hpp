@@ -30,14 +30,17 @@ struct Transform
 {
 	glm::dvec3 position;
 	glm::dvec3 rotation;
-}
+};
+
+class IObject;
 
 struct Intersect
 {
 	double distance; // distance along ray that intersection happened
-	IObject *hitRef; // pointer to the primitive object
+	const IObject *hitRef; // pointer to the primitive object
 	Transform transform; // relative -> world
-}
+	bool positive;
+};
 
 class   IObject
 {
@@ -62,11 +65,6 @@ public:
 	// used to define the direction of things like planes, cones ect
 	static constexpr glm::dvec3 direction = {0, 1, 0};
 
-	// do not use these variables in shape definitions. The ray will be transformed before
-	// it arrives at the concrete shape's functions
-	glm::dvec3 position;
-	glm::dvec3 rotation;
-	//__
-	
+	Transform transform;	
 	Material material;
 };

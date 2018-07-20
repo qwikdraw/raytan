@@ -3,6 +3,7 @@
 #include "Raytan.hpp"
 #include "IObject.hpp"
 
+/*
 class	Subtraction : public IObject
 {
 	IObject const* _positive;
@@ -23,3 +24,4 @@ public:
 	Subtraction(IObject *positive, IObject *negative);
 	RayResult MakeRayResult(double distance, const Ray& ray, IObject*) const;
 };
+*/

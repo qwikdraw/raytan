@@ -24,7 +24,7 @@ glm::dvec2		Cube::solveQuadratic(double a, double b, double c) const
 	return (root);
 }
 
-glm::dvec3		Cube::findNormal(const glm::dvec3& intersection, const Ray& ray) const
+glm::dvec3		Cube::findNormal(const glm::dvec3& intersection) const
 {
 	glm::dvec3 absI = glm::abs(intersection);
 
@@ -65,7 +65,7 @@ glm::dvec2		Cube::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal
 	return glm::dvec2(0.5, 0.5); // Will  update later
 }
 
-std::vector<std::pair<double, IObject*>> Cube::findDistances(const Ray& ray) const
+std::vector<double> Cube::findDistances(const Ray& ray) const
 {
 	// Initializing inverse direction ray
 	glm::dvec3 inverse_direction = 1.0 / ray.direction;
@@ -81,13 +81,13 @@ std::vector<std::pair<double, IObject*>> Cube::findDistances(const Ray& ray) con
 	double minDist = glm::max(glm::max(glm::min(x1, x2), glm::min(y1, y2)), glm::min(z1, z2));
 	double maxDist = glm::min(glm::min(glm::max(x1, x2), glm::max(y1, y2)), glm::max(z1, z2));
 
-	std::vector<std::pair<double, IObject*>>	out;
+	std::vector<double>	out;
 
 	if (minDist > maxDist) // Ray doesn't intersect object
 		return out;
-	out.push_back(std::pair<double, IObject*>(minDist, (IObject*)this));
+	out.push_back(minDist);
 	if (minDist == maxDist)
 		return out;
-	out.push_back(std::pair<double, IObject*>(maxDist, (IObject*)this));
+	out.push_back(maxDist);
 	return out;
 }

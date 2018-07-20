@@ -82,11 +82,11 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 
 	for (auto object : _objects)
 	{
-		auto pair = object->Intersection(ray);
-		double dist = pair.first;
+		Intersect intersect = object->Intersection(ray);
+		double dist = intersect.distance;
 		if (dist < lightDist)
 		{
-			RayResult data = object->MakeRayResult(dist, ray, pair.second);
+			RayResult data = object->MakeRayResult(intersect, ray);
 			if (data.refract == 0)
 				return glm::dvec3(0, 0, 0);
 			intensity *= data.refract * (1.0 - data.diffuse * (glm::dvec3(1) - data.color));

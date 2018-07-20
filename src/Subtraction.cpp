@@ -1,5 +1,6 @@
 #include "Subtraction.hpp"
 
+/*
 Subtraction::Subtraction(IObject *positive, IObject *negative)
 {
 	_positive = positive;
@@ -193,3 +194,5 @@ RayResult Subtraction::MakeRayResult(double distance, const Ray& ray, IObject* r
 
 	return out;
 }
+
+*/

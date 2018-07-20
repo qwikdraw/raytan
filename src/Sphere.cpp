@@ -1,25 +1,25 @@
 #include "Sphere.hpp"
 
-std::vector<std::pair<double, IObject*>> Sphere::findDistances(const Ray& ray) const
+std::vector<double> Sphere::findDistances(const Ray& ray) const
 {
 	double dist1 = dot(ray.direction, ray.origin);
 	double dist2;
 	double discrim = dist1 * dist1 - dot(ray.origin, ray.origin) + radius * radius;
 
 	if (discrim < 0)
-		return std::vector<std::pair<double, IObject*>>();
+		return std::vector<double>();
 	discrim = sqrt(discrim);
 	dist2 = -dist1 - discrim;
 	dist1 = -dist1 + discrim;
 
-	std::vector<std::pair<double, IObject*>> out;
+	std::vector<double> out;
 
-	out.push_back(std::pair<double, IObject*>(dist2, (IObject*)this));
-	out.push_back(std::pair<double, IObject*>(dist1, (IObject*)this));
+	out.push_back(dist1);
+	out.push_back(dist2);
 	return out;
 }
 
-glm::dvec3 Sphere::findNormal(const glm::dvec3& intersection, const Ray& ray) const
+glm::dvec3 Sphere::findNormal(const glm::dvec3& intersection) const
 {
 	return glm::normalize(intersection);
 }

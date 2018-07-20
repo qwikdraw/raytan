@@ -2,45 +2,39 @@
 
 constexpr glm::dvec3 IObject::direction;
 
-Ray	IObject::rayTransform(const Ray& ray) const
+// a default implementation for primitive shapes. Compound shapes should implement their own
+Intersect	IObject::Intersection(const Ray& ray) const
 {
-	Ray out;
+	std::vector<double> dists = findDistances(ray);
+	double bestDist = INFINITY;
 
-	out.origin = ray.origin - position;
-	
-	out.direction = glm::rotateX(ray.direction, glm::radians(-rotation.x));
-	out.direction = glm::rotateY(out.direction, glm::radians(-rotation.y));
-	out.direction = glm::rotateZ(out.direction, glm::radians(-rotation.z));
-
-	out.origin = glm::rotateX(out.origin, glm::radians(-rotation.x));
-	out.origin = glm::rotateY(out.origin, glm::radians(-rotation.y));
-	out.origin = glm::rotateZ(out.origin, glm::radians(-rotation.z));
-
-	return out;
-}
-
-std::pair<double, IObject*>	IObject::Intersection(const Ray& ray) const
-{
-	auto dists = findDistances(rayTransform(ray));	
-	std::pair<double, IObject*> bestPair(INFINITY, nullptr);
-	
-	for (auto& pair : dists)
+	for (auto d : dists)
 	{
-		if (pair.first < bestPair.first && pair.first > 0)
-			bestPair = pair;
+		if (d < bestDist && d > 0)
+			bestDist = d;
 	}
-	return bestPair;
+
+	Intersect out;
+	out.distance = bestDist;
+	out.hitRef = this;
+	out.transform = transform;
+	out.positive = true;
+	
+	return out;
 }
 
 RayResult	IObject::MakeRayResult(const Intersect& intersect, const Ray& ray) const
 {
 	RayResult out;
 
+	// the world position
 	out.position = ray.origin + ray.direction * intersect.distance;
 
+	// because we are going from world -> relative
 	glm::dvec3 relativePos = InverseTransformPoint(out.position, intersect.transform);
 
-	out.normal = ref->findNormal(relativePos);
+	// relative normal
+	out.normal = intersect.hitRef->findNormal(relativePos);
 
 	glm::dvec2 uv;
 	if (intersect.hitRef->material.materialSampler ||
@@ -50,11 +44,12 @@ RayResult	IObject::MakeRayResult(const Intersect& intersect, const Ray& ray) con
 		uv = intersect.hitRef->uvMap(relativePos, out.normal);
 	}
 
-	out.normal = InverseTransformVector(out.normal, intersect.transform);
+	// going from relative -> world
+	out.normal = TransformVector(out.normal, intersect.transform);
 	
-	if (ref->material.materialSampler)
+	if (intersect.hitRef->material.materialSampler)
 	{
-		glm::dvec4 sample = ref->material.materialSampler->Color(uv.x, uv.y);
+		glm::dvec4 sample = intersect.hitRef->material.materialSampler->Color(uv.x, uv.y);
 		out.diffuse = sample.r;
 		out.reflect = sample.g;
 		out.refract = sample.b;
@@ -62,20 +57,20 @@ RayResult	IObject::MakeRayResult(const Intersect& intersect, const Ray& ray) con
 	}
 	else
 	{
-		out.diffuse = ref->material.diffuse;
-		out.reflect = ref->material.reflect;
-		out.refract = ref->material.refract;
-		out.refractiveIndex = ref->material.refractiveIndex;
+		out.diffuse = intersect.hitRef->material.diffuse;
+		out.reflect = intersect.hitRef->material.reflect;
+		out.refract = intersect.hitRef->material.refract;
+		out.refractiveIndex = intersect.hitRef->material.refractiveIndex;
 	}
 
-	if (ref->material.colorSampler)
+	if (intersect.hitRef->material.colorSampler)
 	{
-		glm::dvec4 sample = ref->material.colorSampler->Color(uv.x, uv.y);
+		glm::dvec4 sample = intersect.hitRef->material.colorSampler->Color(uv.x, uv.y);
 		out.color = glm::vec3(sample);
 	}
 	else
 	{
-		out.color = ref->material.color;
+		out.color = intersect.hitRef->material.color;
 	}
 
 //	if (ref->normalSampler)
@@ -83,6 +78,9 @@ RayResult	IObject::MakeRayResult(const Intersect& intersect, const Ray& ray) con
 //		//stuff
 //	}
 
+	if (!intersect.positive)
+		out.normal = -out.normal;
+	
 	return out;
 }
 
