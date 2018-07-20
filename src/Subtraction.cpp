@@ -17,7 +17,8 @@ bool	Subtraction::isFacing(double dist, IObject* obj, const Ray& ray) const
 std::vector<std::tuple<double, IObject*, bool, bool>>
 Subtraction::getEdges(const std::vector<std::pair<double, IObject*>>& positiveEdges,
 		      const std::vector<std::pair<double, IObject*>>& negativeEdges,
-		      const Ray& ray) const
+		      const Ray& rayP,
+		      const Ray& rayN) const
 {
 	std::vector<std::tuple<double, IObject*, bool, bool>> out;
 	std::tuple<double, IObject*, bool, bool> genericEdge;
@@ -27,7 +28,7 @@ Subtraction::getEdges(const std::vector<std::pair<double, IObject*>>& positiveEd
 		std::get<0>(genericEdge) = std::get<0>(edge);
 		std::get<1>(genericEdge) = std::get<1>(edge);
 		std::get<2>(genericEdge) = true;
-		std::get<3>(genericEdge) = isFacing(std::get<0>(edge), std::get<1>(edge), ray);
+		std::get<3>(genericEdge) = isFacing(std::get<0>(edge), std::get<1>(edge), rayP);
 
 		out.push_back(genericEdge);
 	}
@@ -36,7 +37,7 @@ Subtraction::getEdges(const std::vector<std::pair<double, IObject*>>& positiveEd
 		std::get<0>(genericEdge) = std::get<0>(edge);
 		std::get<1>(genericEdge) = std::get<1>(edge);
 		std::get<2>(genericEdge) = false;
-		std::get<3>(genericEdge) = isFacing(std::get<0>(edge), std::get<1>(edge), ray);
+		std::get<3>(genericEdge) = isFacing(std::get<0>(edge), std::get<1>(edge), rayN);
 		
 		out.push_back(genericEdge);
 	}
@@ -47,11 +48,13 @@ Subtraction::getEdges(const std::vector<std::pair<double, IObject*>>& positiveEd
 
 std::vector<std::pair<double, IObject*>> Subtraction::findDistances(const Ray& ray) const
 {
-	auto p = _positive->findDistances(ray);
-	auto n = _negative->findDistances(ray);
+	Ray rayP = _positive->rayTransform(ray);
+	ray rayN = _negative->rayTransform(ray);
+	auto p = _positive->findDistances(rayP);
+	auto n = _negative->findDistances(rayN);
 
 	// tuple: dist, IObject*, is_positive?, is_entering?
-	std::vector<std::tuple<double, IObject*, bool, bool>> edges = getEdges(p, n, ray);
+	std::vector<std::tuple<double, IObject*, bool, bool>> edges = getEdges(p, n, rayP, rayN);
 	
 	bool insideP = false;
 	bool insideN = false;
@@ -112,6 +115,7 @@ std::vector<std::pair<double, IObject*>> Subtraction::findDistances(const Ray& r
 			break;
 		default:
 
+			//printing error message
 			for (auto& edge : edges)
 			{
 				std::cout << "edge: ";

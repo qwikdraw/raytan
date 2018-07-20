@@ -12,8 +12,9 @@ class	Subtraction : public IObject
 	
 	std::vector<std::tuple<double, IObject*, bool, bool>>
 	getEdges(const std::vector<std::pair<double, IObject*>>& positiveEdges,
-		  const std::vector<std::pair<double, IObject*>>& negativeEdges,
-		  const Ray& ray) const;
+		 const std::vector<std::pair<double, IObject*>>& negativeEdges,
+		 const Ray& rayP,
+		 const Ray& rayN) const;
 	
 	std::vector<std::pair<double, IObject*>> findDistances(const Ray& ray) const;
 	glm::dvec3 findNormal(const glm::dvec3& intersection, const Ray& ray) const;

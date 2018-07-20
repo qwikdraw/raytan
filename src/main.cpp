@@ -54,7 +54,16 @@ static void	add_to_scene(Scene& scene)
 	
 	s1->radius = 0.1;
 
-	scene.AddObject(s1);
+	Sphere *s2 = new Sphere;
+	s2->position = glm::dvec3(0, 0, 0.13);
+	s2->rotation = glm::dvec3(0, 0, 0);
+	s2->material = m1;
+
+	Subtraction *sub = new Subtraction(s1, s2);
+	sub->position = glm::dvec3(0, 0, 0);
+	sub->rotation = glm::dvec3(0, 0, 0);
+	
+	scene.AddObject(sub);
 
 	Plane *p1 = new Plane;
 	p1->position = glm::dvec3(1, 0, 0);
@@ -62,33 +71,6 @@ static void	add_to_scene(Scene& scene)
 	p1->material = m1;
 	
 	scene.AddObject(p1);
-
-	Cylinder *c1 = new Cylinder;
-	c1->position = glm::dvec3(0, 0.4, 0);
-	c1->rotation = glm::dvec3(30, 40, 140);
-	c1->material = m2;
-
-	c1->radius = 0.04;
-
-	scene.AddObject(c1);
-
-	Cone *cone1 = new Cone;
-	cone1->position = glm::dvec3(0, -0.3, 0);
-	cone1->rotation = glm::dvec3(0, 40, 40);
-	cone1->material = m2;
-
-	cone1->angle = 10;
-
-	scene.AddObject(cone1);
-
-	Cube *cube = new Cube;
-	cube->position = glm::dvec3(0, 0.3, -0.3);
-	cube->rotation = glm::dvec3(0, 0, 0);
-	cube->material = m3;
-
-	cube->size = glm::dvec3(0.2, 0.1, 0.3);
-
-	scene.AddObject(cube);
 	
 }
 
