@@ -48,19 +48,24 @@ static void	add_to_scene(Scene& scene)
 	m3.normalSampler = nullptr;
 	
 	Sphere *s1 = new Sphere;
-	s1->transform.position = glm::dvec3(0, 0, 0);
-	s1->transform.rotation = glm::dvec3(90, 0, 0);
+	s1->transform.position = glm::dvec3(0, 0, -0.06);
+	s1->transform.rotation = glm::dvec3(90, 30, 10);
 	s1->material = m1;
 	
 	s1->radius = 0.1;
 
 	Sphere *s2 = new Sphere;
-	s2->transform.position = glm::dvec3(0, 0, 0.13);
+	s2->transform.position = glm::dvec3(0, 0, 0.06);
 	s2->transform.rotation = glm::dvec3(0, 0, 0);
 	s2->material = m1;
 
+	s2->radius = 0.1;
 	
-	scene.AddObject(s1);
+	Subtraction *sub = new Subtraction(s1, s2);
+	sub->transform.position = glm::dvec3(0, 0, 0);
+	sub->transform.rotation = glm::dvec3(0, -40, 0);
+	
+	scene.AddObject(sub);
 
 	Plane *p1 = new Plane;
 	p1->transform.position = glm::dvec3(1, 0, 0);

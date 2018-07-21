@@ -35,8 +35,8 @@ bool Subtraction::isFacing(const Intersect& i, const Ray& ray) const
 	glm::dvec3 normal = i.hitRef->findNormal(hitPoint);
 	normal = TransformVector(normal, i.hitRef->transform);
 
-	if (!i.positive)
-		normal = -normal;
+//	if (!i.positive)
+//		normal = -normal; // this broke the code - find out why tommorow when u more awake
 	
 	if (glm::dot(normal, ray.direction) < 0)
 		return true;
@@ -66,7 +66,7 @@ std::vector<Edge> Subtraction::generateEdges(const std::vector<Intersect>& p,
 	std::sort(out.begin(),
 		  out.end(),
 		  [](Edge& a, Edge& b){return a.inter.distance < b.inter.distance;});
-	
+
 	return out;
 }
 

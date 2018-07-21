@@ -165,26 +165,26 @@ Transform IObject::CompoundTransform(const Transform& t1, const Transform& t2)
 
 	out.position = TransformPoint(t1.position, t2);
 
-	glm::dmat4 m1 = glm::eulerAngleYXZ(t1.angle.y, t1.angle.x, t1.angle.z);
-	glm::dmat4 m2 = glm::eulerAngleYXZ(t2.angle.y, t2.angle.x, t2.angle.z);
+	glm::dmat4 m1 = glm::eulerAngleYXZ(t1.rotation.y, t1.rotation.x, t1.rotation.z);
+	glm::dmat4 m2 = glm::eulerAngleYXZ(t2.rotation.y, t2.rotation.x, t2.rotation.z);
 	glm::dmat4 m = m2 * m1;
 	if (m[0][0] == 1.0)
 	{
-		out.angle.y = glm::atan2(m[0][2], m[2][3]);
-		out.angle.x = 0;
-		out.angle.z = 0;
+		out.rotation.y = std::atan2(m[0][2], m[2][3]);
+		out.rotation.x = 0;
+		out.rotation.z = 0;
 	}
 	else if (m[0][0] == -1.0)
 	{
-		out.angle.y = glm::atan2(m[0][2], m[2][3]);
-		out.angle.x = 0;
-		out.angle.z = 0;
+		out.rotation.y = std::atan2(m[0][2], m[2][3]);
+		out.rotation.x = 0;
+		out.rotation.z = 0;
 	}
 	else
 	{
-		out.angle.y = glm::atan2(-m[2][0], m[0][0]);
-		out.angle.x = glm::asin(m[1][0]);
-		out.angle.z = glm::atan2(-m[1][2], m[1][1]);
+		out.rotation.y = std::atan2(-m[2][0], m[0][0]);
+		out.rotation.x = glm::asin(m[1][0]);
+		out.rotation.z = std::atan2(-m[1][2], m[1][1]);
 	}
 	return out;
 }
