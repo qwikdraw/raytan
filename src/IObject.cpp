@@ -2,10 +2,37 @@
 
 constexpr glm::dvec3 IObject::direction;
 
+std::vector<Intersect>	IObject::findIntersections(const Ray&) const
+{
+	assert(!"default implementation should not be called");
+	return std::vector<Intersect>();
+}
+
+glm::dvec3	IObject::findNormal(const glm::dvec3&) const
+{
+	assert(!"default implementation should not be called");
+	return glm::dvec3();
+}
+
+glm::dvec2	IObject::uvMap(const glm::dvec3&, const glm::dvec3&) const
+{
+	assert(!"default implementation should not be called");
+	return glm::dvec3();
+}
+
+bool	IObject::IsPrimitive(void) const
+{
+	return true;
+}
+
 // a default implementation for primitive shapes. Compound shapes should implement their own
 Intersect	IObject::Intersection(const Ray& ray) const
 {
-	std::vector<double> dists = findDistances(ray);
+	Ray transformed;
+	transformed.origin = InverseTransformPoint(ray.origin, transform);
+	transformed.direction = InverseTransformVector(ray.direction, transform);
+	
+	std::vector<double> dists = findDistances(transformed);
 	double bestDist = INFINITY;
 
 	for (auto d : dists)
@@ -130,4 +157,9 @@ glm::dvec3 IObject::InverseTransformVector(const glm::dvec3& v, const Transform&
 	out = glm::rotateX(out, glm::radians(-t.rotation.x));
 
 	return out;
+}
+
+Transform IObject::CompoundTransform(const Transform& t1, const Transform& t2)
+{
+	
 }

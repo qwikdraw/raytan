@@ -3,25 +3,30 @@
 #include "Raytan.hpp"
 #include "IObject.hpp"
 
-/*
+struct Edge
+{
+	Intersect inter;
+	bool forwardFacing;
+};
+
+// non primitive object
 class	Subtraction : public IObject
 {
 	IObject const* _positive;
 	IObject const* _negative;
 
-	bool    isFacing(double dist, IObject* obj, const Ray& ray) const;
+	bool isFacing(const Intersect&, const Ray&) const;
+	std::vector<Edge> generateEdges(const std::vector<Intersect>&,
+					const std::vector<Intersect>&,
+					const Ray&) const;
+	std::vector<Intersect> getIntersectionsFrom(const IObject*, const Ray&) const;
+	std::vector<Intersect> findIntersections(const Ray&) const;
 	
-	std::vector<std::tuple<double, IObject*, bool, bool>>
-	getEdges(const std::vector<std::pair<double, IObject*>>& positiveEdges,
-		 const std::vector<std::pair<double, IObject*>>& negativeEdges,
-		 const Ray& rayP,
-		 const Ray& rayN) const;
-	
-	std::vector<std::pair<double, IObject*>> findDistances(const Ray& ray) const;
-	glm::dvec3 findNormal(const glm::dvec3& intersection, const Ray& ray) const;
-	glm::dvec2 uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const;
+	// will have dummy implementation
+	std::vector<double> findDistances(const Ray&) const;
 public:
 	Subtraction(IObject *positive, IObject *negative);
-	RayResult MakeRayResult(double distance, const Ray& ray, IObject*) const;
+
+	bool IsPrimitive(void) const;
+	Intersect Intersection(const Ray&) const;
 };
-*/
