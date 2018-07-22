@@ -30,13 +30,13 @@ std::vector<Intersect>	Subtraction::getIntersectionsFrom(const IObject *o, const
 bool Subtraction::isFacing(const Intersect& i, const Ray& ray) const
 {
 	glm::dvec3 hitPoint = ray.origin + ray.direction * i.distance;
-	hitPoint = InverseTransformPoint(hitPoint, i.hitRef->transform);
+	hitPoint = InverseTransformPoint(hitPoint, i.transform);
 
 	glm::dvec3 normal = i.hitRef->findNormal(hitPoint);
-	normal = TransformVector(normal, i.hitRef->transform);
+	normal = TransformVector(normal, i.transform);
 
-//	if (!i.positive)
-//		normal = -normal; // this broke the code - find out why tommorow when u more awake
+	if (!i.positive)
+		normal = -normal;
 	
 	if (glm::dot(normal, ray.direction) < 0)
 		return true;
@@ -54,12 +54,17 @@ std::vector<Edge> Subtraction::generateEdges(const std::vector<Intersect>& p,
 	{
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
+		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
+		edge.positive = true;
 		out.push_back(edge);
 	}
 	for (const Intersect& i : n)
 	{
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
+		edge.inter.positive = !edge.inter.positive;
+		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
+		edge.positive = false;
 		out.push_back(edge);
 	}
 
@@ -75,17 +80,8 @@ std::vector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 	auto p = getIntersectionsFrom(_positive, ray);
 	auto n = getIntersectionsFrom(_negative, ray);
 
-	for (Intersect& i : p)
-	{
-		i.transform = CompoundTransform(i.transform, transform);
-	}
-	for (Intersect& i : n)
-	{
-		i.transform = CompoundTransform(i.transform, transform);
-		i.positive = !i.positive;
-	}
-
 	std::vector<Edge> edges = generateEdges(p, n, ray);
+	
 	bool insideP = false;
 	bool insideN = false;
 
@@ -94,12 +90,12 @@ std::vector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 	bool toggle2 = false;
 	for (auto& edge : edges)
 	{
-		if (edge.inter.positive && !toggle1)
+		if (edge.positive && !toggle1)
 		{
 			insideP = !edge.forwardFacing;
 			toggle1 = true;
 		}
-		if (!edge.inter.positive && !toggle2)
+		if (!edge.positive && !toggle2)
 		{
 			insideN = !edge.forwardFacing;
 			toggle2 = true;
@@ -110,7 +106,7 @@ std::vector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 	std::vector<Intersect> out;
 	for (auto& edge : edges)
 	{
-		int event = insideP + 2 * insideN + 4 * edge.inter.positive + 8 * edge.forwardFacing;
+		int event = insideP + 2 * insideN + 4 * edge.positive + 8 * edge.forwardFacing;
 
 		switch(event)
 		{
@@ -143,6 +139,15 @@ std::vector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 			insideP = false;
 			break;
 		default:
+			for (auto& e : edges)
+			{
+				std::cout << e.inter.distance <<
+					" " << e.inter.hitRef << " " <<
+					e.inter.positive << " " <<
+					e.forwardFacing << " " << e.positive << std::endl;
+			}
+			std::cout << "event: " << insideP << " " << insideN << " " <<
+				edge.positive << " " << edge.forwardFacing << std::endl;
 			assert(!"badly defined shape");
 		}
 	}
@@ -165,7 +170,7 @@ Intersect	Subtraction::Intersection(const Ray& ray) const
 	Ray transformed;
 	transformed.origin = InverseTransformPoint(ray.origin, transform);
 	transformed.direction = InverseTransformVector(ray.direction, transform);
-	
+
 	auto hits = findIntersections(transformed);
 	Intersect best;
 	best.distance = INFINITY;
@@ -175,5 +180,6 @@ Intersect	Subtraction::Intersection(const Ray& ray) const
 		if (hit.distance < best.distance && hit.distance > 0)
 			best = hit;
 	}
+	best.transform = CompoundTransform(best.transform, transform);
 	return best;
 }

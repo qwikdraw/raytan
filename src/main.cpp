@@ -14,7 +14,7 @@
 
 static void	add_to_scene(Scene& scene)
 {
-	scene.SetAmbient(glm::dvec3(0.05, 0.05, 0.05));
+//	scene.SetAmbient(glm::dvec3(0.05, 0.05, 0.05));
 	scene.lights.push_back((Light){{-1, 0, 0}, {1, 1, 1}});
 
 	Material m1;
@@ -23,17 +23,17 @@ static void	add_to_scene(Scene& scene)
 	m1.refract = 0;
 	m1.refractiveIndex = 1.4;
 	m1.materialSampler = nullptr;
-	m1.color = glm::dvec3(1, 1, 0.5);
-	m1.colorSampler = new Sampler("assets/image.png");
+	m1.color = glm::dvec3(1, 0, 0);
+	m1.colorSampler = nullptr;//new Sampler("assets/image.png");
 	m1.normalSampler = nullptr;
 
 	Material m2;
-	m2.diffuse = 0.2;
+	m2.diffuse = 1;
 	m2.reflect = 0;
-	m2.refract = 0.8;
+	m2.refract = 0;
 	m2.refractiveIndex = 1.4;
 	m2.materialSampler = nullptr;
-	m2.color = glm::dvec3(0.4, 1, 0.4);
+	m2.color = glm::dvec3(0, 1, 0);
 	m2.colorSampler = nullptr;
 	m2.normalSampler = nullptr;
 
@@ -43,13 +43,13 @@ static void	add_to_scene(Scene& scene)
 	m3.refract = 0;
 	m3.refractiveIndex = 1.4;
 	m3.materialSampler = nullptr;
-	m3.color = glm::dvec3(0.1, 0.4, 0.9);
+	m3.color = glm::dvec3(0, 0, 1);
 	m3.colorSampler = nullptr;
 	m3.normalSampler = nullptr;
 	
 	Sphere *s1 = new Sphere;
-	s1->transform.position = glm::dvec3(0, 0, -0.06);
-	s1->transform.rotation = glm::dvec3(90, 30, 10);
+	s1->transform.position = glm::dvec3(0, 0, 0);
+	s1->transform.rotation = glm::dvec3(0, 0, 0);
 	s1->material = m1;
 	
 	s1->radius = 0.1;
@@ -60,12 +60,21 @@ static void	add_to_scene(Scene& scene)
 	s2->material = m1;
 
 	s2->radius = 0.1;
+
+	Plane *p2 = new Plane;
+	p2->transform.position = glm::dvec3(0, 0, 0);
+	p2->transform.rotation = glm::dvec3(0, 0, -90);
+	p2->material = m3;
 	
 	Subtraction *sub = new Subtraction(s1, s2);
 	sub->transform.position = glm::dvec3(0, 0, 0);
-	sub->transform.rotation = glm::dvec3(0, -40, 0);
-	
-	scene.AddObject(sub);
+	sub->transform.rotation = glm::dvec3(0, 0, 0);
+
+	Subtraction *sub2 = new Subtraction(s1, p2);
+	sub2->transform.position = glm::dvec3(-0.4, 0, 0.3);
+	sub2->transform.rotation = glm::dvec3(0, 35, 10);
+
+	scene.AddObject(sub2);
 
 	Plane *p1 = new Plane;
 	p1->transform.position = glm::dvec3(1, 0, 0);

@@ -6,6 +6,7 @@
 struct Edge
 {
 	Intersect inter;
+	bool positive;
 	bool forwardFacing;
 };
 

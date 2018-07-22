@@ -115,9 +115,9 @@ glm::dvec3 IObject::TransformPoint(const glm::dvec3& p, const Transform& t)
 {
 	glm::dvec3 out;
 	
-	out = glm::rotateY(p, glm::radians(t.rotation.y));
+	out = glm::rotateZ(p, glm::radians(t.rotation.z));
+	out = glm::rotateY(out, glm::radians(t.rotation.y));
 	out = glm::rotateX(out, glm::radians(t.rotation.x));
-	out = glm::rotateZ(out, glm::radians(t.rotation.z));
 
 	out = out + t.position;
 	
@@ -128,9 +128,9 @@ glm::dvec3 IObject::TransformVector(const glm::dvec3& v, const Transform& t)
 {
 	glm::dvec3 out;
 
-	out = glm::rotateY(v, glm::radians(t.rotation.y));
+	out = glm::rotateZ(v, glm::radians(t.rotation.z));
+	out = glm::rotateY(out, glm::radians(t.rotation.y));
 	out = glm::rotateX(out, glm::radians(t.rotation.x));
-	out = glm::rotateZ(out, glm::radians(t.rotation.z));
 
 	return out;
 }
@@ -141,9 +141,9 @@ glm::dvec3 IObject::InverseTransformPoint(const glm::dvec3& p, const Transform& 
 
 	out = p - t.position;
 	
-	out = glm::rotateZ(out, glm::radians(-t.rotation.z));
 	out = glm::rotateX(out, glm::radians(-t.rotation.x));
 	out = glm::rotateY(out, glm::radians(-t.rotation.y));
+	out = glm::rotateZ(out, glm::radians(-t.rotation.z));
 
 	return out;
 }
@@ -152,9 +152,9 @@ glm::dvec3 IObject::InverseTransformVector(const glm::dvec3& v, const Transform&
 {
 	glm::dvec3 out;
 
-	out = glm::rotateZ(v, glm::radians(-t.rotation.z));
-	out = glm::rotateX(out, glm::radians(-t.rotation.x));
+	out = glm::rotateX(v, glm::radians(-t.rotation.x));
 	out = glm::rotateY(out, glm::radians(-t.rotation.y));
+	out = glm::rotateZ(out, glm::radians(-t.rotation.z));
 
 	return out;
 }
@@ -164,27 +164,15 @@ Transform IObject::CompoundTransform(const Transform& t1, const Transform& t2)
 	Transform out;
 
 	out.position = TransformPoint(t1.position, t2);
-
-	glm::dmat4 m1 = glm::eulerAngleYXZ(t1.rotation.y, t1.rotation.x, t1.rotation.z);
-	glm::dmat4 m2 = glm::eulerAngleYXZ(t2.rotation.y, t2.rotation.x, t2.rotation.z);
-	glm::dmat4 m = m2 * m1;
-	if (m[0][0] == 1.0)
-	{
-		out.rotation.y = std::atan2(m[0][2], m[2][3]);
-		out.rotation.x = 0;
-		out.rotation.z = 0;
-	}
-	else if (m[0][0] == -1.0)
-	{
-		out.rotation.y = std::atan2(m[0][2], m[2][3]);
-		out.rotation.x = 0;
-		out.rotation.z = 0;
-	}
-	else
-	{
-		out.rotation.y = std::atan2(-m[2][0], m[0][0]);
-		out.rotation.x = glm::asin(m[1][0]);
-		out.rotation.z = std::atan2(-m[1][2], m[1][1]);
-	}
+	
+	glm::dmat4 m1 = glm::eulerAngleXYZ(glm::radians(t1.rotation.x),
+					   glm::radians(t1.rotation.y),
+					   glm::radians(t1.rotation.z));
+	glm::dmat4 m2 = glm::eulerAngleXYZ(glm::radians(t2.rotation.x),
+					   glm::radians(t2.rotation.y),
+					   glm::radians(t2.rotation.z));
+	
+	glm::extractEulerAngleXYZ(m2 * m1, out.rotation.x, out.rotation.y, out.rotation.z);
+	out.rotation = glm::degrees(out.rotation);
 	return out;
 }
