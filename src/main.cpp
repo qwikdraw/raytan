@@ -46,7 +46,17 @@ static void	add_to_scene(Scene& scene)
 	m3.color = glm::dvec3(0.1, 0.4, 0.9);
 	m3.colorSampler = nullptr;
 	m3.normalSampler = nullptr;
-	
+
+	Material m4;
+	m4.diffuse = 0.7;
+	m4.reflect = 0;
+	m4.refract = 0.3;
+	m4.refractiveIndex = 1.4;
+	m4.materialSampler = nullptr;
+	m4.color = glm::dvec3(0.1, 0.4, 0.9);
+	m4.colorSampler = nullptr;
+	m4.normalSampler = nullptr;
+
 	Sphere *s1 = new Sphere;
 	s1->position = glm::dvec3(0, 0, 0);
 	s1->rotation = glm::dvec3(90, 0, 0);
@@ -83,8 +93,8 @@ static void	add_to_scene(Scene& scene)
 
 	Cube *cube = new Cube;
 	cube->position = glm::dvec3(0, 0.3, -0.3);
-	cube->rotation = glm::dvec3(0, 0, 0);
-	cube->material = m3;
+	cube->rotation = glm::dvec3(0, 40, 0);
+	cube->material = m4;
 
 	cube->size = glm::dvec3(0.2, 0.1, 0.3);
 

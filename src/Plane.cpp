@@ -22,8 +22,11 @@ glm::dvec3 Plane::findNormal(const glm::dvec3& intersection, const Ray& ray) con
 }
 
 
-glm::dvec2 Plane::uvMap(const glm::dvec3&, const glm::dvec3&) const
+glm::dvec2 Plane::uvMap(const glm::dvec3& intersection, const glm::dvec3&) const
 {
-	// ill implement later
-	return glm::dvec2(0);
+	glm::dvec2	out;
+
+	out.x = intersection.x;
+	out.y = intersection.z;
+	return glm::mod(out, 1.0);
 }

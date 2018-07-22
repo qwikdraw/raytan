@@ -38,7 +38,11 @@ glm::dvec3		Cylinder::findNormal(const glm::dvec3& intersection, const Ray& ray)
 
 glm::dvec2		Cylinder::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const
 {
-	return glm::dvec2(0.5, 0.5); // Will  update later
+	glm::dvec2	out;
+
+	out.x = glm::
+
+	return out;
 }
 
 std::vector<std::pair<double, IObject*>> Cylinder::findDistances(const Ray& ray) const

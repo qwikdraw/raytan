@@ -26,20 +26,20 @@ glm::dvec2		Cube::solveQuadratic(double a, double b, double c) const
 
 glm::dvec3		Cube::findNormal(const glm::dvec3& intersection, const Ray& ray) const
 {
-	glm::dvec3 absI = glm::abs(intersection);
+	// glm::dvec3 absI = glm::abs(intersection);
+	// std::cout << absI.x << std::endl;
 
-	if (absI.x > absI.y && absI.x > absI.z && intersection.x < 0)
-		return glm::dvec3(-1, 0, 0);
-	if (absI.x > absI.y && absI.x > absI.z && intersection.x > 0)
-		return glm::dvec3(1, 0, 0);
-	if (absI.y > absI.x && absI.y > absI.z && intersection.y < 0)
-		return glm::dvec3(0, -1, 0);
-	if (absI.y > absI.x && absI.y > absI.z && intersection.y > 0)
-		return glm::dvec3(0, 1, 0);
-	if (intersection.z < 0)
-		return glm::dvec3(0, 0, -1);
-	return glm::dvec3(0, 0, 1);
-/*
+	// if (absI.x > absI.y && absI.x > absI.z && intersection.x < 0)
+	// 	return glm::dvec3(-1, 0, 0);
+	// if (absI.x > absI.y && absI.x > absI.z && intersection.x > 0)
+	// 	return glm::dvec3(1, 0, 0);
+	// if (absI.y > absI.x && absI.y > absI.z && intersection.y < 0)
+	// 	return glm::dvec3(0, -1, 0);
+	// if (absI.y > absI.x && absI.y > absI.z && intersection.y > 0)
+	// 	return glm::dvec3(0, 1, 0);
+	// if (intersection.z < 0)
+	// 	return glm::dvec3(0, 0, -1);
+	// return glm::dvec3(0, 0, 1);
 
 
 
@@ -48,16 +48,16 @@ glm::dvec3		Cube::findNormal(const glm::dvec3& intersection, const Ray& ray) con
 	glm::dvec3 pVec = intersection;
 
 	// Grab the 'divisor' vectors
-	glm::dvec3 divisor = glm::abs(boundary[0] - boundary[1]) / 2.0;
+	glm::dvec3 divisor = glm::abs(size) / 2.0;
 
 	// Calculate the normal vector
 	glm::dvec3 normal =  glm::round(pVec);
-//	normal.x = (int)(pVec.x * 1.0001 / divisor.x);
-//	normal.y = (int)(pVec.y * 1.0001 / divisor.y);
-//	normal.z = (int)(pVec.z * 1.0001 / divisor.z);
+	normal.x = (int)(pVec.x / divisor.x * 1.0001);
+	normal.y = (int)(pVec.y / divisor.y * 1.0001);
+	normal.z = (int)(pVec.z / divisor.z * 1.0001);
 
 	return glm::normalize(normal);
-*/
+
 }
 
 glm::dvec2		Cube::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const
