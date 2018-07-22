@@ -2,7 +2,7 @@
 
 namespace RP = RenderPipeline;
 
-void	RP::SceneToImage(const Scene& scene, const Camera& camera, Image* image, QProgressBar& pro, int recursionLvl)
+void	RP::SceneToImage(const Scene& scene, const Camera& camera, Image* image, Window* win, int recursionLvl)
 {
 	for (int y = 0; y < image->height; y++)
 	{
@@ -13,9 +13,8 @@ void	RP::SceneToImage(const Scene& scene, const Camera& camera, Image* image, QP
 			RawColor c = scene.TraceRay(camera.GetRay(normalizedX, normalizedY), recursionLvl);
 			image->raw.push_back(c);
 		}
-		//pro.setValue(1 + 100.0 * (y / (double)image->height));
+		emit win->progressUpdate(1 + 100.0 * (y / (double)image->height));
 	}
-	(void)pro;
 }
 
 void	RP::NormalizeColor(Image* image, double gamma)
@@ -43,9 +42,9 @@ void	RP::ImageToRGB32(Image* image)
 {
 	for (auto& raw : image->raw)
 	{
-		image->colors.push_back(raw.color.b * 255);
-		image->colors.push_back(raw.color.g * 255);
 		image->colors.push_back(raw.color.r * 255);
+		image->colors.push_back(raw.color.g * 255);
+		image->colors.push_back(raw.color.b * 255);
 		image->colors.push_back(255);
 	}
 /*
