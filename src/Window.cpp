@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QPixmap>
 #include <QFileDialog>
+#include <QColorDialog>
 #include <QtConcurrent>
 #include <QFuture>
 
@@ -24,15 +25,15 @@ Window::Window(Scene& s, Camera& c) :
 	rightColumn->setLayout(l);
 
 
-	QLabel* bouncesLabel = new QLabel(tr("Ray Bounces"));
+	QLabel* bouncesLabel = new QLabel(tr("Maximum Ray Bounces"));
 	l->addWidget(bouncesLabel);
 
 	QSlider* bouncesSlider = new QSlider(Qt::Horizontal);
 	bouncesSlider->setTickInterval(5);
 	bouncesSlider->setSingleStep(1);
-	bouncesSlider->setMaximum(100);
+	bouncesSlider->setMaximum(30);
 	bouncesSlider->setMinimum(0);
-	bouncesSlider->setValue(20);
+	bouncesSlider->setValue(10);
 	l->addWidget(bouncesSlider);
 	connect(bouncesSlider, &QAbstractSlider::sliderReleased, [this, bouncesSlider]{
 		this->_bounces = bouncesSlider->value();
@@ -41,9 +42,23 @@ Window::Window(Scene& s, Camera& c) :
 	// Render Button
 	QPushButton* renderButton = new QPushButton(tr("Render"));
 	connect(renderButton, &QPushButton::clicked, [this]{
-		render();
+		render(1024, 1024);
 	});
 	l->addWidget(renderButton);
+
+	// Ambient Light Picker
+	QPushButton* ambientButton = new QPushButton(tr("Set Ambient Light"));
+	connect(ambientButton, &QPushButton::clicked, [this]{
+		QColor newAmbient = QColorDialog::getColor(
+			QColor(255, 255, 255),
+			this,
+			tr("Ambient Color")
+		);
+		glm::dvec3 tmp;
+		newAmbient.getRgbF(&tmp.x, &tmp.y, &tmp.z);
+		_scene.SetAmbient(tmp);
+	});
+	l->addWidget(ambientButton);
 
 	// Save Button
 	QPushButton* saveButton = new QPushButton(tr("Save Render"));
@@ -89,7 +104,7 @@ void	Window::setImage(void)
 {
 	Image* im = _watcher->result();
 	QImage qim(im->colors.data(), im->width, im->height, QImage::Format_RGBA8888);
-	_label.setPixmap(QPixmap::fromImage(qim));
+	_label.setPixmap(QPixmap::fromImage(qim.scaledToWidth(1000, Qt::SmoothTransformation)));
 	if (_image)
 		delete _image;
 	_image = im;
