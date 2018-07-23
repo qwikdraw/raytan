@@ -62,7 +62,9 @@ std::vector<double> Cylinder::findDistances(const Ray& ray) const
 	glm::dvec2 root = solveQuadratic(a, b, c);
 	
 	std::vector<double> out;
-	out.push_back(root.x);
-	out.push_back(root.y);
+	if (root.x)
+		out.push_back(root.x);
+	if (root.y && root.x != root.y)
+		out.push_back(root.y);
 	return out;
 }

@@ -4,7 +4,7 @@ std::vector<double> Sphere::findDistances(const Ray& ray) const
 {
 	double dist1 = dot(ray.direction, ray.origin);
 	double dist2;
-	double discrim = dist1 * dist1 - dot(ray.origin, ray.origin) + radius * radius;
+	double discrim = dist1 * dist1 - glm::dot(ray.origin, ray.origin) + radius * radius;
 
 	if (discrim < 0)
 		return std::vector<double>();
@@ -12,10 +12,18 @@ std::vector<double> Sphere::findDistances(const Ray& ray) const
 	dist2 = -dist1 - discrim;
 	dist1 = -dist1 + discrim;
 
+	if (std::isnan(dist1))
+	{
+		std::cout << ray.direction.x << " " << ray.direction.y << " " << ray.direction.z << std::endl;
+		std::cout << discrim << std::endl;
+		std::cout << ray.origin.x << " " << ray.origin.y << " " << ray.origin.z << std::endl;
+	}
+	
 	std::vector<double> out;
 
 	out.push_back(dist1);
-	out.push_back(dist2);
+	if (dist1 != dist2)
+		out.push_back(dist2);
 	return out;
 }
 

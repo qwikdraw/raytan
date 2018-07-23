@@ -19,14 +19,21 @@ void	RP::SceneToImage(const Scene& scene, const Camera& camera, Image* image, Wi
 
 void	RP::NormalizeColor(Image* image, double gamma)
 {
-	glm::dvec3 averageCol;
+	glm::dvec3 averageCol = glm::dvec3(0);
 	double totalPixels = image->width * image->height;
 	
 	for (auto& raw : image->raw)
 	{
 		raw.color = glm::pow(raw.color, glm::dvec3(gamma));
-		averageCol += raw.color / totalPixels;
+		if (std::isfinite(raw.color.x) &&
+		    std::isfinite(raw.color.y) &&
+		    std::isfinite(raw.color.z))
+		{
+			averageCol += raw.color / totalPixels;			
+		}
 	}
+
+	std::cout << averageCol.x << " " << averageCol.y << " " << averageCol.z << std::endl;
 	
 	double scaleFactor = (averageCol.r + averageCol.g + averageCol.b) * 2 / 3.0;
 

@@ -13,6 +13,10 @@ std::vector<Intersect>	Subtraction::getIntersectionsFrom(const IObject *o, const
 	transformed.origin = InverseTransformPoint(ray.origin, o->transform);
 	transformed.direction = InverseTransformVector(ray.direction, o->transform);
 
+	if (std::isnan(ray.origin.x))
+	{
+	}
+
 	if (!o->IsPrimitive())
 		return o->findIntersections(transformed);
 
@@ -146,9 +150,9 @@ std::vector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 					e.inter.positive << " " <<
 					e.forwardFacing << " " << e.positive << std::endl;
 			}
-			std::cout << "event: " << insideP << " " << insideN << " " <<
+			std::cout << "bad edge order: " << insideP << " " << insideN << " " <<
 				edge.positive << " " << edge.forwardFacing << std::endl;
-			assert(!"badly defined shape");
+//			assert(!"badly defined shape");
 		}
 	}
 	return out;	

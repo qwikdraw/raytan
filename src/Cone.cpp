@@ -33,7 +33,7 @@ glm::dvec3		Cone::findNormal(const glm::dvec3& intersection) const
 		dist = -dist;
 	tmpVector = (direction * dist);
 
-	return glm::normalize(intersection - tmpVector);
+	return glm::normalize(intersection - tmpVector + glm::dvec3(0.0001));
 }
 
 glm::dvec2		Cone::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const
@@ -61,7 +61,9 @@ std::vector<double> Cone::findDistances(const Ray& ray) const
 	glm::dvec2 root = solveQuadratic(a, b, c);
 
 	std::vector<double> out;
-	out.push_back(root.x);
-	out.push_back(root.y);
+	if (root.x)
+		out.push_back(root.x);
+	if (root.y && root.x != root.y)
+		out.push_back(root.y);
 	return out;
 }
