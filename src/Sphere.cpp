@@ -12,13 +12,6 @@ std::vector<double> Sphere::findDistances(const Ray& ray) const
 	dist2 = -dist1 - discrim;
 	dist1 = -dist1 + discrim;
 
-	if (std::isnan(dist1))
-	{
-		std::cout << ray.direction.x << " " << ray.direction.y << " " << ray.direction.z << std::endl;
-		std::cout << discrim << std::endl;
-		std::cout << ray.origin.x << " " << ray.origin.y << " " << ray.origin.z << std::endl;
-	}
-	
 	std::vector<double> out;
 
 	out.push_back(dist1);
