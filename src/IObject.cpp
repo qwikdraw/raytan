@@ -2,56 +2,81 @@
 
 constexpr glm::dvec3 IObject::direction;
 
-Ray	IObject::rayTransform(const Ray& ray) const
+std::vector<Intersect>	IObject::findIntersections(const Ray&) const
 {
-	Ray out;
+	assert(!"default implementation should not be called");
+	return std::vector<Intersect>();
+}
 
-	out.origin = ray.origin - position;
+glm::dvec3	IObject::findNormal(const glm::dvec3&) const
+{
+	assert(!"default implementation should not be called");
+	return glm::dvec3();
+}
+
+glm::dvec2	IObject::uvMap(const glm::dvec3&, const glm::dvec3&) const
+{
+	assert(!"default implementation should not be called");
+	return glm::dvec3();
+}
+
+bool	IObject::IsPrimitive(void) const
+{
+	return true;
+}
+
+// a default implementation for primitive shapes. Compound shapes should implement their own
+Intersect	IObject::Intersection(const Ray& ray) const
+{
+	Ray transformed;
+	transformed.origin = InverseTransformPoint(ray.origin, transform);
+	transformed.direction = InverseTransformVector(ray.direction, transform);
 	
-	out.direction = glm::rotateX(ray.direction, glm::radians(-rotation.x));
-	out.direction = glm::rotateY(out.direction, glm::radians(-rotation.y));
-	out.direction = glm::rotateZ(out.direction, glm::radians(-rotation.z));
+	std::vector<double> dists = findDistances(transformed);
+	double bestDist = INFINITY;
 
-	out.origin = glm::rotateX(out.origin, glm::radians(-rotation.x));
-	out.origin = glm::rotateY(out.origin, glm::radians(-rotation.y));
-	out.origin = glm::rotateZ(out.origin, glm::radians(-rotation.z));
+	for (auto d : dists)
+	{
+		if (d < bestDist && d > 0)
+			bestDist = d;
+	}
 
+	Intersect out;
+	out.distance = bestDist;
+	out.hitRef = this;
+	out.transform = transform;
+	out.positive = true;
+	
 	return out;
 }
 
-std::pair<double, IObject*>	IObject::Intersection(const Ray& ray) const
-{
-	auto dists = findDistances(rayTransform(ray));	
-	std::pair<double, IObject*> bestPair(INFINITY, nullptr);
-	
-	for (auto& pair : dists)
-	{
-		if (pair.first < bestPair.first && pair.first > 0)
-			bestPair = pair;
-	}
-	return bestPair;
-}
-
-RayResult	IObject::MakeRayResult(double distance, const Ray& ray, IObject* ref) const
+RayResult	IObject::MakeRayResult(const Intersect& intersect, const Ray& ray) const
 {
 	RayResult out;
-	Ray transformedRay = rayTransform(ray);
-	glm::dvec3 transformI = transformedRay.origin + transformedRay.direction * distance;
-	
-	out.position = ray.origin + ray.direction * distance;
-	out.normal = ref->findNormal(transformI, transformedRay);
+
+	// the world position
+	out.position = ray.origin + ray.direction * intersect.distance;
+
+	// because we are going from world -> relative
+	glm::dvec3 relativePos = InverseTransformPoint(out.position, intersect.transform);
+
+	// relative normal
+	out.normal = intersect.hitRef->findNormal(relativePos);
 
 	glm::dvec2 uv;
-	if (ref->material.materialSampler || ref->material.colorSampler || ref->material.normalSampler)
-		uv = ref->uvMap(transformI, out.normal);
-
-	out.normal = glm::rotateZ(out.normal, glm::radians(rotation.z));
-        out.normal = glm::rotateY(out.normal, glm::radians(rotation.y));
-        out.normal = glm::rotateX(out.normal, glm::radians(rotation.x));
-	
-	if (ref->material.materialSampler)
+	if (intersect.hitRef->material.materialSampler ||
+	    intersect.hitRef->material.colorSampler ||
+	    intersect.hitRef->material.normalSampler)
 	{
-		glm::dvec4 sample = ref->material.materialSampler->Color(uv.x, uv.y);
+		uv = intersect.hitRef->uvMap(relativePos, out.normal);
+	}
+
+	// going from relative -> world
+	out.normal = TransformVector(out.normal, intersect.transform);
+	
+	if (intersect.hitRef->material.materialSampler)
+	{
+		glm::dvec4 sample = intersect.hitRef->material.materialSampler->Color(uv.x, uv.y);
 		out.diffuse = sample.r;
 		out.reflect = sample.g;
 		out.refract = sample.b;
@@ -59,20 +84,20 @@ RayResult	IObject::MakeRayResult(double distance, const Ray& ray, IObject* ref) 
 	}
 	else
 	{
-		out.diffuse = ref->material.diffuse;
-		out.reflect = ref->material.reflect;
-		out.refract = ref->material.refract;
-		out.refractiveIndex = ref->material.refractiveIndex;
+		out.diffuse = intersect.hitRef->material.diffuse;
+		out.reflect = intersect.hitRef->material.reflect;
+		out.refract = intersect.hitRef->material.refract;
+		out.refractiveIndex = intersect.hitRef->material.refractiveIndex;
 	}
 
-	if (ref->material.colorSampler)
+	if (intersect.hitRef->material.colorSampler)
 	{
-		glm::dvec4 sample = ref->material.colorSampler->Color(uv.x, uv.y);
+		glm::dvec4 sample = intersect.hitRef->material.colorSampler->Color(uv.x, uv.y);
 		out.color = glm::vec3(sample);
 	}
 	else
 	{
-		out.color = ref->material.color;
+		out.color = intersect.hitRef->material.color;
 	}
 
 //	if (ref->normalSampler)
@@ -80,5 +105,74 @@ RayResult	IObject::MakeRayResult(double distance, const Ray& ray, IObject* ref) 
 //		//stuff
 //	}
 
+	if (!intersect.positive)
+		out.normal = -out.normal;
+	
+	return out;
+}
+
+glm::dvec3 IObject::TransformPoint(const glm::dvec3& p, const Transform& t)
+{
+	glm::dvec3 out;
+	
+	out = glm::rotateZ(p, glm::radians(t.rotation.z));
+	out = glm::rotateY(out, glm::radians(t.rotation.y));
+	out = glm::rotateX(out, glm::radians(t.rotation.x));
+
+	out = out + t.position;
+	
+	return out;
+}
+
+glm::dvec3 IObject::TransformVector(const glm::dvec3& v, const Transform& t)
+{
+	glm::dvec3 out;
+
+	out = glm::rotateZ(v, glm::radians(t.rotation.z));
+	out = glm::rotateY(out, glm::radians(t.rotation.y));
+	out = glm::rotateX(out, glm::radians(t.rotation.x));
+
+	return out;
+}
+
+glm::dvec3 IObject::InverseTransformPoint(const glm::dvec3& p, const Transform& t)
+{
+	glm::dvec3 out;
+
+	out = p - t.position;
+	
+	out = glm::rotateX(out, glm::radians(-t.rotation.x));
+	out = glm::rotateY(out, glm::radians(-t.rotation.y));
+	out = glm::rotateZ(out, glm::radians(-t.rotation.z));
+
+	return out;
+}
+
+glm::dvec3 IObject::InverseTransformVector(const glm::dvec3& v, const Transform& t)
+{
+	glm::dvec3 out;
+
+	out = glm::rotateX(v, glm::radians(-t.rotation.x));
+	out = glm::rotateY(out, glm::radians(-t.rotation.y));
+	out = glm::rotateZ(out, glm::radians(-t.rotation.z));
+
+	return out;
+}
+
+Transform IObject::CompoundTransform(const Transform& t1, const Transform& t2)
+{
+	Transform out;
+
+	out.position = TransformPoint(t1.position, t2);
+	
+	glm::dmat4 m1 = glm::eulerAngleXYZ(glm::radians(t1.rotation.x),
+					   glm::radians(t1.rotation.y),
+					   glm::radians(t1.rotation.z));
+	glm::dmat4 m2 = glm::eulerAngleXYZ(glm::radians(t2.rotation.x),
+					   glm::radians(t2.rotation.y),
+					   glm::radians(t2.rotation.z));
+	
+	glm::extractEulerAngleXYZ(m2 * m1, out.rotation.x, out.rotation.y, out.rotation.z);
+	out.rotation = glm::degrees(out.rotation);
 	return out;
 }
