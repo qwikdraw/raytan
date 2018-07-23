@@ -23,16 +23,17 @@ Scene::~Scene(void)
 
 RayResult	Scene::getRayResult(const Ray& ray) const
 {
-	std::pair<double, IObject*> bestPair(INFINITY, nullptr);
+	Intersect bestIntersect;
 	int bestIndex = -1;
-	
+
+	bestIntersect.distance = INFINITY;
 	for (unsigned i = 0; i < _objects.size(); i++)
 	{
-		auto distPair = _objects[i]->Intersection(ray);
+		Intersect intersect = _objects[i]->Intersection(ray);
 
-		if (distPair.first < bestPair.first)
+		if (intersect.distance < bestIntersect.distance)
 		{
-			bestPair = distPair;
+			bestIntersect = intersect;
 			bestIndex = i;
 		}
 	}
@@ -45,7 +46,7 @@ RayResult	Scene::getRayResult(const Ray& ray) const
 		return out;
 	}
 
-	return _objects[bestIndex]->MakeRayResult(bestPair.first, ray, bestPair.second);
+	return _objects[bestIndex]->MakeRayResult(bestIntersect, ray);
 }
 
 // getDiffuse will also do shadow management
@@ -81,11 +82,11 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 
 	for (auto object : _objects)
 	{
-		auto pair = object->Intersection(ray);
-		double dist = pair.first;
+		Intersect intersect = object->Intersection(ray);
+		double dist = intersect.distance;
 		if (dist < lightDist)
 		{
-			RayResult data = object->MakeRayResult(dist, ray, pair.second);
+			RayResult data = object->MakeRayResult(intersect, ray);
 			if (data.refract == 0)
 				return glm::dvec3(0, 0, 0);
 			intensity *= data.refract * (1.0 - data.diffuse * (glm::dvec3(1) - data.color));

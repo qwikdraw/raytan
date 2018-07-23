@@ -74,7 +74,7 @@ void	Window::render(int width, int height)
 	QFuture<Image*> renderTask = QtConcurrent::run([this, width, height](){
 		Image* im = new Image(width, height);
 		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
-		RenderPipeline::NormalizeColor(im, 0.5);
+		RenderPipeline::NormalizeColor(im, 0.2);
 		RenderPipeline::ImageToRGB32(im);
 		return im;
 	});
