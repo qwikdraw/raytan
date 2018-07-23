@@ -180,6 +180,5 @@ Intersect	Subtraction::Intersection(const Ray& ray) const
 		if (hit.distance < best.distance && hit.distance > 0)
 			best = hit;
 	}
-	best.transform = CompoundTransform(best.transform, transform);
 	return best;
 }

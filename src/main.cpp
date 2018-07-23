@@ -23,7 +23,7 @@ static void	add_to_scene(Scene& scene)
 	m1.refract = 0;
 	m1.refractiveIndex = 1.4;
 	m1.materialSampler = nullptr;
-	m1.color = glm::dvec3(1, 0, 0);
+	m1.color = glm::dvec3(1, 1, 1);
 	m1.colorSampler = nullptr;//new Sampler("assets/image.png");
 	m1.normalSampler = nullptr;
 
@@ -33,7 +33,7 @@ static void	add_to_scene(Scene& scene)
 	m2.refract = 0;
 	m2.refractiveIndex = 1.4;
 	m2.materialSampler = nullptr;
-	m2.color = glm::dvec3(0, 1, 0);
+	m2.color = glm::dvec3(1, 1, 1);
 	m2.colorSampler = nullptr;
 	m2.normalSampler = nullptr;
 
@@ -43,7 +43,7 @@ static void	add_to_scene(Scene& scene)
 	m3.refract = 0;
 	m3.refractiveIndex = 1.4;
 	m3.materialSampler = nullptr;
-	m3.color = glm::dvec3(0, 0, 1);
+	m3.color = glm::dvec3(1, 1, 1);
 	m3.colorSampler = nullptr;
 	m3.normalSampler = nullptr;
 	
@@ -55,7 +55,7 @@ static void	add_to_scene(Scene& scene)
 	s1->radius = 0.1;
 
 	Sphere *s2 = new Sphere;
-	s2->transform.position = glm::dvec3(0, 0, 0.06);
+	s2->transform.position = glm::dvec3(0, 0, 1);
 	s2->transform.rotation = glm::dvec3(0, 0, 0);
 	s2->material = m1;
 
@@ -63,7 +63,7 @@ static void	add_to_scene(Scene& scene)
 
 	Plane *p2 = new Plane;
 	p2->transform.position = glm::dvec3(0, 0, 0);
-	p2->transform.rotation = glm::dvec3(0, 0, -90);
+	p2->transform.rotation = glm::dvec3(0, 0, 0);
 	p2->material = m3;
 	
 	Subtraction *sub = new Subtraction(s1, s2);
@@ -71,8 +71,8 @@ static void	add_to_scene(Scene& scene)
 	sub->transform.rotation = glm::dvec3(0, 0, 0);
 
 	Subtraction *sub2 = new Subtraction(s1, p2);
-	sub2->transform.position = glm::dvec3(-0.4, 0, 0.3);
-	sub2->transform.rotation = glm::dvec3(0, 35, 10);
+	sub2->transform.position = glm::dvec3(0, 0, 0);
+	sub2->transform.rotation = glm::dvec3(0, 0, 0);
 
 	scene.AddObject(sub2);
 
@@ -95,7 +95,7 @@ int	main(int argc, char *argv[])
 
 	add_to_scene(scene);
 	
-	glm::dvec3 pos = {-1.3, 0, 0};
+	glm::dvec3 pos = {-1, 0, 0};
 	glm::dvec3 dir = {1, 0, 0};
 	Camera camera(pos, glm::normalize(dir), glm::dvec3(0, 1, 0), 45, 1);
 	

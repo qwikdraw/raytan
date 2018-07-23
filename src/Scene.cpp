@@ -80,6 +80,8 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 	// inverse square falloff
 	glm::dvec3 intensity = light.color / (lightDist * lightDist);
 
+//	return intensity;
+	
 	for (auto object : _objects)
 	{
 		Intersect intersect = object->Intersection(ray);
