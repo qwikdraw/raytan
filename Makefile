@@ -24,7 +24,8 @@ Cone \
 Cube \
 Sampler \
 IObject \
-Subtraction
+Subtraction \
+Addition
 
 SRC_DIR = src
 OBJ_DIR = obj

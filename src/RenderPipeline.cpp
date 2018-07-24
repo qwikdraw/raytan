@@ -48,8 +48,6 @@ void	RP::NormalizeColor(Image* image, double gamma)
 			averageCol += raw.color / totalPixels;			
 		}
 	}
-
-	std::cout << averageCol.x << " " << averageCol.y << " " << averageCol.z << std::endl;
 	
 	double scaleFactor = (averageCol.r + averageCol.g + averageCol.b) * 2 / 3.0;
 
