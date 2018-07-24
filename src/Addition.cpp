@@ -144,7 +144,7 @@ std::vector<double>	Addition::findDistances(const Ray&) const
 
 Addition::Addition(IObject* shape1, IObject* shape2)
 {
-	_shape1 = shape2;
+	_shape1 = shape1;
 	_shape2 = shape2;
 }
 
