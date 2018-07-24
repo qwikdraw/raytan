@@ -31,9 +31,9 @@ Window::Window(Scene& s, Camera& c) :
 	QSlider* bouncesSlider = new QSlider(Qt::Horizontal);
 	bouncesSlider->setTickInterval(5);
 	bouncesSlider->setSingleStep(1);
-	bouncesSlider->setMaximum(30);
+	bouncesSlider->setMaximum(60);
 	bouncesSlider->setMinimum(0);
-	bouncesSlider->setValue(10);
+	bouncesSlider->setValue(20);
 	l->addWidget(bouncesSlider);
 	connect(bouncesSlider, &QAbstractSlider::sliderReleased, [this, bouncesSlider]{
 		this->_bounces = bouncesSlider->value();
@@ -67,7 +67,6 @@ Window::Window(Scene& s, Camera& c) :
 	});
 	l->addWidget(saveButton);
 
-	_progressBar.setMaximum(100);
 	_progressBar.setMinimum(0);
 
 	// Main layout
@@ -86,8 +85,10 @@ void	Window::render(int width, int height)
 	else if (_watcher)
 		return;
 
+	_progressBar.setValue(0);
 	QFuture<Image*> renderTask = QtConcurrent::run([this, width, height](){
 		Image* im = new Image(width, height);
+		_progressBar.setMaximum(height * 2);
 		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
 		RenderPipeline::NormalizeColor(im, 0.2);
 		RenderPipeline::ImageToRGB32(im);
@@ -97,7 +98,12 @@ void	Window::render(int width, int height)
 	_watcher = new QFutureWatcher<Image*>(this);
 	connect(_watcher, SIGNAL(finished()), this, SLOT(setImage()));
 	_watcher->setFuture(renderTask);
-	connect(this, SIGNAL(progressUpdate(int)), &_progressBar, SLOT(setValue(int)), Qt::QueuedConnection);
+	connect(this, SIGNAL(progressUpdate()), this, SLOT(progressStep()), Qt::QueuedConnection);
+}
+
+void	Window::progressStep(void)
+{
+	_progressBar.setValue(_progressBar.value() + 1);
 }
 
 void	Window::setImage(void)

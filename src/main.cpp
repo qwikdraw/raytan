@@ -23,13 +23,13 @@ static void	add_to_scene(Scene& scene)
 	m1.refract = 0;
 	m1.refractiveIndex = 1.4;
 	m1.materialSampler = nullptr;
-	m1.color = glm::dvec3(1, 1, 1);
+	m1.color = glm::dvec3(0.5, 1, 0.5);
 	m1.colorSampler = nullptr;//new Sampler("assets/image.png");
 	m1.normalSampler = nullptr;
 
 	Material m2;
-	m2.diffuse = 0.1;
-	m2.reflect = 0.9;
+	m2.diffuse = 1.0;
+	m2.reflect = 0.0;
 	m2.refract = 0;
 	m2.refractiveIndex = 1.4;
 	m2.materialSampler = nullptr;

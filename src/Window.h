@@ -27,8 +27,9 @@ class Window : public QWidget
 	void    saveRender(void);
 public slots:
 	void	setImage(void);
+	void	progressStep(void);
 signals:
-	void	progressUpdate(int);
+	void	progressUpdate(void);
 public:
 	explicit Window(Scene& s, Camera& c);
 };
