@@ -33,7 +33,7 @@ Window::Window(Scene& s, Camera& c) :
 	bouncesSlider->setSingleStep(1);
 	bouncesSlider->setMaximum(60);
 	bouncesSlider->setMinimum(0);
-	bouncesSlider->setValue(20);
+	bouncesSlider->setValue(10);
 	l->addWidget(bouncesSlider);
 	connect(bouncesSlider, &QAbstractSlider::sliderReleased, [this, bouncesSlider]{
 		this->_bounces = bouncesSlider->value();
