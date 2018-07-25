@@ -1,13 +1,6 @@
-#include "Subtraction.hpp"
+#include "Addition.hpp"
 
-std::vector<double>	Subtraction::findDistances(const Ray&) const
-{
-	assert(!"non primitive implementation should not be called");
-	return std::vector<double>();
-}
-
-
-std::vector<Intersect>	Subtraction::getIntersectionsFrom(const IObject *o, const Ray& ray) const
+std::vector<Intersect>	Addition::getIntersectionsFrom(const IObject* o, const Ray& ray) const
 {
 	Ray transformed;
 	transformed.origin = InverseTransformPoint(ray.origin, o->transform);
@@ -24,10 +17,9 @@ std::vector<Intersect>	Subtraction::getIntersectionsFrom(const IObject *o, const
 		out.push_back(i);
 	}
 	return out;
-
 }
 
-bool Subtraction::isFacing(const Intersect& i, const Ray& ray) const
+bool	Addition::isFacing(const Intersect& i, const Ray& ray) const
 {
 	glm::dvec3 hitPoint = ray.origin + ray.direction * i.distance;
 	hitPoint = InverseTransformPoint(hitPoint, i.transform);
@@ -37,20 +29,20 @@ bool Subtraction::isFacing(const Intersect& i, const Ray& ray) const
 
 	if (!i.positive)
 		normal = -normal;
-	
+
 	if (glm::dot(normal, ray.direction) < 0)
 		return true;
-	return false;	
+	return false;
 }
 
-std::vector<Edge> Subtraction::generateEdges(const std::vector<Intersect>& p,
-					     const std::vector<Intersect>& n,
-					     const Ray& ray) const
+std::vector<Edge> Addition::generateEdges(const std::vector<Intersect>& s1,
+					  const std::vector<Intersect>& s2,
+					  const Ray& ray) const
 {
 	std::vector<Edge> out;
 	Edge edge;
 
-	for (const Intersect& i : p)
+	for (const Intersect& i : s1)
 	{
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
@@ -58,11 +50,10 @@ std::vector<Edge> Subtraction::generateEdges(const std::vector<Intersect>& p,
 		edge.positive = true;
 		out.push_back(edge);
 	}
-	for (const Intersect& i : n)
+	for (const Intersect& i : s2)
 	{
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
-		edge.inter.positive = !edge.inter.positive;
 		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 		edge.positive = false;
 		out.push_back(edge);
@@ -75,104 +66,100 @@ std::vector<Edge> Subtraction::generateEdges(const std::vector<Intersect>& p,
 	return out;
 }
 
-std::vector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
+std::vector<Intersect>	Addition::findIntersections(const Ray& ray) const
 {
-	auto p = getIntersectionsFrom(_positive, ray);
-	auto n = getIntersectionsFrom(_negative, ray);
+	auto s1 = getIntersectionsFrom(_shape1, ray);
+	auto s2 = getIntersectionsFrom(_shape2, ray);
 
-	std::vector<Edge> edges = generateEdges(p, n, ray);
-	
-	bool insideP = false;
-	bool insideN = false;
+	std::vector<Edge> edges = generateEdges(s1, s2, ray);
 
-	// checking if ray starts off inside an object
+	bool inside1 = false;
+	bool inside2 = false;
+
 	bool toggle1 = false;
 	bool toggle2 = false;
 	for (auto& edge : edges)
 	{
 		if (edge.positive && !toggle1)
 		{
-			insideP = !edge.forwardFacing;
+			inside1 = !edge.forwardFacing;
 			toggle1 = true;
 		}
 		if (!edge.positive && !toggle2)
 		{
-			insideN = !edge.forwardFacing;
+			inside2 = !edge.forwardFacing;
 			toggle2 = true;
 		}
 		if (toggle1 && toggle2)
 			break;
 	}
+
 	std::vector<Intersect> out;
 	for (auto& edge : edges)
 	{
-		int event = insideP + 2 * insideN + 4 * edge.positive + 8 * edge.forwardFacing;
+		int event = inside1 + 2 * inside2 + 4 * edge.positive + 8 * edge.forwardFacing;
 
 		switch(event)
 		{
-		case(0b1001):
+		case(0b0011):
+			inside1 = false;
+			break;
+		case(0b0111):
+			inside2 = false;
+			break;
+		case(0b1010):
+			inside1 = true;
+			break;
+		case(0b0110):
 			out.push_back(edge.inter);
-			insideN = true;
+			inside2 = false;
+			break;
+		case(0b0001):
+			out.push_back(edge.inter);
+			inside1 = false;
+			break;
+		case(0b1101):
+			inside2 = true;
 			break;
 		case(0b1000):
-			insideN = true;
-			break;
-		case(0b0011):
 			out.push_back(edge.inter);
-			insideN = false;
-			break;
-		case(0b0010):
-			insideN = false;
-			break;
-		case(0b1110):
-			insideP = true;
+			inside1 = true;
 			break;
 		case(0b1100):
 			out.push_back(edge.inter);
-			insideP = true;
-			break;
-		case(0b0111):
-			insideP = false;
-			break;
-		case(0b0101):
-			out.push_back(edge.inter);
-			insideP = false;
+			inside2 = true;
 			break;
 		default:
 			;
-//			for (auto& e : edges)
-//			{
-//				std::cout << e.inter.distance <<
-//					" " << e.inter.hitRef << " " <<
-//					e.inter.positive << " " <<
-//					e.forwardFacing << " " << e.positive << std::endl;
-//			}
-//			std::cout << "bad edge order: " << insideP << " " << insideN << " " <<
-//				edge.positive << " " << edge.forwardFacing << std::endl;
-//			assert(!"badly defined shape");
 		}
 	}
-	return out;	
+	return out;
 }
 
-Subtraction::Subtraction(IObject *positive, IObject *negative)
+std::vector<double>	Addition::findDistances(const Ray&) const
 {
-	_positive = positive;
-	_negative = negative;
+	assert(!"non primitive implementation should not be called");
+	return std::vector<double>();
 }
 
-Subtraction::~Subtraction(void)
+Addition::Addition(IObject* shape1, IObject* shape2)
 {
-	delete _positive;
-	delete _negative;
+	_shape1 = shape1;
+	_shape2 = shape2;
 }
 
-bool	Subtraction::IsPrimitive(void) const
+Addition::~Addition(void)
 {
-	return false;	
+	delete _shape1;
+	delete _shape2;
 }
 
-Intersect	Subtraction::Intersection(const Ray& ray) const
+bool	Addition::IsPrimitive(void) const
+{
+	return false;
+}
+
+Intersect	Addition::Intersection(const Ray& ray) const
 {
 	Ray transformed;
 	transformed.origin = InverseTransformPoint(ray.origin, transform);

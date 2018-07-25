@@ -11,6 +11,7 @@
 #include "Cone.hpp"
 #include "Cube.hpp"
 #include "Subtraction.hpp"
+#include "Addition.hpp"
 
 static void	add_to_scene(Scene& scene)
 {
@@ -28,12 +29,12 @@ static void	add_to_scene(Scene& scene)
 	m1.normalSampler = nullptr;
 
 	Material m2;
-	m2.diffuse = 0.6;
-	m2.reflect = 0.4;
+	m2.diffuse = 1;
+	m2.reflect = 0;
 	m2.refract = 0;
-	m2.refractiveIndex = 1.4;
+	m2.refractiveIndex = 1.0;
 	m2.materialSampler = nullptr;
-	m2.color = glm::dvec3(0.4, 1, 0.6);
+	m2.color = glm::dvec3(0.5, 0.5, 1);
 	m2.colorSampler = nullptr;
 	m2.normalSampler = nullptr;
 
@@ -48,12 +49,12 @@ static void	add_to_scene(Scene& scene)
 	m3.normalSampler = nullptr;
 
 	Material m4;
-	m4.diffuse = 0.7;
+	m4.diffuse = 0;
 	m4.reflect = 0;
-	m4.refract = 0.3;
-	m4.refractiveIndex = 1.4;
+	m4.refract = 1;
+	m4.refractiveIndex = 1.1;
 	m4.materialSampler = nullptr;
-	m4.color = glm::dvec3(0.1, 0.4, 0.9);
+	m4.color = glm::dvec3(0, 0, 0);
 	m4.colorSampler = nullptr;
 	m4.normalSampler = nullptr;
 
@@ -131,14 +132,26 @@ static void	add_to_scene(Scene& scene)
 	Subtraction *sub4 = new Subtraction(cube, s2);
 	sub4->transform.position = glm::dvec3(0, 0, -0.2);
 	sub4->transform.rotation = glm::dvec3(20, 50, 30);
+	
+	scene.AddObject(sub4);
 
-	scene.AddObject(cube);
-	// scene.AddObject(cone2);
+	Sphere *s10 = new Sphere;
+	s10->transform.position = glm::dvec3(0, 0, 0);
+	s10->transform.rotation = glm::dvec3(0, 0, 0);
+	s10->material = m4;
+	s10->radius = 0.05;
 
-	// scene.AddObject(sub3);
+	Sphere *s11 = new Sphere;
+	s11->transform.position = glm::dvec3(0, 0, 0.09);
+	s11->transform.rotation = glm::dvec3(0, 0, 0);
+	s11->material = m4;
+	s11->radius = 0.1;
 
-	// scene.AddObject(sub4);
-
+	Addition *add = new Addition(s11, s10);
+	add->transform.position = glm::dvec3(-0.4, 0, -0.15);
+	add->transform.rotation = glm::dvec3(0, 20, 30);
+	
+	scene.AddObject(add);
 	scene.AddObject(p1);
 }
 

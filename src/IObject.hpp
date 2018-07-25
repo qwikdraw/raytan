@@ -45,6 +45,7 @@ struct Intersect
 class   IObject
 {
 	friend class Subtraction;
+	friend class Addition;
 protected:
 
 	// method is not implemented for primitives
