@@ -38,7 +38,21 @@ glm::dvec3		Cone::findNormal(const glm::dvec3& intersection) const
 
 glm::dvec2		Cone::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const
 {
-	return glm::dvec2(0.5, 0.5); // Will  update later
+
+	glm::dvec2	out;
+	// double		radiusAtIntersection = glm::abs(glm::tan(glm::radians(angle)) * intersection.y);
+	// double		twoPiR = 2.0 * glm::pi<double>() * radiusAtIntersection;
+
+	glm::dvec3	newNormal = glm::normalize(glm::dvec3(normal.x, 0, normal.z));
+	double radiansAngle = glm::acos(glm::dot(glm::dvec3(1, 0, 0), newNormal));
+
+	if (glm::dot(glm::dvec3(0, 0, 1), newNormal) < 0)
+		radiansAngle = 2 * glm::pi<double>() - radiansAngle;
+
+	out.x = radiansAngle / (2 * glm::pi<double>());
+	out.y = glm::mod(glm::abs(intersection.y), 1.0); //twoPiR) / twoPiR;
+
+	return out;
 }
 
 std::vector<double> Cone::findDistances(const Ray& ray) const

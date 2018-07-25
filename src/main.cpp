@@ -19,13 +19,13 @@ static void	add_to_scene(Scene& scene)
 	scene.lights.push_back((Light){{-1, 0, 0.5}, {1, 1, 1}});
 
 	Material m1;
-	m1.diffuse = 1;
+	m1.diffuse = 1.0;
 	m1.reflect = 0;
 	m1.refract = 0;
-	m1.refractiveIndex = 1.4;
+	m1.refractiveIndex = 1.0;
 	m1.materialSampler = nullptr;
-	m1.color = glm::dvec3(0.5, 1, 0.5);
-	m1.colorSampler = nullptr;//new Sampler("assets/image.png");
+	m1.color = glm::dvec3(1, 1, 1);
+	m1.colorSampler = new Sampler("assets/image.png");
 	m1.normalSampler = nullptr;
 
 	Material m2;
@@ -40,8 +40,8 @@ static void	add_to_scene(Scene& scene)
 
 	Material m3;
 	m3.diffuse = 0.5;
-	m3.reflect = 0;
-	m3.refract = 0.5;
+	m3.reflect = 0.5;
+	m3.refract = 0;
 	m3.refractiveIndex = 1.1;
 	m3.materialSampler = nullptr;
 	m3.color = glm::dvec3(1, 0.4, 0.6);
@@ -57,7 +57,7 @@ static void	add_to_scene(Scene& scene)
 	m4.color = glm::dvec3(0, 0, 0);
 	m4.colorSampler = nullptr;
 	m4.normalSampler = nullptr;
-	
+
 	Sphere *s1 = new Sphere;
 	s1->transform.position = glm::dvec3(0, 0, 0);
 	s1->transform.rotation = glm::dvec3(0, 0, 0);
@@ -66,23 +66,38 @@ static void	add_to_scene(Scene& scene)
 	s1->radius = 0.1;
 
 	Cone *cone = new Cone;
-	cone->transform.position = glm::dvec3(0, 0, 0);
+	cone->transform.position = glm::dvec3(0.3, 0, -0.35);
 	cone->transform.rotation = glm::dvec3(0, 0, 0);
-	cone->material = m3;
+	cone->material = m1;
 
 	cone->angle = 40;
+
+	Cone *cone2 = new Cone;
+	cone2->transform.position = glm::dvec3(0.3, 0, 0.35);
+	cone2->transform.rotation = glm::dvec3(0, 180, 0);
+	cone2->material = m1;
+
+	cone2->angle = 40;
 
 	Plane *plane = new Plane;
 	plane->transform.position = glm::dvec3(0, 0, 0);
 	plane->transform.rotation = glm::dvec3(0, 0, 0);
-	plane->material = m3;
+	plane->material = m1;
 	
 	Cylinder *cylinder = new Cylinder;
-	cylinder->transform.position = glm::dvec3(0, 0, 0);
-	cylinder->transform.rotation = glm::dvec3(90, 0, 0);
-	cylinder->material = m3;
+	cylinder->transform.position = glm::dvec3(0.3, 0, 0.35);
+	cylinder->transform.rotation = glm::dvec3(0, 0, 0);
+	cylinder->material = m1;
 
-	cylinder->radius = 0.05;
+	cylinder->radius = 0.1;
+
+	Cylinder *cylinder2 = new Cylinder;
+	cylinder2->transform.position = glm::dvec3(0.3, 0, -0.35);
+	cylinder2->transform.rotation = glm::dvec3(0, 180, 0);
+	cylinder2->material = m1;
+
+	cylinder2->radius = 0.1;
+
 
 	Subtraction *sub1 = new Subtraction(s1, cylinder);
 	sub1->transform.position = glm::dvec3(0, 0, 0);
@@ -96,7 +111,6 @@ static void	add_to_scene(Scene& scene)
 	sub3->transform.position = glm::dvec3(0, -0.1, 0.1);
 	sub3->transform.rotation = glm::dvec3(0, 20, 50);	
 
-	scene.AddObject(sub3);
 
 	Plane *p1 = new Plane;
 	p1->transform.position = glm::dvec3(1, 0, 0);
@@ -110,10 +124,10 @@ static void	add_to_scene(Scene& scene)
 	s2->radius = 0.115;
 	
 	Cube *cube = new Cube;
-	cube->transform.position = glm::dvec3(0, 0, 0);
-	cube->transform.rotation = glm::dvec3(0, 0, 0);
-	cube->size = glm::dvec3(0.2);
-	cube->material = m2;
+	cube->transform.position = glm::dvec3(0, 0.3, -0.3);
+	cube->transform.rotation = glm::dvec3(30, 30, 30);
+	cube->size = glm::dvec3(0.2, 0.25, 0.56);
+	cube->material = m1;
 
 	Subtraction *sub4 = new Subtraction(cube, s2);
 	sub4->transform.position = glm::dvec3(0, 0, -0.2);
@@ -138,7 +152,6 @@ static void	add_to_scene(Scene& scene)
 	add->transform.rotation = glm::dvec3(0, 20, 30);
 	
 	scene.AddObject(add);
-	
 	scene.AddObject(p1);
 }
 
@@ -152,7 +165,7 @@ int	main(int argc, char *argv[])
 
 	add_to_scene(scene);
 	
-	glm::dvec3 pos = {-1.3, 0, 0};
+	glm::dvec3 pos = {-1.8, 0, 0};
 	glm::dvec3 dir = {1, 0, 0};
 	Camera camera(pos, glm::normalize(dir), glm::dvec3(0, 1, 0), 45, 1);
 	

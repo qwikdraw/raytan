@@ -27,18 +27,29 @@ glm::dvec2		Cylinder::solveQuadratic(double a, double b, double c) const
 glm::dvec3		Cylinder::findNormal(const glm::dvec3& intersection) const
 {
 
-	glm::dvec3 normal = intersection;
+	glm::dvec3 tmp = intersection;
 
-	double dist = glm::dot(normal, direction);
+	double dist = glm::dot(tmp, direction);
 
-	normal = (direction * dist);
+	tmp = (direction * dist);
 
-	return glm::normalize(intersection - normal);
+	return glm::normalize(intersection - tmp);
 }
 
 glm::dvec2		Cylinder::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const
 {
-	return glm::dvec2(0.5, 0.5); // Will  update later
+	glm::dvec2	out;
+
+	double twoPiR = 2.0 * glm::pi<double>() * radius;
+	double radiansAngle = glm::acos(glm::dot(glm::dvec3(1, 0, 0), normal));
+
+	if (glm::dot(glm::dvec3(0, 0, 1), normal) < 0)
+		radiansAngle = 2 * glm::pi<double>() - radiansAngle;
+
+	out.x = radiansAngle / (2 * glm::pi<double>());
+	out.y = glm::mod(intersection.y, twoPiR) / twoPiR;
+
+	return out;
 }
 
 std::vector<double> Cylinder::findDistances(const Ray& ray) const
