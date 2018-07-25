@@ -148,6 +148,12 @@ Addition::Addition(IObject* shape1, IObject* shape2)
 	_shape2 = shape2;
 }
 
+Addition::~Addition(void)
+{
+	delete _shape1;
+	delete _shape2;
+}
+
 bool	Addition::IsPrimitive(void) const
 {
 	return false;

@@ -20,6 +20,7 @@ class	Addition : public IObject
 	std::vector<double> findDistances(const Ray&) const;
 public:
 	Addition(IObject* shape1, IObject* shape2);
+	~Addition(void);
 
 	bool IsPrimitive(void) const;
 	Intersect Intersection(const Ray&) const;

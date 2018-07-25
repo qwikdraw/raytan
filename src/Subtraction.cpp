@@ -161,6 +161,12 @@ Subtraction::Subtraction(IObject *positive, IObject *negative)
 	_negative = negative;
 }
 
+Subtraction::~Subtraction(void)
+{
+	delete _positive;
+	delete _negative;
+}
+
 bool	Subtraction::IsPrimitive(void) const
 {
 	return false;	

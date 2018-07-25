@@ -27,6 +27,7 @@ class	Subtraction : public IObject
 	std::vector<double> findDistances(const Ray&) const;
 public:
 	Subtraction(IObject *positive, IObject *negative);
+	~Subtraction(void);
 
 	bool IsPrimitive(void) const;
 	Intersect Intersection(const Ray&) const;
