@@ -21,6 +21,9 @@ struct	Image
 
 namespace	RenderPipeline
 {
+	void    RenderSquare(const Scene& scene, const Camera& camera, Image* image, Window* win,
+		int recursionLvl, int startx, int starty);
+
 	// fills the image with raw color values
 	void	SceneToImage(const Scene&, const Camera&, Image* im, Window* win, int recursionLvl = 10);
 

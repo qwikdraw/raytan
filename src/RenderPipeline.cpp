@@ -1,20 +1,36 @@
+#include <thread>
+
 #include "RenderPipeline.hpp"
 
 namespace RP = RenderPipeline;
 
-void	RP::SceneToImage(const Scene& scene, const Camera& camera, Image* image, Window* win, int recursionLvl)
+void	RP::RenderSquare(const Scene& scene, const Camera& camera, Image* image, Window* win,
+	int recursionLvl, int startx, int starty)
 {
-	for (int y = 0; y < image->height; y++)
+	for (int y = starty; y < starty + image->height / 2; y++)
 	{
-		for (int x = 0; x < image->width; x++)
+		for (int x = startx; x < startx + image->width / 2; x++)
 		{
 			double normalizedX = (2 * x - image->width) / (double)image->width;
 			double normalizedY = (2 * y - image->height) / (double)image->height;
 			RawColor c = scene.TraceRay(camera.GetRay(normalizedX, normalizedY), recursionLvl);
-			image->raw.push_back(c);
+			image->raw[x + y * image->width] = c;
 		}
-		emit win->progressUpdate(1 + 100.0 * (y / (double)image->height));
+		emit win->progressUpdate();
 	}
+}
+
+void	RP::SceneToImage(const Scene& scene, const Camera& camera, Image* image, Window* win, int recursionLvl)
+{
+	image->raw.resize(image->width * image->height);
+	std::thread one(RP::RenderSquare, scene, camera, image, win, recursionLvl, 0, 0);
+	std::thread two(RP::RenderSquare, scene, camera, image, win, recursionLvl, image->width / 2, 0);
+	std::thread three(RP::RenderSquare, scene, camera, image, win, recursionLvl, image->width / 2, image->height / 2);
+	std::thread four(RP::RenderSquare, scene, camera, image, win, recursionLvl, 0, image->height / 2);
+	one.join();
+	two.join();
+	three.join();
+	four.join();
 }
 
 void	RP::NormalizeColor(Image* image, double gamma)
