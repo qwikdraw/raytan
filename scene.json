@@ -1,0 +1,32 @@
+{
+"scene": {
+	"ambient": [0.0, 0.0, 0.0],
+	"camera": {
+		"position": [0.0, 0.0, 0.0]
+	}
+},
+"materials": [
+	{
+		"name": "rock",
+		"color": [0.18, 0.18, 0.2],
+		"diffuse": 0.9995,
+		"reflect": 0.0005,
+		"refract": 0.0
+	}	
+],
+"objects" : [
+	{
+		"type": "cube",
+		"position" : [0.0, 0.0, 0.1],
+		"size" : [0.3, 0.1, 0.2],
+		"rotation": [45.0, 45, 15.0],
+		"material": "rock"
+	},
+	{
+		"type": "sphere",
+		"position" : [0.0, 0.0, -0.1],
+		"radius" : 0.1,
+		"material": "plastic"
+	}
+]
+}
