@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/21 18:27:49 by lkaser           ###   ########.fr       */
+/*   Updated: 2018/07/25 18:05:55 by lkaser           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 
 Scene::Scene(void)
 {
-	_ambient = glm::dvec3(0.0);
+	_ambient = glm::dvec3(0.0001);
 }
 
 Scene::~Scene(void)
 {
+	for (auto object : _objects)
+		delete object;
 }
 
 RayResult	Scene::getRayResult(const Ray& ray) const

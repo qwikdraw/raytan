@@ -12,7 +12,7 @@
 #include "RenderPipeline.hpp"
 #include "lodepng.h"
 
-Window::Window(Scene& s, Camera& c) :
+Window::Window(Scene* s, Camera& c) :
 	QWidget(), _layout(), _scene(s), _camera(c),
 	_image(NULL), _watcher(NULL), _label(), _progressBar()
 {
@@ -42,7 +42,7 @@ Window::Window(Scene& s, Camera& c) :
 	// Render Button
 	QPushButton* renderButton = new QPushButton(tr("Render"));
 	connect(renderButton, &QPushButton::clicked, [this]{
-		render(1024, 1024);
+		render(2048, 2048);
 	});
 	l->addWidget(renderButton);
 
@@ -56,7 +56,7 @@ Window::Window(Scene& s, Camera& c) :
 		);
 		glm::dvec3 tmp;
 		newAmbient.getRgbF(&tmp.x, &tmp.y, &tmp.z);
-		_scene.SetAmbient(tmp);
+		_scene->SetAmbient(tmp);
 	});
 	l->addWidget(ambientButton);
 

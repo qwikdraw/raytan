@@ -16,7 +16,7 @@ class Window : public QWidget
 {
 	Q_OBJECT
 	QGridLayout _layout;
-	Scene& _scene;	
+	Scene* _scene;
 	Camera& _camera;
 	Image* _image;
 	QFutureWatcher<Image*>* _watcher;
@@ -31,5 +31,5 @@ public slots:
 signals:
 	void	progressUpdate(void);
 public:
-	explicit Window(Scene& s, Camera& c);
+	explicit Window(Scene* s, Camera& c);
 };

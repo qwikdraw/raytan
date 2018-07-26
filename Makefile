@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/23 21:00:09 by lkaser           ###   ########.fr        #
+#    Updated: 2018/07/25 18:48:12 by lkaser           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,8 @@ Cube \
 Sampler \
 IObject \
 Subtraction \
-Addition
+Addition \
+parse
 
 SRC_DIR = src
 OBJ_DIR = obj
