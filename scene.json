@@ -36,10 +36,11 @@
 		"material": "plastic"
 	},
 	{
-		"type": "cube",
-		"position" : [-0.3, 0.0, 0],
+		"type": "cone",
+		"position" : [0.3, 0.1, -0.1],
 		"size" : [0.1, 0.2, 0.2],
 		"rotation": [45.0, 45, 15.0],
+		"angle" : 30,
 		"material": "glass"
         }
 ]
