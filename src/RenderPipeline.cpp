@@ -70,3 +70,44 @@ void	RP::ImageToRGB32(Image* image)
 */
 	image->raw.clear();
 }
+
+void	RP::SobelEdge(Image* image)
+{
+	Kernel<3> x_kernel = {{{ 1,  0, -1},
+			       { 2,  0, -2},
+			       { 1,  0, -1}}};
+	
+	Kernel<3> y_kernel = {{{ 1,  2,  1},
+			       { 0,  0,  0},
+			       {-1, -2, -1}}};
+
+	Image depth;
+
+	depth.width = image->width;
+	depth.height = image->height;
+	depth.raw.resize(depth.width * depth.height);
+
+	for (int x = 0; x < image->width; x++)
+		for (int y = 0; y < image->height; y++)
+			depth.raw[x + y * image->width].color.x = image->raw[x + y * image->width].depth;
+
+	Image* gx = ApplyKernel(depth, x_kernel);
+	Image* gy = ApplyKernel(depth, y_kernel);
+
+	for (int x = 0; x < image->width; x++)
+	{
+		for (int y = 0; y < image->height; y++)
+		{
+			size_t index = x + y * image->width;
+			double x_val = gx->raw[index].color.x;
+			double y_val = gy->raw[index].color.x;
+			double line = glm::sqrt(x_val * x_val + y_val * y_val);
+
+			image->raw[x + y * image->width].color =
+				glm::min(glm::max(image->raw[x + y * image->width].color, glm::dvec3(line * 2)),
+					 glm::dvec3(1));
+		}
+	}
+	delete gx;
+	delete gy;
+}
