@@ -151,8 +151,8 @@ static void	add_to_scene(Scene& scene)
 	add->transform.position = glm::dvec3(-0.4, 0, -0.15);
 	add->transform.rotation = glm::dvec3(0, 20, 30);
 	
-	scene.AddObject(add);
-	scene.AddObject(p1);
+//	scene.AddObject(add);
+//	scene.AddObject(p1);
 }
 
 int	main(int argc, char *argv[])
