@@ -24,5 +24,9 @@ namespace	RenderPipeline
 	// converts the raw color values to 32 bit rgba values
 	void	ImageToRGB32(Image*);
 
+	// uses the depth value of the image to draw edges onto the image
 	void	SobelEdge(Image*, glm::dvec3 color = glm::dvec3(1));
+
+	// uses a limited color palette
+	void	Cartoon(Image*, int palette_size = 10);
 };
