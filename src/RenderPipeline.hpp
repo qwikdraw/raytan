@@ -24,5 +24,5 @@ namespace	RenderPipeline
 	// converts the raw color values to 32 bit rgba values
 	void	ImageToRGB32(Image*);
 
-	void	SobelEdge(Image*);
+	void	SobelEdge(Image*, glm::dvec3 color = glm::dvec3(1));
 };

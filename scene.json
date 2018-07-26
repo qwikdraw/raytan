@@ -12,7 +12,14 @@
 		"diffuse": 0.9995,
 		"reflect": 0.0005,
 		"refract": 0.0
-	}	
+	},
+	{
+		"name": "glass",
+		"color": [0.8, 0.8, 0.9],
+		"diffuse": 0.1,
+		"reflect": 0.0,
+		"refract": 0.9
+	}
 ],
 "objects" : [
 	{
@@ -27,6 +34,13 @@
 		"position" : [0.0, 0.0, -0.1],
 		"radius" : 0.1,
 		"material": "plastic"
-	}
+	},
+	{
+		"type": "cube",
+		"position" : [-0.3, 0.0, 0],
+		"size" : [0.1, 0.2, 0.2],
+		"rotation": [45.0, 45, 15.0],
+		"material": "glass"
+        }
 ]
 }

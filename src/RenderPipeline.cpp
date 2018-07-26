@@ -71,15 +71,15 @@ void	RP::ImageToRGB32(Image* image)
 	image->raw.clear();
 }
 
-void	RP::SobelEdge(Image* image)
+void	RP::SobelEdge(Image* image, glm::dvec3 color)
 {
-	Kernel<3> x_kernel = {{{ 1,  0, -1},
-			       { 2,  0, -2},
-			       { 1,  0, -1}}};
+	Kernel<3> x_kernel = {{{ 3,  0, -3},
+			       { 10,  0, -10},
+			       { 3,  0, -3}}};
 	
-	Kernel<3> y_kernel = {{{ 1,  2,  1},
+	Kernel<3> y_kernel = {{{ 3,  10,  3},
 			       { 0,  0,  0},
-			       {-1, -2, -1}}};
+			       {-3, -10, -3}}};
 
 	Image depth;
 
@@ -88,8 +88,15 @@ void	RP::SobelEdge(Image* image)
 	depth.raw.resize(depth.width * depth.height);
 
 	for (int x = 0; x < image->width; x++)
+	{
 		for (int y = 0; y < image->height; y++)
-			depth.raw[x + y * image->width].color.x = image->raw[x + y * image->width].depth;
+		{
+			if (!std::isfinite(image->raw[x + y * image->width].depth))
+				depth.raw[x + y * image->width].color.x = 1000;
+			else
+				depth.raw[x + y * image->width].color.x = image->raw[x + y * image->width].depth;
+		}
+	}
 
 	Image* gx = ApplyKernel(depth, x_kernel);
 	Image* gy = ApplyKernel(depth, y_kernel);
@@ -101,11 +108,10 @@ void	RP::SobelEdge(Image* image)
 			size_t index = x + y * image->width;
 			double x_val = gx->raw[index].color.x;
 			double y_val = gy->raw[index].color.x;
-			double line = glm::sqrt(x_val * x_val + y_val * y_val);
+			bool line = (glm::sqrt(x_val * x_val + y_val * y_val) > 0.5);
 
-			image->raw[x + y * image->width].color =
-				glm::min(glm::max(image->raw[x + y * image->width].color, glm::dvec3(line * 2)),
-					 glm::dvec3(1));
+			if (line)
+				image->raw[x + y * image->width].color = color;
 		}
 	}
 	delete gx;
