@@ -1,37 +1,28 @@
 #include "Plane.hpp"
 
-Plane::Plane(glm::dvec3 center, glm::dvec3 normal) :
-_center(center),
-_normal(normal)
-{}
-
-double Plane::Intersection(const Ray& ray) const
+std::vector<double> Plane::findDistances(const Ray& ray) const
 {
-	double		denom;
-	glm::dvec3	subtract;
-	double		dist;
+	double dist = glm::dot(ray.direction, direction);
+	if (dist == 0)
+		return std::vector<double>();
+	dist = glm::dot(-ray.origin, direction) / dist;
 
-	denom = glm::dot(_normal, ray.direction);
-	if (glm::abs(denom) < 0.0001)
-		return INFINITY;
-	subtract = ray.origin - _center;
-	dist = glm::dot(subtract, ray.direction) / denom;
-	return (dist > 0 ? dist : INFINITY);
+	std::vector<double> out;
+	out.push_back(dist);
+	return out;
 }
 
-RayResult Plane::MakeRayResult(double distance, const Ray& ray) const
+glm::dvec3 Plane::findNormal(const glm::dvec3& intersection) const
 {
-	RayResult out;
+	return direction;
+}
 
-	out.position = ray.origin + ray.direction * distance;
-	if (glm::dot(ray.direction * -1, _normal) < 0)
-		out.normal = _normal * -1;
-	else
-		out.normal = _normal;
-	out.color = glm::dvec3(1, 0, 0);
-	out.diffuse = 1;
-	out.reflect = 0;
-	out.refract = 0;
-	out.refractiveIndex = 1;
-	return out;
+
+glm::dvec2 Plane::uvMap(const glm::dvec3& intersection, const glm::dvec3&) const
+{
+	glm::dvec2	out;
+
+	out.x = intersection.x;
+	out.y = intersection.z;
+	return glm::mod(out, 1.0);
 }

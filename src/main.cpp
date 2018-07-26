@@ -1,34 +1,31 @@
+#include <QApplication>
+#include "json.hpp"
 
-#include "Raetan.hpp"
-#include "ImagePipeline.hpp"
+#include "Window.h"
+#include "Raytan.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
-#include "Window.hpp"
-#include "Image2D.hpp"
+#include "parse.hpp"
 
-int	main(void)
+using json = nlohmann::json;
+
+int	main(int argc, char *argv[])
 {
-	Scene scene;
+	/*
+	** Later the camera a scene will be read from
+	** the scene file here.
+	*/
+	Scene* scene;
 
-	glm::dvec3 pos = {0, 0, 0};
-	glm::dvec3 dir = {1, 0, 0};
-	Camera camera(pos, dir, glm::dvec3(0, 1, 0), 45, 1);
+	scene = ParseSceneFile("scene.json");
 	
-	Image im(1000, 1000);
-
-	ImagePipeline::SceneToImage(scene, camera, im);
-	ImagePipeline::Normalize(im, 1);
-	ImagePipeline::Finalize(im);	
-
-	Window window(1000, 1000, "Raetan");
-	Image2D imageDisplay;
-	imageDisplay.Render(im.colors, im.width, im.height);
-
-	while (!window.ShouldClose())
-	{
-		window.Clear();
-		imageDisplay.Render();
-		window.Render();
-	}
-	window.Close();
+	glm::dvec3 pos = {-1.8, 0, 0};
+	glm::dvec3 dir = {1, 0, 0};
+	Camera camera(pos, glm::normalize(dir), glm::dvec3(0, 1, 0), 45, 1);
+	
+	// Initialize Qt Application with the scene and camera
+	QApplication qt(argc, argv);
+	Window window(scene, camera);
+	window.show();
+	return qt.exec();
 }

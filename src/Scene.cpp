@@ -6,37 +6,36 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/12 21:23:28 by bpierce          ###   ########.fr       */
+/*   Updated: 2018/07/25 18:05:55 by lkaser           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Scene.hpp"
 
-#include "Sphere.hpp"
-
 Scene::Scene(void)
 {
-	_objects.push_back(new Sphere(glm::dvec3(1, 0, 0), 0.1));
-	_objects.push_back(new Sphere(glm::dvec3(52, 0, 0), 50));
-	_lights.push_back((Light){{0.5, -0.3, 0}, {2, 2, 2}});
+	_ambient = glm::dvec3(0.0001);
 }
 
 Scene::~Scene(void)
 {
+	for (auto object : _objects)
+		delete object;
 }
 
 RayResult	Scene::getRayResult(const Ray& ray) const
 {
-	double bestDist = INFINITY;
+	Intersect bestIntersect;
 	int bestIndex = -1;
-	
-	for (int i = 0; i < _objects.size(); i++)
-	{
-		double dist = _objects[i]->Intersection(ray);
 
-		if (dist < bestDist)
+	bestIntersect.distance = INFINITY;
+	for (unsigned i = 0; i < _objects.size(); i++)
+	{
+		Intersect intersect = _objects[i]->Intersection(ray);
+
+		if (intersect.distance < bestIntersect.distance)
 		{
-			bestDist = dist;
+			bestIntersect = intersect;
 			bestIndex = i;
 		}
 	}
@@ -49,7 +48,7 @@ RayResult	Scene::getRayResult(const Ray& ray) const
 		return out;
 	}
 
-	return _objects[bestIndex]->MakeRayResult(bestDist, ray);
+	return _objects[bestIndex]->MakeRayResult(bestIntersect, ray);
 }
 
 // getDiffuse will also do shadow management
@@ -59,21 +58,22 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 	RawColor 	pixelColor = {{0.0, 0.0, 0.0}, 0};
 	Ray		lightRay;
 	glm::dvec3	lightVector;
-	double		dotValue;
 
-	for (auto& light : _lights)
+	for (auto& light : lights)
 	{
+		double offset = 0.00001;
+		if (glm::dot(ray.direction, rayResult.normal) > 0)
+			offset = -offset;
 		lightVector = light.position - rayResult.position;
 		lightRay.direction = glm::normalize(lightVector);
-		lightRay.origin = rayResult.position + (lightRay.direction * 0.00001); // Offset
+		lightRay.origin = rayResult.position + (rayResult.normal * offset);
 
 		glm::dvec3 intensity = lightIntensity(lightRay, light, glm::length(lightVector));
-		if (intensity.r == 0 && intensity.g == 0 && intensity.b == 0)
-			continue;
-
-		dotValue = std::max(glm::dot(rayResult.normal, lightRay.direction), 0.0);
-		pixelColor.color += rayResult.color * intensity * dotValue;
-	}	
+		intensity *= glm::abs(glm::dot(rayResult.normal, lightRay.direction));
+		intensity = glm::max(intensity, _ambient);
+		
+		pixelColor.color += rayResult.color * intensity;
+	}
 	return pixelColor;
 }
 
@@ -84,33 +84,64 @@ glm::dvec3	Scene::lightIntensity(const Ray& ray, const Light& light, double ligh
 
 	for (auto object : _objects)
 	{
-		double dist = object->Intersection(ray);
+		Intersect intersect = object->Intersection(ray);
+		double dist = intersect.distance;
 		if (dist < lightDist)
 		{
-			return glm::dvec3(0, 0, 0);
-			RayResult data = object->MakeRayResult(dist, ray);
+			RayResult data = object->MakeRayResult(intersect, ray);
 			if (data.refract == 0)
 				return glm::dvec3(0, 0, 0);
-			intensity *= data.refract * data.diffuse * data.color;
+			intensity *= data.refract * (1.0 - data.diffuse * (glm::dvec3(1) - data.color));
 		}
 	}
 	return intensity;
 }
 
+static glm::dvec3 refract(const glm::dvec3& I, const glm::dvec3& N, double eta)
+{
+	double NdotI = glm::dot(N, I);
+	double cosi = -glm::clamp(NdotI, -1.0, 1.0);	
+	double k = 1.0 - eta * eta * (1.0 - cosi * cosi);
+
+	if (k < 0.0)
+		return glm::reflect(I, N);
+	return eta * I + (eta * cosi - glm::sqrt(k)) * N;
+}
+
 Ray	Scene::getRefract(const Ray & ray, const RayResult & rayResult) const
 {
-	return (Ray){{0, 0, 0}, {0, 0, 0}, 0};
+	glm::dvec3 normal;
+	double ratio;
+	
+	if (glm::dot(ray.direction, rayResult.normal) > 0)
+	{
+		normal = rayResult.normal * -1.0;
+		ratio = rayResult.refractiveIndex;
+	}
+	else
+	{
+		normal = rayResult.normal;
+		ratio = 1.0 / rayResult.refractiveIndex;
+	}
+
+	Ray out;
+	out.direction = glm::normalize(refract(ray.direction, normal, ratio));
+	out.origin = rayResult.position + out.direction * 0.00001; // Offset
+	return out;
 }
 
 Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 {
-	return (Ray){{0, 0, 0}, {0, 0, 0}, 0};
+	Ray out;
+	out.direction = glm::normalize(glm::reflect(ray.direction, rayResult.normal));
+	out.origin = rayResult.position + out.direction * 0.00001; // Offset
+	return out;
 }
 
 RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 {
 	if (recursionLevel == -1)
-		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
+		return (RawColor){{0.0, 1.0, 0.0}, INFINITY};
 
 	// The point of Intersection
 	RayResult rayResult = getRayResult(ray);
@@ -118,7 +149,11 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
 
 	// The diffuse color
-	RawColor diffusePart = getDiffuse(ray, rayResult);
+	RawColor diffusePart = {{0.0, 0.0, 0.0}, 0};
+	if (rayResult.diffuse > 0)
+	{
+		diffusePart = getDiffuse(ray, rayResult);
+	}
 
  	// The reflect color
 	RawColor reflectPart = {{0.0, 0.0, 0.0}, 0};
@@ -143,4 +178,26 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 		       reflectPart.color * rayResult.reflect +
 		       refractPart.color * rayResult.refract;
 	return output;
+}
+
+void	Scene::SetAmbient(glm::dvec3 color)
+{
+	_ambient = color;
+}
+
+void	Scene::AddObject(IObject* o)
+{
+	_objects.push_back(o);
+}
+
+void	Scene::RemoveObject(IObject* o)
+{
+	for (size_t i = 0; i < _objects.size(); i++)
+	{
+		if (_objects[i] == o)
+		{
+			_objects.erase(_objects.begin() + i);
+			return;
+		}
+	}
 }

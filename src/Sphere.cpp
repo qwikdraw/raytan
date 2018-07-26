@@ -1,53 +1,38 @@
 #include "Sphere.hpp"
 
-Sphere::Sphere(glm::dvec3 center, double radius) :
-_center(center),
-_radius(radius)
-{}
-
-static double	closest_dist(double dist1, double dist2)
+std::vector<double> Sphere::findDistances(const Ray& ray) const
 {
-	if (dist1 < dist2)
-	{
-		if (dist1 > 0)
-			return (dist1);
-		if (dist2 > 0)
-			return (dist2);
-		return (INFINITY);
-	}
-	if (dist2 > 0)
-		return (dist2);
-	if (dist1 > 0)
-		return (dist1);
-	return (INFINITY);
-}
-
-double Sphere::Intersection(const Ray& ray) const
-{
-	glm::dvec3 temp = ray.origin - _center;
-	double dist1 = dot(ray.direction, temp);
+	double dist1 = dot(ray.direction, ray.origin);
 	double dist2;
-	double discrim = dist1 * dist1 - dot(temp, temp) + _radius * _radius;
+	double discrim = dist1 * dist1 - glm::dot(ray.origin, ray.origin) + radius * radius;
 
 	if (discrim < 0)
-		return INFINITY;
+		return std::vector<double>();
 	discrim = sqrt(discrim);
 	dist2 = -dist1 - discrim;
 	dist1 = -dist1 + discrim;
-	return closest_dist(dist1, dist2);
+
+	std::vector<double> out;
+
+	out.push_back(dist1);
+	if (dist1 != dist2)
+		out.push_back(dist2);
+	return out;
 }
 
-RayResult Sphere::MakeRayResult(double distance, const Ray& ray) const
+glm::dvec3 Sphere::findNormal(const glm::dvec3& intersection) const
 {
-	RayResult out;
+	return glm::normalize(intersection);
+}
 
-	out.position = ray.origin + ray.direction * distance;
-	out.normal = glm::normalize(out.position - _center);
-	out.color = glm::dvec3(1, 0, 0);
-	out.diffuse = 1;
-	out.reflect = 0;
-	out.refract = 0;
-	out.refractiveIndex = 1;
+glm::dvec2 Sphere::uvMap(const glm::dvec3&, const glm::dvec3& normal) const
+{
+	glm::dvec2 out;
+
+	out.x = glm::acos(glm::dot(normal, glm::dvec3(1, 0, 0)));
+	out.y = glm::acos(glm::dot(normal, glm::dvec3(0, 1, 0)));
+	out.x = out.x / 3.1415;
+	out.y = out.y / 3.1415;
 
 	return out;
 }

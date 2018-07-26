@@ -1,18 +1,12 @@
 #pragma once
 
-#include "Raetan.hpp"
+#include "Raytan.hpp"
 #include "IObject.hpp"
 
+// defines a plane centered at the origin and facing the direction of constexpr IObject::direction
 class	Plane : public IObject
 {
-	glm::dvec3	_center;
-	glm::dvec3	_normal;
-
-public:
-
-	Plane(glm::dvec3 center, glm::dvec3 normal);
-
-	double		Intersection(const Ray& ray) const;
-	RayResult	MakeRayResult(double distance, const Ray& ray) const;
-
+	std::vector<double> findDistances(const Ray& ray) const;
+	glm::dvec3 findNormal(const glm::dvec3& intersection) const;
+	glm::dvec2 uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const;
 };

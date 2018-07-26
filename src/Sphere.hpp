@@ -1,15 +1,16 @@
 #pragma once
 
-#include "Raetan.hpp"
+#include "Raytan.hpp"
 #include "IObject.hpp"
 
+
+//defines a sphere centered at the origin with a radius.
 class	Sphere : public IObject
 {
-	glm::dvec3 _center;
-	double _radius;
-public:
-	Sphere(glm::dvec3 center, double radius);
+	std::vector<double> findDistances(const Ray& ray) const;
+	glm::dvec3 findNormal(const glm::dvec3& intersection) const;
+	glm::dvec2 uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const;
 
-	double Intersection(const Ray& ray) const;
-	RayResult MakeRayResult(double distance, const Ray& ray) const;
+public:
+	double radius;
 };

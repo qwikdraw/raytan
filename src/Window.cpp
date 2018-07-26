@@ -1,246 +1,137 @@
-#include "Window.hpp"
-#include <stdexcept>
+#include <QSlider>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QPixmap>
+#include <QFileDialog>
+#include <QColorDialog>
+#include <QtConcurrent>
+#include <QFuture>
 
-Window::Window(int width, int height, std::string name) :
-	_screenCornerX(0),
-	_screenCornerY(0),
-	_width(1),
-	_height(1),
-	_windowWidth(width),
-	_windowHeight(height)
+#include "Window.h"
+#include "Raytan.hpp"
+#include "RenderPipeline.hpp"
+#include "lodepng.h"
+
+Window::Window(Scene* s, Camera& c) :
+	QWidget(), _layout(), _scene(s), _camera(c),
+	_image(NULL), _watcher(NULL), _label(), _progressBar()
 {
-	GLuint vertex_array_id;
+	setLayout(&_layout);
 
-	if (glfwInit() == GLFW_FALSE)
-		throw std::runtime_error("Failed to initialize GLFW");
-	WindowHints();
-	glfwSetErrorCallback(ErrorCallback);
-	_window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
-	if (!_window)
+	// Create right column
+	QWidget* rightColumn = new QWidget;
+	QVBoxLayout* l = new QVBoxLayout();
+	l->setAlignment(Qt::AlignTop);
+	rightColumn->setLayout(l);
+
+
+	QLabel* bouncesLabel = new QLabel(tr("Maximum Ray Bounces"));
+	l->addWidget(bouncesLabel);
+
+	QSlider* bouncesSlider = new QSlider(Qt::Horizontal);
+	bouncesSlider->setTickInterval(5);
+	bouncesSlider->setSingleStep(1);
+	bouncesSlider->setMaximum(60);
+	bouncesSlider->setMinimum(0);
+	bouncesSlider->setValue(10);
+	l->addWidget(bouncesSlider);
+	connect(bouncesSlider, &QAbstractSlider::sliderReleased, [this, bouncesSlider]{
+		this->_bounces = bouncesSlider->value();
+	});
+
+	// Render Button
+	QPushButton* renderButton = new QPushButton(tr("Render"));
+	connect(renderButton, &QPushButton::clicked, [this]{
+		render(2048, 2048);
+	});
+	l->addWidget(renderButton);
+
+	// Ambient Light Picker
+	QPushButton* ambientButton = new QPushButton(tr("Set Ambient Light"));
+	connect(ambientButton, &QPushButton::clicked, [this]{
+		QColor newAmbient = QColorDialog::getColor(
+			QColor(255, 255, 255),
+			this,
+			tr("Ambient Color")
+		);
+		glm::dvec3 tmp;
+		newAmbient.getRgbF(&tmp.x, &tmp.y, &tmp.z);
+		_scene->SetAmbient(tmp);
+	});
+	l->addWidget(ambientButton);
+
+	// Save Button
+	QPushButton* saveButton = new QPushButton(tr("Save Render"));
+	connect(saveButton, &QPushButton::clicked, [this]{
+		saveRender();
+	});
+	l->addWidget(saveButton);
+
+	_progressBar.setMinimum(0);
+
+	// Main layout
+	_layout.addWidget(&_label, 0, 0);
+	_layout.addWidget(rightColumn, 0, 1);
+	_layout.addWidget(&_progressBar, 1, 0);
+}
+
+void	Window::render(int width, int height)
+{
+	if (_watcher && _watcher->isFinished())
 	{
-		glfwTerminate();
-		throw std::runtime_error("Failed to initialize window");
+		delete _watcher;
+		_watcher = NULL;
 	}
-	glfwSetWindowUserPointer(_window, this);
-	glfwSetWindowSizeCallback(_window, WindowResizeCallback);
-	glfwSetWindowPosCallback(_window, WindowMoveCallback);
-	glfwSetKeyCallback(_window, KeyCallback);
-	glfwSetMouseButtonCallback(_window, MouseButtonCallback);
-	glfwSetCursorPosCallback(_window, MousePositionCallback);
-	glfwMakeContextCurrent(_window);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	else if (_watcher)
+		return;
 
-	glGenVertexArrays(1, &vertex_array_id);
-	glBindVertexArray(vertex_array_id);
+	_progressBar.setValue(0);
+	QFuture<Image*> renderTask = QtConcurrent::run([this, width, height](){
+		Image* im = new Image(width, height);
+		_progressBar.setMaximum(height * 2);
+		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
+		RenderPipeline::NormalizeColor(im, 0.5, 1);
+		RenderPipeline::ImageToRGB32(im);
+		return im;
+	});
+
+	_watcher = new QFutureWatcher<Image*>(this);
+	connect(_watcher, SIGNAL(finished()), this, SLOT(setImage()));
+	_watcher->setFuture(renderTask);
+	connect(this, SIGNAL(progressUpdate()), this, SLOT(progressStep()), Qt::QueuedConnection);
 }
 
-void	Window::WindowHints(void)
+void	Window::progressStep(void)
 {
-	glfwDefaultWindowHints();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_DEPTH_BITS, 32);
-	glfwWindowHint(GLFW_SAMPLES, 4);
+	_progressBar.setValue(_progressBar.value() + 1);
 }
 
-
-void	Window::GetWindowSize(int &width, int &height)
+void	Window::setImage(void)
 {
-	width = _windowWidth;
-	height = _windowHeight;
+	Image* im = _watcher->result();
+	QImage qim(im->colors.data(), im->width, im->height, QImage::Format_RGBA8888);
+	_label.setPixmap(QPixmap::fromImage(qim.scaledToWidth(1000, Qt::SmoothTransformation)));
+	if (_image)
+		delete _image;
+	_image = im;
 }
 
-void	Window::GetMaxRenderSize(float &width, float &height)
+void	Window::saveRender(void)
 {
-	int iwidth, iheight;
-
-	glfwGetFramebufferSize(_window, &iwidth, &iheight);
-	
-	width = static_cast<float>(iwidth);
-	height = static_cast<float>(iheight);
-}
-
-float Window::GetAspect(void)
-{
-	float width, height;
-	GetSize(width, height);
-	return width / height;
-}
-
-bool	Window::ShouldClose(void)
-{
-	return glfwWindowShouldClose(_window);
-}
-
-void	Window::Close(void)
-{
-	glfwDestroyWindow(_window);
-	glfwTerminate();
-}
-
-void	Window::GetSize(float &width, float &height)
-{
-	float actualWidth, actualHeight;
-
-	GetMaxRenderSize(actualWidth, actualHeight);
-
-	width = _width * actualWidth;
-	height = _height * actualHeight;
-}
-
-void	Window::SetRenderMask(float x, float y, float width, float height)
-{
-	float windowWidth, windowHeight;
-
-	_width = width;
-	_height = height;
-	_screenCornerX = x;
-	_screenCornerY = y;
-	
-	GetMaxRenderSize(windowWidth, windowHeight);
-	glEnable(GL_SCISSOR_TEST);
-	glViewport(windowWidth * x,
-		   windowHeight * y,
-		   windowWidth * width,		
-		   windowHeight * height);
-	glScissor(windowWidth * x,
-		  windowHeight * y,
-		  windowWidth * width,
-		  windowHeight * height);
-}
-
-void	Window::RemoveRenderMask(void)
-{
-	_screenCornerX = 0;
-	_screenCornerY = 0;
-	_width = 1;
-	_height = 1;
-
-	int width, height;
-	glfwGetFramebufferSize(_window, &width, &height);
-	glViewport(0, 0, width, height);
-	glScissor(0, 0, width, height);
-	glDisable(GL_SCISSOR_TEST);
-}
-
-void	Window::Render(void)
-{
-
-	for (bool &status : _mouseButtonClicked)
-		status = false;
-	for (bool &status : _keyJustPressed)
-		status = false;
-
-	glfwSwapBuffers(_window);
-	glfwPollEvents();
-}
-
-void	Window::Clear(void)
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void	Window::RefreshRenderMask(void)
-{
-	SetRenderMask(_screenCornerX, _screenCornerY, _width, _height);
-}
-
-void	WindowResizeCallback(GLFWwindow *glfwWindow, int width, int height)
-{
-	Window *window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-	window->_windowWidth = width;
-	window->_windowHeight = height;
-	window->RefreshRenderMask();
-}
-
-void	Window::WindowMoveCallback(GLFWwindow *glfwWindow, int, int)
-{
-	Window *window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-
-	window->RefreshRenderMask();
-}
-
-void	Window::ErrorCallback(int, const char *description)
-{
-	std::cerr << description << std::endl;
-}
-
-GLFWwindow* Window::GetGLWindow(void)
-{
-	return _window;
-}
-
-void	KeyCallback(GLFWwindow *glfwWindow, int key, int, int action, int)
-{
-	Window *window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-	
-	if (action == GLFW_PRESS)
+	if (!_image)
+		return;
+	lodepng::State state;
+	state.encoder.text_compression = 1;
+	state.decoder.color_convert = 0;
+	std::string filename = QFileDialog::getSaveFileName(this, tr("Save File"), "render", tr("PNG (*.png)")).toStdString();
+	if (filename == "")
+		return;
+	std::vector<uint8_t> buffer;
+	unsigned error = lodepng::encode(buffer, _image->colors, _image->width, _image->height, state);
+	if(error)
 	{
-		window->_keys[key] = true;
-		window->_keyJustPressed[key] = true;
+		std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+		return;
 	}
-	else if (action == GLFW_RELEASE)
-		window->_keys[key] = false;
-}
-
-bool Window::Key(int key)
-{
-	if (key >= 0 && key < 512)
-		return _keys[key];
-	else
-		return false;
-}
-
-bool	Window::KeyPress(int key)
-{
-	if (key >= 0 && key < 512)
-		return _keyJustPressed[key];
-	else
-		return false;
-}
-
-void	MouseButtonCallback(GLFWwindow *glfwWindow, int button, int action, int)
-{
-	Window *window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-	
-	if (action == GLFW_PRESS)
-	{
-		window->_mouseButtons[button] = true;
-		window->_mouseButtonClicked[button] = true;
-	}
-	else if (action == GLFW_RELEASE)
-		window->_mouseButtons[button] = false;
-}
-
-bool	Window::MouseButton(int button)
-{
-	if (button >= 0 && button < 8)
-		return _mouseButtons[button];
-	else
-		return false;
-}
-
-bool	Window::MouseClick(int button)
-{
-	if (button >= 0 && button < 8)
-		return _mouseButtonClicked[button];
-	else
-		return false;
-}
-
-void	MousePositionCallback(GLFWwindow *glfwWindow, double x, double y)
-{
-	Window *window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-	int width, height;
-	window->GetWindowSize(width, height);
-	window->_mousePosition.x = (x * 2 / width) - 1;
-	window->_mousePosition.y = (y * -2 / height) + 1;
-}
-
-const glm::vec2& Window::MousePos(void)
-{
-	return const_cast<const glm::vec2&>(_mousePosition);
+	lodepng::save_file(buffer, filename);
 }

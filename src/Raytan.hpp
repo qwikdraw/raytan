@@ -1,9 +1,7 @@
 #pragma once
 
 #define GLM_ENABLE_EXPERIMENTAL
-#define GLFW_INCLUDE_GLCOREARB
 
-#include <GLFW/glfw3.h>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -21,7 +19,6 @@ struct	Ray
 {
 	glm::dvec3 origin;
 	glm::dvec3 direction;
-	double refractiveIndex;
 };
 
 struct	RawColor

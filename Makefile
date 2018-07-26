@@ -1,48 +1,92 @@
-NAME = raetan
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
+#    Updated: 2018/07/26 14:38:46 by bpierce          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-SRC = $(wildcard src/*.cpp)
+NAME = RT
+LIST = main \
+Window \
+Window.moc \
+Camera \
+RenderPipeline \
+Plane \
+Scene \
+Sphere \
+Cylinder \
+Cone \
+Cube \
+Sampler \
+IObject \
+Subtraction \
+Addition \
+parse
 
-OBJ = $(patsubst src/%.cpp, src/%.o, $(SRC))
+SRC_DIR = src
+OBJ_DIR = obj
 
-CC = g++
+SRC = $(addsuffix .cpp, $(addprefix $(SRC_DIR), $(LIST)))
+OBJ = $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(LIST)))
+DEP = $(OBJ:%.o=%.d)
 
-FRAMEWORKS = -framework OpenGl
+INCLUDES = $(shell pkg-config --cflags glm Qt5Core Qt5Gui Qt5Widgets Qt5Concurrent) \
+-I lib/lodepng \
+-I lib/json
 
-GLFW_INC = -I ~/.brew/include
+CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
+-O3 -flto=thin -march=native $(INCLUDES)\
+#-g -fsanitize=undefined -fsanitize=address
 
-GLFW_LINK = -L ~/.brew/lib -lglfw
+LDFLAGS = -framework OpenGl \
+$(shell pkg-config --libs glm Qt5Core Qt5Gui Qt5Widgets Qt5Concurrent) \
+-L lib/lodepng -llodepng -flto=thin \
+#-fsanitize=undefined -fsanitize=address
 
-MY_INC = -I src/
+all: $(OBJ_DIR) $(NAME)
 
-FLAGS = -std=c++14 -O3
+$(NAME): lib/lodepng/liblodepng.a $(OBJ)
+	@printf "\e[32;1mLinking.. \e[0m\n"
+	@export PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig
+	@clang++ $(LDFLAGS) -o $@ $^
+	@printf "\e[32;1mCreated:\e[0m %s\n" $(NAME)
 
-all: $(NAME)
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
 
-$(NAME): $(OBJ)
-	@printf "compiling $(NAME)..."
-	@$(CC) $(FLAGS) $^ $(FRAMEWORKS) $(MY_INC) $(GLFW_INC) $(GLFW_LINK) -o $(NAME)
-	@echo SUCCESS!
+-include $(DEP)
 
-%.o: %.cpp %.hpp src/Raetan.hpp
-	@echo compiling... $@
-	@$(CC) $(FLAGS) $(MY_INC) $(GLFW_INC) -c -o $@ $< 
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@printf "\e[34;1mCompiling: \e[0m%s\n" $<
+	@clang++ $(CPPFLAGS) -MMD -c $< -o $@
 
-src/main.o : src/main.cpp
-	@echo compiling... $@
-	@$(CC) $(FLAGS) -c -o $@ $< $(MY_INC) $(GLFW_INC)
+$(SRC_DIR)/%.moc.cpp: $(SRC_DIR)/%.h
+	@moc $(INCLUDES) $< -o $@
+
+lib/lodepng/liblodepng.a: lib/lodepng/lodepng.cpp
+	@printf "\e[35;1mCompiling Dependency: \e[0m%s\n" $<
+	@clang++ $(CPPFLAGS) -c -o lib/lodepng/lodepng.o $<
+	@ar rcs $@ lib/lodepng/lodepng.o
 
 clean:
-	@echo cleaning object files...
-	@/bin/rm -f $(OBJ)
-	@/bin/rm -f $(patsubst src/%.cpp, src/%.hpp.gch, $(SRC))
+	@printf "\e[31;1mCleaning..\e[0m\n"
+	@rm -f $(OBJ)
+	@rm -f lib/lodepng/lodepng.o
 
 fclean: clean
-	@echo cleaning $(NAME)...
-	@/bin/rm -f $(NAME)
+	@printf "\e[31;1mFull Cleaning..\e[0m\n"
+	@rm -rf $(OBJ_DIR)
+	@rm -f $(NAME)
+	@rm -f lib/lodepng/liblodepng.a
 
-re:
-	@echo remaking $(NAME)...
-	@make fclean
-	@make
+re:	fclean all
 
-.PHONY: clean fclean re
+deps:
+	@./deps.sh
+
+.PHONY: clean fclean all re docs
