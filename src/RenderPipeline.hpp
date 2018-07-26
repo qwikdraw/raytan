@@ -28,5 +28,5 @@ namespace	RenderPipeline
 	void	SobelEdge(Image*, glm::dvec3 color = glm::dvec3(1));
 
 	// uses a limited color palette
-	void	Cartoon(Image*, int palette_size = 10);
+	void	Cartoon(Image*, int palette_size = 5);
 };

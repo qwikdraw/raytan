@@ -121,5 +121,8 @@ void	RP::SobelEdge(Image* image, glm::dvec3 color)
 void	RP::Cartoon(Image* image, int palette_size)
 {
 	for (auto& raw : image->raw)
-		raw.color = glm::round(raw.color * (double)palette_size) / (double)palette_size;
+	{
+		double grey = (raw.color.r + raw.color.g + raw.color.b) / 3.0;
+		raw.color *= (glm::round(grey * palette_size) / palette_size) / grey;
+	}
 }
