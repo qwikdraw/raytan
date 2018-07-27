@@ -18,11 +18,11 @@ int	main(int argc, char *argv[])
 	Scene* scene;
 
 	scene = ParseSceneFile("scene.json");
-	
+
 	glm::dvec3 pos = {-1.8, 0, 0};
 	glm::dvec3 dir = {1, 0, 0};
 	Camera camera(pos, glm::normalize(dir), glm::dvec3(0, 1, 0), 45, 1);
-	
+
 	// Initialize Qt Application with the scene and camera
 	QApplication qt(argc, argv);
 	Window window(scene, camera);

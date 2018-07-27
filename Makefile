@@ -22,6 +22,7 @@ Sphere \
 Cylinder \
 Cone \
 Cube \
+Sheet \
 Sampler \
 IObject \
 Subtraction \
