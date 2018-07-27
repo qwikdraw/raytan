@@ -27,6 +27,13 @@
 		"position" : [0.0, 0.0, -0.1],
 		"radius" : 0.1,
 		"material": "plastic"
+	},
+	{
+		"type": "sheet",
+		"position" : [0.0, 0.1, 0.2],
+		"rotation" : [0.0, 30.0, -20.0],
+		"size" : [0.4, 1.1],
+		"material": "plastic"
 	}
 ]
 }

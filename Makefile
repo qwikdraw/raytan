@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/25 18:48:12 by lkaser           ###   ########.fr        #
+#    Updated: 2018/07/26 14:38:46 by bpierce          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ Sphere \
 Cylinder \
 Cone \
 Cube \
+Sheet \
 Sampler \
 IObject \
 Subtraction \
