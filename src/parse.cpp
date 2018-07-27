@@ -9,6 +9,7 @@
 #include "Cone.hpp"
 #include "Cube.hpp"
 #include "Subtraction.hpp"
+#include "Addition.hpp"
 
 /* Default Materials */
 
@@ -88,7 +89,6 @@ static double get_double(const json& j, std::string key, double def = 0.0)
 
 std::unordered_map<std::string, std::function<IObject*(const json& object)>> object_parsers = {
 	{"sphere", [](const json& o) {
-		std::cout << "Sphere object created." << std::endl;
 		Sphere* tmp = new Sphere;
 		tmp->radius = get_double(o, "radius", 0.1);
 		return tmp;
@@ -112,7 +112,6 @@ std::unordered_map<std::string, std::function<IObject*(const json& object)>> obj
 		return tmp;
 	}},
 	{"sheet", [](const json& o) {
-		std::cout << "Sheet object created." << std::endl;
 		Sheet* tmp = new Sheet;
 		tmp->size = get_dvec2(o, "size", glm::dvec2(0.1, 0.1));
 		return tmp;
@@ -120,8 +119,22 @@ std::unordered_map<std::string, std::function<IObject*(const json& object)>> obj
 	{"subtraction", [](const json& o) {
 		std::cout << "Subtractive object created." << std::endl;
 		IObject* positive = object_parsers[o["positive"]["type"]](o["positive"]);
+		positive->transform.position = get_dvec3(o["positive"], "position");
+		positive->transform.rotation = get_dvec3(o["positive"], "rotation");
+		positive->material = default_materials["plastic"];
+
 		IObject* negative = object_parsers[o["negative"]["type"]](o["negative"]);
+		negative->transform.position = get_dvec3(o["negative"], "position");
+		negative->transform.rotation = get_dvec3(o["negative"], "rotation");
+		negative->material = default_materials["plastic"];
 		IObject* tmp = new Subtraction(positive, negative);
+		return tmp;
+	}},
+	{"addition", [](const json& o) {
+		std::cout << "Additive object created." << std::endl;
+		IObject* a = object_parsers[o["object_a"]["type"]](o["object_a"]);
+		IObject* b = object_parsers[o["object_b"]["type"]](o["object_b"]);
+		IObject* tmp = new Addition(a, b);
 		return tmp;
 	}}
 };
