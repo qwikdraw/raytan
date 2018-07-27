@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include "Sphere.hpp"
 #include "Plane.hpp"
+#include "Sheet.hpp"
 #include "Cylinder.hpp"
 #include "Cone.hpp"
 #include "Cube.hpp"
@@ -52,6 +53,18 @@ static glm::dvec3 get_dvec3(const json& j, std::string key, glm::dvec3 def = glm
 	return def;
 }
 
+static glm::dvec2 get_dvec2(const json& j, std::string key, glm::dvec2 def = glm::dvec2(0.0, 0.0))
+{
+	if (j.count(key) && j[key].is_array() && j[key].size() == 2)
+	{
+		auto v = j[key];
+		if (!(v[0].is_number() && v[1].is_number()))
+			return def;
+		return glm::dvec2(v[0], v[1]);
+	}
+	return def;
+}
+
 static Material get_material(const json& j, material_map& m)
 {
 	if (j.count("material") && j["material"].is_string())
@@ -95,6 +108,11 @@ std::unordered_map<std::string, std::function<IObject*(const json& object)>> obj
 	{"cube", [](const json& o) {
 		Cube* tmp = new Cube;
 		tmp->size = get_dvec3(o, "size", glm::dvec3(0.1, 0.1, 0.1));
+		return tmp;
+	}},
+	{"sheet", [](const json& o) {
+		Sheet* tmp = new Sheet;
+		tmp->size = get_dvec2(o, "size", glm::dvec2(0.1, 0.1));
 		return tmp;
 	}},
 };
