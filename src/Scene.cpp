@@ -138,6 +138,31 @@ Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 	return out;
 }
 
+static double	line_point_distance(const Ray& ray, const glm::dvec3& p)
+{
+	glm::dvec3 cross = glm::cross(p - ray.origin, p - ray.origin + ray.direction);
+	return glm::sqrt(glm::dot(cross, cross) / dot(ray.origin, ray.origin));
+}
+
+glm::dvec3	Scene::getDirectLight(const Ray& ray, const RayResult& rayResult) const
+{
+	glm::dvec3 outputCol = glm::dvec3(0);
+	for (auto& light : lights)
+	{
+		glm::dvec3 dir = light.position - ray.origin;
+		if (glm::dot(dir, ray.direction) < 0)
+			continue;
+		double lightDist = glm::length(dir);
+		double objDist = glm::length(rayResult.position - ray.origin);
+		if (lightDist > objDist)
+			continue;
+		double proximity = line_point_distance(ray, light.position);
+		proximity *= 100; // to make it not overwelm everything
+		outputCol += light.color / (proximity * proximity);
+	}
+	return outputCol;
+}
+
 RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 {
 	if (recursionLevel == -1)
@@ -146,7 +171,7 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 	// The point of Intersection
 	RayResult rayResult = getRayResult(ray);
 	if (IS_INFIN(rayResult.position))
-		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
+		return (RawColor){getDirectLight(ray, rayResult), INFINITY};
 
 	// The diffuse color
 	RawColor diffusePart = {{0.0, 0.0, 0.0}, 0};
@@ -171,12 +196,16 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 		refractPart = TraceRay(refraction, recursionLevel - 1);
 	}
 
+	// the light direct from light source
+	glm::dvec3 directLight = getDirectLight(ray, rayResult);
+	
 	// Output color
 	RawColor output;
 	output.depth = glm::length(rayResult.position - ray.origin);
 	output.color = diffusePart.color * rayResult.diffuse +
 		       reflectPart.color * rayResult.reflect +
-		       refractPart.color * rayResult.refract;
+		       refractPart.color * rayResult.refract +
+		       directLight;
 	return output;
 }
 

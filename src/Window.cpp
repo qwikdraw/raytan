@@ -91,7 +91,7 @@ void	Window::render(int width, int height)
 		_progressBar.setMaximum(height * 2);
 		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
 		RenderPipeline::NormalizeColor(im, 0.5, 1);
-		RenderPipeline::MotionBlur(im);
+//		RenderPipeline::MotionBlur(im);
 //		RenderPipeline::Tint(im, glm::dvec3(1, 0.8, 0.7), 0.65);
 //		RenderPipeline::Cartoon(im, 5);
 //		RenderPipeline::SobelEdge(im, glm::dvec3(0.5, 0.5, 0.5));

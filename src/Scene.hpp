@@ -27,6 +27,7 @@ class Scene
 	
 	Ray		getRefract(const Ray&, const RayResult&) const;
 	Ray		getReflect(const Ray&, const RayResult&) const;
+	glm::dvec3	getDirectLight(const Ray&, const RayResult&) const;
 
 public:
 
