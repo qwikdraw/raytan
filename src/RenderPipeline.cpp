@@ -126,3 +126,89 @@ void	RP::Cartoon(Image* image, int palette_size)
 		raw.color *= (glm::round(grey * palette_size) / palette_size) / grey;
 	}
 }
+
+void	RP::Anaglyph(Image* image)
+{
+	int shift = image->width / 200;
+
+	Image rightShift;
+	Image leftShift;
+
+	rightShift.width = image->width - shift;
+	rightShift.height = image->height;
+	leftShift.width = image->width - shift;
+	leftShift.height = image->height;
+	rightShift.raw.resize(rightShift.width * rightShift.height);
+	leftShift.raw.resize(rightShift.width * rightShift.height);
+
+	for (int x = 0; x < image->width; x++)
+	{
+		for (int y = 0; y < image->height; y++)
+		{
+			if (x - shift > 0)
+			{
+				leftShift.raw[x - shift + y * leftShift.width].color =
+					image->raw[x + y * image->width].color;
+			}
+			if (x + shift < image->width)
+			{
+				rightShift.raw[x + y * rightShift.width].color =
+					image->raw[x + y * image->width].color;
+			}
+		}
+	}
+
+	// now to combine right and left shift into a single image
+
+	image->width = rightShift.width;
+	image->height = rightShift.height;
+	image->raw.resize(rightShift.width * rightShift.height);
+	
+	for (size_t i = 0; i < (size_t)rightShift.height * rightShift.width; i++)
+	{
+		image->raw[i].color =
+			glm::dvec3(leftShift.raw[i].color.r, 0, 0) +
+			glm::dvec3(0, rightShift.raw[i].color.g, rightShift.raw[i].color.b);
+	}
+}
+
+void	RP::Tint(Image* image, glm::dvec3 color, double saturation)
+{
+	for (auto& raw : image->raw)
+	{
+		double grey = (raw.color.r + raw.color.g + raw.color.b) / 3.0;
+		glm::dvec3 adjustedColor = grey * color;
+		raw.color = raw.color * (1 - saturation) + adjustedColor * saturation;
+	}
+}
+
+void	RP::MotionBlur(Image* image, double distance)
+{
+	int shift = image->width * distance;
+	Image temp;
+	temp.width = image->width;
+	temp.height = image->height;
+	temp.raw.resize(temp.height * temp.width);
+
+	for (auto& raw : temp.raw)
+		raw.color = glm::dvec3(0);
+	
+	for (int x = 0; x < image->width; x++)
+	{
+		for (int y = 0; y < image->height; y++)
+		{
+			double depthShift = shift / (image->raw[x + y * image->width].depth + 0.1);
+			glm::dvec3 colShare = image->raw[x + y * image->width].color / depthShift;
+
+			for (int s = -depthShift/2; s < depthShift - depthShift/2; s++)
+			{
+				if (x + s < 0 || x + s >= image->width)
+					continue;
+				temp.raw[x + s + y * image->width].color += colShare;
+			}
+		}
+	}
+	for (int x = 0; x < image->width; x++)
+		for (int y = 0; y < image->height; y++)
+			image->raw[x + y * image->width].color = temp.raw[x + y * image->width].color;
+}
