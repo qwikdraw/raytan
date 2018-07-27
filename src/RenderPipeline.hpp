@@ -6,18 +6,9 @@
 #include "Scene.hpp"
 #include "Camera.hpp"
 #include "Window.h"
+#include "ImageKernel.hpp"
 
 class Window;
-struct	Image
-{
-	Image() {}
-	Image(int w, int h) : width(w), height(h) {}
-	
-	int width;
-	int height;
-	std::vector<RawColor> raw;
-	std::vector<uint8_t> colors;
-};
 
 namespace	RenderPipeline
 {
@@ -32,4 +23,10 @@ namespace	RenderPipeline
 
 	// converts the raw color values to 32 bit rgba values
 	void	ImageToRGB32(Image*);
+
+	// uses the depth value of the image to draw edges onto the image
+	void	SobelEdge(Image*, glm::dvec3 color = glm::dvec3(1));
+
+	// uses a limited color palette
+	void	Cartoon(Image*, int palette_size = 5);
 };

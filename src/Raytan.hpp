@@ -32,3 +32,14 @@ struct	Light
 	glm::dvec3 position;
 	glm::dvec3 color;
 };
+
+struct  Image
+{
+	Image() {}
+	Image(int w, int h) : width(w), height(h) {}
+
+	int width;
+	int height;
+	std::vector<RawColor> raw;
+	std::vector<uint8_t> colors;
+};

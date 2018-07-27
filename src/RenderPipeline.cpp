@@ -70,3 +70,59 @@ void	RP::ImageToRGB32(Image* image)
 */
 	image->raw.clear();
 }
+
+void	RP::SobelEdge(Image* image, glm::dvec3 color)
+{
+	Kernel<3> x_kernel = {{{ 3,  0, -3},
+			       { 10,  0, -10},
+			       { 3,  0, -3}}};
+	
+	Kernel<3> y_kernel = {{{ 3,  10,  3},
+			       { 0,  0,  0},
+			       {-3, -10, -3}}};
+
+	Image depth;
+
+	depth.width = image->width;
+	depth.height = image->height;
+	depth.raw.resize(depth.width * depth.height);
+
+	for (int x = 0; x < image->width; x++)
+	{
+		for (int y = 0; y < image->height; y++)
+		{
+			if (!std::isfinite(image->raw[x + y * image->width].depth))
+				depth.raw[x + y * image->width].color.x = 1000;
+			else
+				depth.raw[x + y * image->width].color.x = image->raw[x + y * image->width].depth;
+		}
+	}
+
+	Image* gx = ApplyKernel(depth, x_kernel);
+	Image* gy = ApplyKernel(depth, y_kernel);
+
+	for (int x = 0; x < image->width; x++)
+	{
+		for (int y = 0; y < image->height; y++)
+		{
+			size_t index = x + y * image->width;
+			double x_val = gx->raw[index].color.x;
+			double y_val = gy->raw[index].color.x;
+			bool line = (glm::sqrt(x_val * x_val + y_val * y_val) > 0.5);
+
+			if (line)
+				image->raw[x + y * image->width].color = color;
+		}
+	}
+	delete gx;
+	delete gy;
+}
+
+void	RP::Cartoon(Image* image, int palette_size)
+{
+	for (auto& raw : image->raw)
+	{
+		double grey = (raw.color.r + raw.color.g + raw.color.b) / 3.0;
+		raw.color *= (glm::round(grey * palette_size) / palette_size) / grey;
+	}
+}

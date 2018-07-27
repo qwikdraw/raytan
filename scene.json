@@ -12,7 +12,14 @@
 		"diffuse": 0.9995,
 		"reflect": 0.0005,
 		"refract": 0.0
-	}	
+	},
+	{
+		"name": "glass",
+		"color": [0.5, 0.5, 0.9],
+		"diffuse": 0.2,
+		"reflect": 0.8,
+		"refract": 0.0
+	}
 ],
 "objects" : [
 	{
@@ -29,6 +36,14 @@
 		"material": "plastic"
 	},
 	{
+		"type": "cone",
+		"position" : [0.3, 0.1, -0.1],
+		"size" : [0.1, 0.2, 0.2],
+		"rotation": [45.0, 45, 15.0],
+		"angle" : 30,
+		"material": "glass"
+  },
+  {
 		"type": "sheet",
 		"position" : [0.0, 0.1, 0.2],
 		"rotation" : [0.0, 30.0, -20.0],
