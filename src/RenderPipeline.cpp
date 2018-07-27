@@ -197,7 +197,7 @@ void	RP::MotionBlur(Image* image, double distance)
 	{
 		for (int y = 0; y < image->height; y++)
 		{
-			double depthShift = shift / image->raw[x + y * image->width].depth;
+			double depthShift = shift / (image->raw[x + y * image->width].depth + 0.1);
 			glm::dvec3 colShare = image->raw[x + y * image->width].color / depthShift;
 
 			for (int s = -depthShift/2; s < depthShift - depthShift/2; s++)
