@@ -180,7 +180,7 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 	return output;
 }
 
-IObject*	Scene::GetObject(const Ray&) const
+IObject*	Scene::GetObject(const Ray& ray) const
 {
 	Intersect bestIntersect;
 	int bestIndex = -1;
@@ -198,7 +198,7 @@ IObject*	Scene::GetObject(const Ray&) const
 	}
 	if (bestIndex == -1)
 		return nullptr;
-	return _objects[i];
+	return _objects[bestIndex];
 }
 
 void	Scene::SetAmbient(glm::dvec3 color)
