@@ -158,13 +158,32 @@ static void parseObjects(const json& objects_json, material_map& materials, Scen
 
 Scene*	ParseSceneFile(std::string sceneFile)
 {
-	std::ifstream t(sceneFile);
 	std::stringstream buffer;
-	buffer << t.rdbuf();
-	material_map materials;
+	json j;
 
+	if (sceneFile == "-")
+	{
+		std::string line;
+		while (std::getline(std::cin, line))
+			buffer << line;
+	}
+	else
+	{
+		std::ifstream tmp(sceneFile);
+		buffer << tmp.rdbuf();
+	}
+
+	try
+	{
+		j = json::parse(buffer.str());
+	}
+	catch (std::exception)
+	{
+		std::cout << "Parse error." << std::endl;
+		exit(1);
+	}
+	material_map materials;
 	Scene* scene = new Scene();
-	auto j = json::parse(buffer.str());
 	if (!j.count("objects") || !j["objects"].is_array())
 		return scene;
 	if (j.count("materials") && j["materials"].is_array())

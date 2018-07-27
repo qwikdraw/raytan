@@ -115,7 +115,7 @@ void	Window::setImage(void)
 {
 	Image* im = _watcher->result();
 	QImage qim(im->colors.data(), im->width, im->height, QImage::Format_RGBA8888);
-	_label.setPixmap(QPixmap::fromImage(qim.scaledToWidth(1000, Qt::SmoothTransformation)));
+	_label.setPixmap(QPixmap::fromImage(qim.scaledToWidth(1024, Qt::SmoothTransformation)));
 	if (_image)
 		delete _image;
 	_image = im;
