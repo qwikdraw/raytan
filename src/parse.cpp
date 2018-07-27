@@ -88,6 +88,7 @@ static double get_double(const json& j, std::string key, double def = 0.0)
 
 std::unordered_map<std::string, std::function<IObject*(const json& object)>> object_parsers = {
 	{"sphere", [](const json& o) {
+		std::cout << "Sphere object created." << std::endl;
 		Sphere* tmp = new Sphere;
 		tmp->radius = get_double(o, "radius", 0.1);
 		return tmp;
@@ -111,13 +112,27 @@ std::unordered_map<std::string, std::function<IObject*(const json& object)>> obj
 		return tmp;
 	}},
 	{"sheet", [](const json& o) {
+		std::cout << "Sheet object created." << std::endl;
 		Sheet* tmp = new Sheet;
 		tmp->size = get_dvec2(o, "size", glm::dvec2(0.1, 0.1));
 		return tmp;
 	}},
+	{"subtraction", [](const json& o) {
+		std::cout << "Subtractive object created." << std::endl;
+		IObject* positive = object_parsers[o["positive"]["type"]](o["positive"]);
+		IObject* negative = object_parsers[o["negative"]["type"]](o["negative"]);
+		IObject* tmp = new Subtraction(positive, negative);
+		return tmp;
+	}}
 };
 
 /* Section Parsers */
+
+
+static void	parseScene(const json& scene_json, Scene* scene)
+{
+	scene->SetAmbient(get_dvec3(scene_json, "ambient", glm::dvec3(0.0001)));
+}
 
 static void	parseMaterials(const json& materials_json, material_map& materials)
 {
@@ -154,7 +169,11 @@ static void parseObjects(const json& objects_json, material_map& materials, Scen
 	}
 }
 
-/* Parse from a file */
+/* 
+** Parse from a file 
+** If the scenefile is called `-`
+** it reads from standard input.
+*/
 
 Scene*	ParseSceneFile(std::string sceneFile)
 {
@@ -186,6 +205,8 @@ Scene*	ParseSceneFile(std::string sceneFile)
 	Scene* scene = new Scene();
 	if (!j.count("objects") || !j["objects"].is_array())
 		return scene;
+	if (j.count("scene") && j["scene"].is_object())
+		parseScene(j["scene"], scene);
 	if (j.count("materials") && j["materials"].is_array())
 		parseMaterials(j["materials"], materials);
 	parseObjects(j["objects"], materials, scene);
