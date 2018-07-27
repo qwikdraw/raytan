@@ -29,4 +29,13 @@ namespace	RenderPipeline
 
 	// uses a limited color palette
 	void	Cartoon(Image*, int palette_size = 5);
+
+	// makes the image 3D. Note: this destroys the depth so use after filters that require it
+	void	Anaglyph(Image*);
+
+	// tints the image with color. Saturation of 0 is no tint. Saturation of 1 is full tint.
+	void	Tint(Image*, glm::dvec3 color, double saturation);
+
+	// applies a horizontal blur on the image as if each object moved 'distance' amount
+	void	MotionBlur(Image*, double distance = 0.05);
 };
