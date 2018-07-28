@@ -42,7 +42,7 @@ using json = nlohmann::json;
 
 /* Extractors */
 
-static glm::dvec3 get_dvec3(const json& j, std::string key, glm::dvec3 def = glm::dvec3(0.0, 0.0, 0.0))
+static glm::dvec3 get_dvec3(const json& j, const std::string key, glm::dvec3 def = glm::dvec3(0.0, 0.0, 0.0))
 {
 	if (j.count(key) && j[key].is_array() && j[key].size() == 3)
 	{
@@ -54,7 +54,7 @@ static glm::dvec3 get_dvec3(const json& j, std::string key, glm::dvec3 def = glm
 	return def;
 }
 
-static glm::dvec2 get_dvec2(const json& j, std::string key, glm::dvec2 def = glm::dvec2(0.0, 0.0))
+static glm::dvec2 get_dvec2(const json& j, const std::string key, glm::dvec2 def = glm::dvec2(0.0, 0.0))
 {
 	if (j.count(key) && j[key].is_array() && j[key].size() == 2)
 	{
@@ -66,75 +66,111 @@ static glm::dvec2 get_dvec2(const json& j, std::string key, glm::dvec2 def = glm
 	return def;
 }
 
-static Material get_material(const json& j, material_map& m)
+static Material get_material(const json& j, const material_map& m)
 {
 	if (j.count("material") && j["material"].is_string())
 	{
 		if (m.count(j["material"]) > 0)
-			return m[j["material"]];
+			return m.at(j["material"]);
 		if (default_materials.count(j["material"]) > 0)
-			return default_materials[j["material"]];
+			return default_materials.at(j["material"]);
 	}
-	return default_materials["plastic"];
+	return default_materials.at("plastic");
 }
 
-static double get_double(const json& j, std::string key, double def = 0.0)
+static double get_double(const json& j, const std::string key, double def = 0.0)
 {
 	if (j.count(key) && j[key].is_number())
 		return j[key];
 	return def;
 }
 
+typedef std::function<IObject*(const json&, const material_map&)> object_parser;
+
+static bool valid_object(const json& o, const std::string key, std::unordered_map<std::string, object_parser>& parsers)
+{
+	if (o.count(key) && o[key].is_object()
+		&& o[key].count("type") && o[key]["type"].is_string()
+		&& parsers.count(o[key]["type"]))
+		return true;
+	return false;
+}
+
 /* Object Parsers */
 
-std::unordered_map<std::string, std::function<IObject*(const json& object)>> object_parsers = {
-	{"sphere", [](const json& o) {
+std::unordered_map<std::string, object_parser> object_parsers = {
+	{"sphere", [](const json& o, const material_map&) {
 		Sphere* tmp = new Sphere;
 		tmp->radius = get_double(o, "radius", 0.1);
 		return tmp;
 	}},
-	{"cylinder", [](const json& o) {
+	{"cylinder", [](const json& o, const material_map&) {
 		Cylinder* tmp = new Cylinder;
 		tmp->radius = get_double(o, "radius", 0.1);
 		return tmp;
 	}},
-	{"cone", [](const json& o) {
+	{"cone", [](const json& o, const material_map&) {
 		Cone* tmp = new Cone;
 		tmp->angle = get_double(o, "angle", 0.1);
 		return tmp;
 	}},
-	{"plane", [](const json&) {
+	{"plane", [](const json&, const material_map&) {
 		return new Plane;
 	}},
-	{"cube", [](const json& o) {
+	{"cube", [](const json& o, const material_map&) {
 		Cube* tmp = new Cube;
 		tmp->size = get_dvec3(o, "size", glm::dvec3(0.1, 0.1, 0.1));
 		return tmp;
 	}},
-	{"sheet", [](const json& o) {
+	{"sheet", [](const json& o, const material_map&) {
 		Sheet* tmp = new Sheet;
 		tmp->size = get_dvec2(o, "size", glm::dvec2(0.1, 0.1));
 		return tmp;
 	}},
-	{"subtraction", [](const json& o) {
-		std::cout << "Subtractive object created." << std::endl;
-		IObject* positive = object_parsers[o["positive"]["type"]](o["positive"]);
+	{"subtraction", [](const json& o, const material_map& materials) {
+		if (!valid_object(o, "positive", object_parsers))
+		{
+			std::cerr << "Subtraction object requires a valid positive object" << std::endl;
+			exit(1);
+		}
+		IObject* positive = object_parsers[o["positive"]["type"]](o["positive"], materials);
 		positive->transform.position = get_dvec3(o["positive"], "position");
 		positive->transform.rotation = get_dvec3(o["positive"], "rotation");
-		positive->material = default_materials["plastic"];
+		positive->material = get_material(o["positive"], materials);
 
-		IObject* negative = object_parsers[o["negative"]["type"]](o["negative"]);
+		if (!valid_object(o, "negative", object_parsers))
+		{
+			std::cerr << "Subtraction object requires a valid negative object" << std::endl;
+			exit(1);
+		}
+		IObject* negative = object_parsers[o["negative"]["type"]](o["negative"], materials);
 		negative->transform.position = get_dvec3(o["negative"], "position");
 		negative->transform.rotation = get_dvec3(o["negative"], "rotation");
-		negative->material = default_materials["plastic"];
+		negative->material = get_material(o["negative"], materials);
 		IObject* tmp = new Subtraction(positive, negative);
 		return tmp;
 	}},
-	{"addition", [](const json& o) {
-		std::cout << "Additive object created." << std::endl;
-		IObject* a = object_parsers[o["object_a"]["type"]](o["object_a"]);
-		IObject* b = object_parsers[o["object_b"]["type"]](o["object_b"]);
-		IObject* tmp = new Addition(a, b);
+	{"addition", [](const json& o, const material_map& materials) {
+		if (!valid_object(o, "object_a", object_parsers))
+		{
+			std::cerr << "Addition object requires a valid object_a" << std::endl;
+			exit(1);
+		}
+		IObject* object_a = object_parsers[o["object_a"]["type"]](o["object_a"], materials);
+		object_a->transform.position = get_dvec3(o["object_a"], "position");
+		object_a->transform.rotation = get_dvec3(o["object_a"], "rotation");
+		object_a->material = get_material(o["object_a"], materials);
+
+		if (!valid_object(o, "object_b", object_parsers))
+		{
+			std::cerr << "Addition object requires a valid object_b" << std::endl;
+			exit(1);
+		}
+		IObject* object_b = object_parsers[o["object_b"]["type"]](o["object_b"], materials);
+		object_b->transform.position = get_dvec3(o["object_b"], "position");
+		object_b->transform.rotation = get_dvec3(o["object_b"], "rotation");
+		object_b->material = get_material(o["object_b"], materials);
+		IObject* tmp = new Addition(object_a, object_b);
 		return tmp;
 	}}
 };
@@ -145,6 +181,22 @@ std::unordered_map<std::string, std::function<IObject*(const json& object)>> obj
 static void	parseScene(const json& scene_json, Scene* scene)
 {
 	scene->SetAmbient(get_dvec3(scene_json, "ambient", glm::dvec3(0.0001)));
+
+	if (scene_json.count("lights") && scene_json["lights"].is_array())
+	{
+		for (auto& light : scene_json["lights"])
+		{
+			if (!light.is_object())
+			{
+				std::cerr << "Invalid light: " << light << std::endl;
+				exit(1);
+			}
+			Light tmp;
+			tmp.position = get_dvec3(light, "position");
+			tmp.color = get_dvec3(light, "color", glm::dvec3(1.0));
+			scene->lights.push_back(tmp);
+		}
+	}
 }
 
 static void	parseMaterials(const json& materials_json, material_map& materials)
@@ -169,11 +221,15 @@ static void parseObjects(const json& objects_json, material_map& materials, Scen
 {
 	for (auto& o : objects_json)
 	{
-		if (!o.count("type"))
-			continue;
+		if (!(o.count("type") && o["type"].is_string() && object_parsers.count(o["type"])))
+		{
+			std::cerr << "Every object must have a valid type" << std::endl;
+			std::cerr << "Invalid object: " << o << std::endl;
+			exit(1);
+		}
 		if (object_parsers.count(o["type"]))
 		{
-			IObject* tmp = object_parsers[o["type"]](o);
+			IObject* tmp = object_parsers[o["type"]](o, materials);
 			tmp->transform.position = get_dvec3(o, "position");
 			tmp->transform.rotation = get_dvec3(o, "rotation");
 			tmp->material = get_material(o, materials);
@@ -223,6 +279,5 @@ Scene*	ParseSceneFile(std::string sceneFile)
 	if (j.count("materials") && j["materials"].is_array())
 		parseMaterials(j["materials"], materials);
 	parseObjects(j["objects"], materials, scene);
-	scene->lights.push_back((Light){{-1, 0, 0.5}, {1, 1, 1}});
 	return scene;
 }

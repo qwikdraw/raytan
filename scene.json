@@ -3,7 +3,10 @@
 	"ambient": [0.001, 0.0001, 0.0001],
 	"camera": {
 		"position": [0.0, 0.0, 0.0]
-	}
+	},
+	"lights": [
+		{"position": [0.0, 0.0, 0.5], "color": [1.0, 1.0, 1.0]}
+	]
 },
 "materials": [
 	{
@@ -22,13 +25,6 @@
 	}
 ],
 "objects" : [
-	{
-		"type": "cube",
-		"position" : [-0.9, 0.0, 0.1],
-		"size" : [0.3, 0.1, 0.2],
-		"rotation": [45.0, 45, 15.0],
-		"material": "rock"
-	},
 	{
 		"type": "sphere",
 		"position" : [0.0, 0.0, -0.1],
@@ -54,10 +50,10 @@
 		"type": "subtraction",
 		"positive":
 		{
-			"type": "sheet",
+			"type": "cube",
 			"position" : [0.0, 0.1, 0.2],
 			"rotation" : [0.0, 40.0, -20.0],
-			"size": [0.5, 0.2],
+			"size" : [0.3, 0.1, 0.2],
 			"material": "plastic"
 		},
 		"negative":

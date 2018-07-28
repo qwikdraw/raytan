@@ -52,7 +52,7 @@ int	main(int argc, char **argv)
 		return qt.exec();
 	}
 
-	Image* image = new Image(1920, 1080);
+	Image* image = new Image(4096, 4096);
 	RenderPipeline::SceneToImage(scene, camera, image, nullptr, 30);
 	RenderPipeline::NormalizeColor(image, 0.5, 1);
 	RenderPipeline::ImageToRGB32(image);
