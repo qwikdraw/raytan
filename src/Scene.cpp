@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/25 18:05:55 by lkaser           ###   ########.fr       */
+/*   Updated: 2018/07/26 19:11:43 by lkaser           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Scene::Scene(void)
 {
-	_ambient = glm::dvec3(0.0001);
+	_ambient = glm::dvec3(0.0);
 }
 
 Scene::~Scene(void)

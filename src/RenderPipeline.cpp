@@ -16,7 +16,8 @@ void	RP::RenderSquare(const Scene* scene, const Camera& camera, Image* image, Wi
 			RawColor c = scene->TraceRay(camera.GetRay(normalizedX, normalizedY), recursionLvl);
 			image->raw[x + y * image->width] = c;
 		}
-		emit win->progressUpdate();
+		if (win)
+			emit win->progressUpdate();
 	}
 }
 
