@@ -42,12 +42,18 @@
 		"rotation": [45.0, 45, 15.0],
 		"angle" : 30,
 		"material": "glass"
-  },
-  {
+	},
+	{
 		"type": "sheet",
 		"position" : [0.0, 0.1, 0.2],
 		"rotation" : [0.0, 30.0, -20.0],
 		"size" : [0.4, 1.1],
+		"material": "plastic"
+	},
+	{
+		"type": "cylinder",
+		"position" : [0.0, 0.1, 0.2],
+		"rotation" : [-10.0, -30.0, 20.0],
 		"material": "plastic"
 	}
 ]

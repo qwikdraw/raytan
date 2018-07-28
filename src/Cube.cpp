@@ -66,7 +66,7 @@ glm::dvec2		Cube::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal
 		return glm::dvec2(distX, distZ);
 	if (normal.z == 1 || normal.z == -1)
 		return glm::dvec2(distX, distY);
-	return glm::dvec2(0.5, 0.5); // Will  update later
+	return glm::dvec2(0.5, 0.5);
 }
 
 std::vector<double> Cube::findDistances(const Ray& ray) const
