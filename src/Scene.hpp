@@ -40,5 +40,10 @@ public:
 	void		AddObject(IObject*);
 	void		RemoveObject(IObject*);
 
+	// generates a 'parallel' light
+	static Light	Parallel(const glm::dvec3& direction, const glm::dvec3& color);
+	
 	std::vector<Light> lights;
+	double lightRadius;
+	int lightSample;
 };
