@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/25 18:05:55 by lkaser           ###   ########.fr       */
+/*   Updated: 2018/07/26 19:11:43 by lkaser           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Scene::Scene(void)
 {
-	_ambient = glm::dvec3(0.0001);
+	_ambient = glm::dvec3(0.0);
 }
 
 Scene::~Scene(void)
@@ -138,6 +138,31 @@ Ray	Scene::getReflect(const Ray & ray, const RayResult & rayResult) const
 	return out;
 }
 
+static double	line_point_distance(const Ray& ray, const glm::dvec3& p)
+{
+	glm::dvec3 cross = glm::cross(p - ray.origin, p - ray.origin + ray.direction);
+	return glm::sqrt(glm::dot(cross, cross) / dot(ray.origin, ray.origin));
+}
+
+glm::dvec3	Scene::getDirectLight(const Ray& ray, const RayResult& rayResult) const
+{
+	glm::dvec3 outputCol = glm::dvec3(0);
+	for (auto& light : lights)
+	{
+		glm::dvec3 dir = light.position - ray.origin;
+		if (glm::dot(dir, ray.direction) < 0)
+			continue;
+		double lightDist = glm::length(dir);
+		double objDist = glm::length(rayResult.position - ray.origin);
+		if (lightDist > objDist)
+			continue;
+		double proximity = line_point_distance(ray, light.position);
+		proximity *= 100; // to make it not overwelm everything
+		outputCol += light.color / (proximity * proximity);
+	}
+	return outputCol;
+}
+
 RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 {
 	if (recursionLevel == -1)
@@ -146,7 +171,7 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 	// The point of Intersection
 	RayResult rayResult = getRayResult(ray);
 	if (IS_INFIN(rayResult.position))
-		return (RawColor){{0.0, 0.0, 0.0}, INFINITY};
+		return (RawColor){getDirectLight(ray, rayResult), INFINITY};
 
 	// The diffuse color
 	RawColor diffusePart = {{0.0, 0.0, 0.0}, 0};
@@ -171,13 +196,38 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 		refractPart = TraceRay(refraction, recursionLevel - 1);
 	}
 
+	// the light direct from light source
+	glm::dvec3 directLight = getDirectLight(ray, rayResult);
+	
 	// Output color
 	RawColor output;
 	output.depth = glm::length(rayResult.position - ray.origin);
 	output.color = diffusePart.color * rayResult.diffuse +
 		       reflectPart.color * rayResult.reflect +
-		       refractPart.color * rayResult.refract;
+		       refractPart.color * rayResult.refract +
+		       directLight;
 	return output;
+}
+
+IObject*	Scene::GetObject(const Ray& ray) const
+{
+	Intersect bestIntersect;
+	int bestIndex = -1;
+
+	bestIntersect.distance = INFINITY;
+	for (unsigned i = 0; i < _objects.size(); i++)
+	{
+		Intersect intersect = _objects[i]->Intersection(ray);
+
+		if (intersect.distance < bestIntersect.distance)
+		{
+			bestIntersect = intersect;
+			bestIndex = i;
+		}
+	}
+	if (bestIndex == -1)
+		return nullptr;
+	return _objects[bestIndex];
 }
 
 void	Scene::SetAmbient(glm::dvec3 color)

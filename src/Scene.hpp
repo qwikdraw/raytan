@@ -27,6 +27,7 @@ class Scene
 	
 	Ray		getRefract(const Ray&, const RayResult&) const;
 	Ray		getReflect(const Ray&, const RayResult&) const;
+	glm::dvec3	getDirectLight(const Ray&, const RayResult&) const;
 
 public:
 
@@ -34,6 +35,7 @@ public:
 	virtual ~Scene(void);
 
 	RawColor	TraceRay(const Ray&, int recursionLevel) const;
+	IObject*	GetObject(const Ray&) const;
 	void		SetAmbient(glm::dvec3 color);
 	void		AddObject(IObject*);
 	void		RemoveObject(IObject*);

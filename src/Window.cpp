@@ -67,8 +67,6 @@ Window::Window(Scene* s, Camera& c) :
 	});
 	l->addWidget(saveButton);
 
-	_progressBar.setMinimum(0);
-
 	// Main layout
 	_layout.addWidget(&_label, 0, 0);
 	_layout.addWidget(rightColumn, 0, 1);
@@ -85,17 +83,20 @@ void	Window::render(int width, int height)
 	else if (_watcher)
 		return;
 
+	_progressBar.setMinimum(0);
+	_progressBar.setMaximum(height * 2);
 	_progressBar.setValue(0);
 	QFuture<Image*> renderTask = QtConcurrent::run([this, width, height](){
 		Image* im = new Image(width, height);
-		_progressBar.setMaximum(height * 2);
 		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
 		RenderPipeline::NormalizeColor(im, 0.5, 1);
-//		RenderPipeline::MotionBlur(im);
-//		RenderPipeline::Tint(im, glm::dvec3(1, 0.8, 0.7), 0.65);
-//		RenderPipeline::Cartoon(im, 5);
-//		RenderPipeline::SobelEdge(im, glm::dvec3(0.5, 0.5, 0.5));
-//		RenderPipeline::Anaglyph(im);
+		//RenderPipeline::MotionBlur(im);
+		//RenderPipeline::Tint(im, glm::dvec3(1, 0.8, 0.7), 0.65);
+		//RenderPipeline::Cartoon(im, 5);
+		//RenderPipeline::SobelEdge(im, glm::dvec3(0.5, 0.5, 0.5));
+		//RenderPipeline::Anaglyph(im);
+		//RenderPipeline::Cartoon(im, 5);
+		//RenderPipeline::SobelEdge(im, glm::dvec3(0.5, 0.5, 0.5));
 		RenderPipeline::ImageToRGB32(im);
 		return im;
 	});
@@ -115,10 +116,11 @@ void	Window::setImage(void)
 {
 	Image* im = _watcher->result();
 	QImage qim(im->colors.data(), im->width, im->height, QImage::Format_RGBA8888);
-	_label.setPixmap(QPixmap::fromImage(qim.scaledToWidth(1000, Qt::SmoothTransformation)));
+	_label.setPixmap(QPixmap::fromImage(qim.scaledToWidth(1024, Qt::SmoothTransformation)));
 	if (_image)
 		delete _image;
 	_image = im;
+	_progressBar.setValue(0);
 }
 
 void	Window::saveRender(void)
