@@ -81,7 +81,7 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 
 			glm::dvec3 intensity = lightIntensity(lightRay, light, glm::length(lightVector));
 			intensity *= glm::abs(glm::dot(rayResult.normal, lightRay.direction));
-			intensity = glm::max(intensity, _ambient);
+			intensity += _ambient;
 		
 			pixelColor.color += rayResult.color * intensity;
 		}
@@ -194,7 +194,7 @@ RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 	// The point of Intersection
 	RayResult rayResult = getRayResult(ray);
 	if (IS_INFIN(rayResult.position))
-		return (RawColor){glm::max(getDirectLight(ray, rayResult), _ambient), INFINITY};
+		return (RawColor){getDirectLight(ray, rayResult) + _ambient, INFINITY};
 
 	// The diffuse color
 	RawColor diffusePart = {{0.0, 0.0, 0.0}, 0};

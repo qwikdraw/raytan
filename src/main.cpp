@@ -42,7 +42,6 @@ int	main(int argc, char **argv)
 	scene->lightRadius = 0;
 	scene->lightSample = 1;
 
-	scene->lights.clear();
 	scene->lights.push_back(Scene::Parallel(glm::dvec3(0, 10, 0), glm::dvec3(1)));
 	
 	glm::dvec3 pos = {-1.8, 0, 0};
