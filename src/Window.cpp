@@ -87,7 +87,6 @@ void	Window::render(int width, int height)
 	_progressBar.setMinimum(0);
 	_progressBar.setMaximum(height * 2);
 	_progressBar.setValue(0);
-	std::cout << _bounces << std::endl;
 	QFuture<Image*> renderTask = QtConcurrent::run([this, width, height](){
 		Image* im = new Image(width, height);
 		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
