@@ -2,10 +2,10 @@
 
 constexpr glm::dvec3 IObject::direction;
 
-std::vector<Intersect>	IObject::findIntersections(const Ray&) const
+SmallVector<Intersect>	IObject::findIntersections(const Ray&) const
 {
 	assert(!"default implementation should not be called");
-	return std::vector<Intersect>();
+	return SmallVector<Intersect>();
 }
 
 glm::dvec3	IObject::findNormal(const glm::dvec3&) const
@@ -32,11 +32,12 @@ Intersect	IObject::Intersection(const Ray& ray) const
 	transformed.origin = InverseTransformPoint(ray.origin, transform);
 	transformed.direction = InverseTransformVector(ray.direction, transform);
 	
-	std::vector<double> dists = findDistances(transformed);
+	SmallVector<double> dists = findDistances(transformed);
 	double bestDist = INFINITY;
 
-	for (auto d : dists)
+	for (size_t index = 0; index < dists.size(); index++)
 	{
+		auto d = dists[index];
 		if (d < bestDist && d > 0)
 			bestDist = d;
 	}

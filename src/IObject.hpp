@@ -2,6 +2,7 @@
 
 #include "Raytan.hpp"
 #include "Sampler.hpp"
+#include "SmallVector.hpp"
 
 struct  RayResult
 {
@@ -49,9 +50,9 @@ class   IObject
 protected:
 
 	// method is not implemented for primitives
-	virtual	std::vector<Intersect> findIntersections(const Ray& ray) const;
+	virtual	SmallVector<Intersect> findIntersections(const Ray& ray) const;
 
-	virtual std::vector<double> findDistances(const Ray& ray) const = 0;
+	virtual SmallVector<double> findDistances(const Ray& ray) const = 0;
 
 	// methods are not implemented for non primitives
 	virtual glm::dvec3 findNormal(const glm::dvec3& intersection) const;

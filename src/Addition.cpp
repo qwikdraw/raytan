@@ -1,6 +1,6 @@
 #include "Addition.hpp"
 
-std::vector<Intersect>	Addition::getIntersectionsFrom(const IObject* o, const Ray& ray) const
+SmallVector<Intersect>	Addition::getIntersectionsFrom(const IObject* o, const Ray& ray) const
 {
 	Ray transformed;
 	transformed.origin = InverseTransformPoint(ray.origin, o->transform);
@@ -10,9 +10,10 @@ std::vector<Intersect>	Addition::getIntersectionsFrom(const IObject* o, const Ra
 		return o->findIntersections(transformed);
 
 	auto dists = o->findDistances(transformed);
-	std::vector<Intersect> out;
-	for (double d : dists)
+	SmallVector<Intersect> out;
+	for (size_t index = 0; index < dists.size(); index++)
 	{
+		double d = dists[index];
 		Intersect i = {d, o, o->transform, true};
 		out.push_back(i);
 	}
@@ -35,23 +36,25 @@ bool	Addition::isFacing(const Intersect& i, const Ray& ray) const
 	return false;
 }
 
-std::vector<Edge> Addition::generateEdges(const std::vector<Intersect>& s1,
-					  const std::vector<Intersect>& s2,
+inline std::vector<Edge> Addition::generateEdges(const SmallVector<Intersect>& s1,
+					  const SmallVector<Intersect>& s2,
 					  const Ray& ray) const
 {
 	std::vector<Edge> out;
 	Edge edge;
 
-	for (const Intersect& i : s1)
+	for (size_t index = 0; index < s1.size(); index++)
 	{
+		const auto& i = s1[index];
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
 		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 		edge.positive = true;
 		out.push_back(edge);
 	}
-	for (const Intersect& i : s2)
+	for (size_t index = 0; index < s2.size(); index++)		
 	{
+		const auto& i = s2[index];
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
 		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
@@ -66,7 +69,7 @@ std::vector<Edge> Addition::generateEdges(const std::vector<Intersect>& s1,
 	return out;
 }
 
-std::vector<Intersect>	Addition::findIntersections(const Ray& ray) const
+SmallVector<Intersect>	Addition::findIntersections(const Ray& ray) const
 {
 	auto s1 = getIntersectionsFrom(_shape1, ray);
 	auto s2 = getIntersectionsFrom(_shape2, ray);
@@ -94,7 +97,7 @@ std::vector<Intersect>	Addition::findIntersections(const Ray& ray) const
 			break;
 	}
 
-	std::vector<Intersect> out;
+	SmallVector<Intersect> out;
 	for (auto& edge : edges)
 	{
 		int event = inside1 + 2 * inside2 + 4 * edge.positive + 8 * edge.forwardFacing;
@@ -136,10 +139,10 @@ std::vector<Intersect>	Addition::findIntersections(const Ray& ray) const
 	return out;
 }
 
-std::vector<double>	Addition::findDistances(const Ray&) const
+SmallVector<double>	Addition::findDistances(const Ray&) const
 {
 	assert(!"non primitive implementation should not be called");
-	return std::vector<double>();
+	return SmallVector<double>();
 }
 
 Addition::Addition(IObject* shape1, IObject* shape2)
@@ -169,8 +172,9 @@ Intersect	Addition::Intersection(const Ray& ray) const
 	Intersect best;
 	best.distance = INFINITY;
 
-	for (Intersect& hit : hits)
+	for (size_t index = 0; index < hits.size(); index++)
 	{
+		auto& hit = hits[index];
 		if (hit.distance < best.distance && hit.distance > 0)
 			best = hit;
 	}

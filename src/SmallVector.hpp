@@ -1,9 +1,11 @@
 #pragma once
 
+#include <vector>
+
 template <class T>
 class	SmallVector
 {
-	constexpr size_t _stackSize = 6;
+	static constexpr size_t _stackSize = 6;
 	T _stack[_stackSize];
 	std::vector<T>* _backup;
 	size_t _size;
@@ -41,12 +43,12 @@ public:
 	{
 		if (index < _stackSize)
 			return _stack[index];
-		return _backup[index - _size]
+		return (*_backup)[index - _size];
 	}
 	const T&	operator[](size_t index) const
 	{
 		if (index < _stackSize)
 			return _stack[index];
-		return _backup[index - _size];
+		return (*_backup)[index - _size];
 	}	
 };

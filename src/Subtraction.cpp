@@ -1,13 +1,13 @@
 #include "Subtraction.hpp"
 
-std::vector<double>	Subtraction::findDistances(const Ray&) const
+SmallVector<double>	Subtraction::findDistances(const Ray&) const
 {
 	assert(!"non primitive implementation should not be called");
-	return std::vector<double>();
+	return SmallVector<double>();
 }
 
 
-std::vector<Intersect>	Subtraction::getIntersectionsFrom(const IObject *o, const Ray& ray) const
+SmallVector<Intersect>	Subtraction::getIntersectionsFrom(const IObject *o, const Ray& ray) const
 {
 	Ray transformed;
 	transformed.origin = InverseTransformPoint(ray.origin, o->transform);
@@ -17,9 +17,10 @@ std::vector<Intersect>	Subtraction::getIntersectionsFrom(const IObject *o, const
 		return o->findIntersections(transformed);
 
 	auto dists = o->findDistances(transformed);
-	std::vector<Intersect> out;
-	for (double d : dists)
+	SmallVector<Intersect> out;
+	for (size_t index = 0; index < dists.size(); index++)
 	{
+		double d = dists[index];
 		Intersect i = {d, o, o->transform, true};
 		out.push_back(i);
 	}
@@ -43,23 +44,25 @@ bool Subtraction::isFacing(const Intersect& i, const Ray& ray) const
 	return false;	
 }
 
-std::vector<Edge> Subtraction::generateEdges(const std::vector<Intersect>& p,
-					     const std::vector<Intersect>& n,
-					     const Ray& ray) const
+inline std::vector<Edge> Subtraction::generateEdges(const SmallVector<Intersect>& p,
+						    const SmallVector<Intersect>& n,
+						    const Ray& ray) const
 {
 	std::vector<Edge> out;
 	Edge edge;
 
-	for (const Intersect& i : p)
+	for (size_t index = 0; index < p.size(); index++)
 	{
+		const auto& i = p[index];
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
 		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 		edge.positive = true;
 		out.push_back(edge);
 	}
-	for (const Intersect& i : n)
+	for (size_t index = 0; index < n.size(); index++)
 	{
+		const auto& i = n[index];
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
 		edge.inter.positive = !edge.inter.positive;
@@ -75,7 +78,7 @@ std::vector<Edge> Subtraction::generateEdges(const std::vector<Intersect>& p,
 	return out;
 }
 
-std::vector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
+SmallVector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 {
 	auto p = getIntersectionsFrom(_positive, ray);
 	auto n = getIntersectionsFrom(_negative, ray);
@@ -103,7 +106,7 @@ std::vector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 		if (toggle1 && toggle2)
 			break;
 	}
-	std::vector<Intersect> out;
+	SmallVector<Intersect> out;
 	for (auto& edge : edges)
 	{
 		int event = insideP + 2 * insideN + 4 * edge.positive + 8 * edge.forwardFacing;
@@ -182,8 +185,9 @@ Intersect	Subtraction::Intersection(const Ray& ray) const
 	Intersect best;
 	best.distance = INFINITY;
 
-	for (Intersect& hit : hits)
+	for (size_t index = 0; index < hits.size(); index++)
 	{
+		auto& hit = hits[index];
 		if (hit.distance < best.distance && hit.distance > 0)
 			best = hit;
 	}

@@ -69,7 +69,7 @@ glm::dvec2		Cube::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal
 	return glm::dvec2(0.5, 0.5); // Will  update later
 }
 
-std::vector<double> Cube::findDistances(const Ray& ray) const
+SmallVector<double> Cube::findDistances(const Ray& ray) const
 {
 	// Initializing inverse direction ray
 	glm::dvec3 inverse_direction = 1.0 / ray.direction;
@@ -85,7 +85,7 @@ std::vector<double> Cube::findDistances(const Ray& ray) const
 	double minDist = glm::max(glm::max(glm::min(x1, x2), glm::min(y1, y2)), glm::min(z1, z2));
 	double maxDist = glm::min(glm::min(glm::max(x1, x2), glm::max(y1, y2)), glm::max(z1, z2));
 
-	std::vector<double>	out;
+	SmallVector<double>	out;
 
 	if (minDist > maxDist) // Ray doesn't intersect object
 		return out;
