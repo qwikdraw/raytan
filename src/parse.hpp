@@ -6,4 +6,10 @@
 #include "Scene.hpp"
 #include "Camera.hpp"
 
-Scene*	ParseSceneFile(const std::string sceneFile);
+struct RT
+{
+	Camera	camera;
+	Scene	scene;	
+};
+
+RT*	ParseSceneFile(const std::string sceneFile);
