@@ -15,6 +15,8 @@
 Scene::Scene(void)
 {
 	_ambient = glm::dvec3(0.0);
+	lightRadius = 0;
+	lightSample = 1;
 }
 
 Scene::~Scene(void)
@@ -59,21 +61,32 @@ RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 	Ray		lightRay;
 	glm::dvec3	lightVector;
 
-	for (auto& light : lights)
-	{
-		double offset = 0.00001;
-		if (glm::dot(ray.direction, rayResult.normal) > 0)
-			offset = -offset;
-		lightVector = light.position - rayResult.position;
-		lightRay.direction = glm::normalize(lightVector);
-		lightRay.origin = rayResult.position + (rayResult.normal * offset);
+	int repeat = lightRadius ? lightSample : 1;
 
-		glm::dvec3 intensity = lightIntensity(lightRay, light, glm::length(lightVector));
-		intensity *= glm::abs(glm::dot(rayResult.normal, lightRay.direction));
-		intensity = glm::max(intensity, _ambient);
+	for (int i = 0; i < repeat; i++)
+	{
+		for (auto& light : lights)
+		{
+			double offset = 0.00001;
+			if (glm::dot(ray.direction, rayResult.normal) > 0)
+				offset = -offset;
+			
+			if (lightRadius)
+				lightVector = glm::ballRand(lightRadius) + light.position - rayResult.position;
+			else
+				lightVector = light.position - rayResult.position;
+			
+			lightRay.direction = glm::normalize(lightVector);
+			lightRay.origin = rayResult.position + (rayResult.normal * offset);
+
+			glm::dvec3 intensity = lightIntensity(lightRay, light, glm::length(lightVector));
+			intensity *= glm::abs(glm::dot(rayResult.normal, lightRay.direction));
+			intensity += _ambient;
 		
-		pixelColor.color += rayResult.color * intensity;
+			pixelColor.color += rayResult.color * intensity;
+		}
 	}
+	pixelColor.color /= (double)repeat;
 	return pixelColor;
 }
 
@@ -147,31 +160,41 @@ static double	line_point_distance(const Ray& ray, const glm::dvec3& p)
 glm::dvec3	Scene::getDirectLight(const Ray& ray, const RayResult& rayResult) const
 {
 	glm::dvec3 outputCol = glm::dvec3(0);
-	for (auto& light : lights)
+
+	int repeat = lightRadius ? lightSample : 1;
+
+	for (int i = 0; i < repeat; i++)
 	{
-		glm::dvec3 dir = light.position - ray.origin;
-		if (glm::dot(dir, ray.direction) < 0)
-			continue;
-		double lightDist = glm::length(dir);
-		double objDist = glm::length(rayResult.position - ray.origin);
-		if (lightDist > objDist)
-			continue;
-		double proximity = line_point_distance(ray, light.position);
-		proximity *= 100; // to make it not overwelm everything
-		outputCol += light.color / (proximity * proximity);
-	}
-	return outputCol;
+		for (auto& light : lights)
+		{
+			glm::dvec3 lightpos = light.position;
+			if (lightRadius)
+				lightpos += glm::ballRand(lightRadius);
+			
+			glm::dvec3 dir = lightpos - ray.origin;
+			if (glm::dot(dir, ray.direction) < 0)
+				continue;
+			double lightDist = glm::length(dir);
+			double objDist = glm::length(rayResult.position - ray.origin);
+			if (lightDist > objDist)
+				continue;
+			double proximity = line_point_distance(ray, lightpos);
+			proximity *= 100; // to make it not overwelm everything
+			outputCol += light.color / (proximity * proximity);
+		}
+	}	
+	return outputCol / (double)repeat;
 }
 
 RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
 {
 	if (recursionLevel == -1)
-		return (RawColor){{0.0, 1.0, 0.0}, INFINITY};
+		return (RawColor){_ambient, INFINITY};
 
 	// The point of Intersection
 	RayResult rayResult = getRayResult(ray);
 	if (IS_INFIN(rayResult.position))
-		return (RawColor){getDirectLight(ray, rayResult), INFINITY};
+		return (RawColor){getDirectLight(ray, rayResult) + _ambient, INFINITY};
 
 	// The diffuse color
 	RawColor diffusePart = {{0.0, 0.0, 0.0}, 0};
@@ -250,4 +273,13 @@ void	Scene::RemoveObject(IObject* o)
 			return;
 		}
 	}
+}
+
+Light	Scene::Parallel(const glm::dvec3& direction, const glm::dvec3& color)
+{
+	// generates light 1000 distance away from origin (so close enough to parallel)
+	Light out;
+	out.color = color * 1000000.0;
+	out.position = glm::normalize(direction) * -1000.0;
+	return out;
 }
