@@ -17,11 +17,12 @@
 		"refract": 0.0
 	},
 	{
-		"name": "glass",
+		"name": "glassy",
 		"color": [0.5, 0.5, 0.9],
-		"diffuse": 0.2,
-		"reflect": 0.8,
-		"refract": 0.0
+		"diffuse": 0.00,
+		"reflect": 0.01,
+		"refract": 0.99,
+		"refractiveIndex": 1.581
 	}
 ],
 "objects" : [
@@ -29,7 +30,7 @@
 		"type": "sphere",
 		"position" : [0.0, 0.0, -0.1],
 		"radius" : 0.1,
-		"material": "plastic"
+		"material": "glassy"
 	},
 	{
 		"type": "cone",
@@ -37,7 +38,7 @@
 		"size" : [0.1, 0.2, 0.2],
 		"rotation": [45.0, 45, 15.0],
 		"angle" : 30,
-		"material": "glass"
+		"material": "plastic"
 	},
 	{
 		"type": "sheet",

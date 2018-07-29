@@ -12,7 +12,7 @@ using json = nlohmann::json;
 
 int	main(int argc, char **argv)
 {
-	Scene*	scene;
+	RT*		rt;
 	bool	headless = false;
 	int		c;
 
@@ -35,9 +35,9 @@ int	main(int argc, char **argv)
 				abort();
 		}
 	if (optind < argc)
-		scene = ParseSceneFile(argv[optind]);
+		rt = ParseSceneFile(argv[optind]);
 	else
-		scene = ParseSceneFile("scene.json");
+		rt = ParseSceneFile("scene.json");
 
 	scene->lightRadius = 0;
 	scene->lightSample = 1;
@@ -52,13 +52,13 @@ int	main(int argc, char **argv)
 	{
 		// Qt GUI
 		QApplication qt(argc, argv);
-		Window window(scene, camera);
+		Window window(&rt->scene, &rt->camera);
 		window.show();
 		return qt.exec();
 	}
 
 	Image* image = new Image(4096, 4096);
-	RenderPipeline::SceneToImage(scene, camera, image, nullptr, 30);
+	RenderPipeline::SceneToImage(&rt->scene, &rt->camera, image, nullptr, 30);
 	RenderPipeline::NormalizeColor(image, 0.5, 1);
 	RenderPipeline::ImageToRGB32(image);
 	lodepng::State state;
@@ -72,5 +72,6 @@ int	main(int argc, char **argv)
 		return 1;
 	}
 	lodepng::save_file(buffer, "render.png");
+	free(rt);
 	return 0;
 }

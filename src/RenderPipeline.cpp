@@ -4,7 +4,7 @@
 
 namespace RP = RenderPipeline;
 
-void	RP::RenderSquare(const Scene* scene, const Camera& camera, Image* image, Window* win,
+void	RP::RenderSquare(const Scene* scene, const Camera* camera, Image* image, Window* win,
 	int recursionLvl, int startx, int starty)
 {
 	for (int y = starty; y < starty + image->height / 2; y++)
@@ -13,7 +13,7 @@ void	RP::RenderSquare(const Scene* scene, const Camera& camera, Image* image, Wi
 		{
 			double normalizedX = (2 * x - image->width) / (double)image->width;
 			double normalizedY = (2 * y - image->height) / (double)image->height;
-			RawColor c = scene->TraceRay(camera.GetRay(normalizedX, normalizedY), recursionLvl);
+			RawColor c = scene->TraceRay(camera->GetRay(normalizedX, normalizedY), recursionLvl);
 			image->raw[x + y * image->width] = c;
 		}
 		if (win)
@@ -21,7 +21,7 @@ void	RP::RenderSquare(const Scene* scene, const Camera& camera, Image* image, Wi
 	}
 }
 
-void	RP::SceneToImage(const Scene* scene, const Camera& camera, Image* image, Window* win, int recursionLvl)
+void	RP::SceneToImage(const Scene* scene, const Camera* camera, Image* image, Window* win, int recursionLvl)
 {
 	image->raw.resize(image->width * image->height);
 	std::thread one(RP::RenderSquare, scene, camera, image, win, recursionLvl, 0, 0);

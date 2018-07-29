@@ -17,12 +17,12 @@ class Window : public QWidget
 	Q_OBJECT
 	QGridLayout _layout;
 	Scene* _scene;
-	Camera& _camera;
+	Camera* _camera;
 	Image* _image;
 	QFutureWatcher<Image*>* _watcher;
 	QLabel _label;
 	QProgressBar _progressBar;
-	unsigned _bounces = 20;
+	unsigned _bounces;
 	void	render(int width, int height);
 	void    saveRender(void);
 public slots:
@@ -31,5 +31,5 @@ public slots:
 signals:
 	void	progressUpdate(void);
 public:
-	explicit Window(Scene* s, Camera& c);
+	explicit Window(Scene* s, Camera* c);
 };

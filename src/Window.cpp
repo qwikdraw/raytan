@@ -12,7 +12,7 @@
 #include "RenderPipeline.hpp"
 #include "lodepng.h"
 
-Window::Window(Scene* s, Camera& c) :
+Window::Window(Scene* s, Camera* c) :
 	QWidget(), _layout(), _scene(s), _camera(c),
 	_image(NULL), _watcher(NULL), _label(), _progressBar()
 {
@@ -31,13 +31,14 @@ Window::Window(Scene* s, Camera& c) :
 	QSlider* bouncesSlider = new QSlider(Qt::Horizontal);
 	bouncesSlider->setTickInterval(5);
 	bouncesSlider->setSingleStep(1);
-	bouncesSlider->setMaximum(60);
+	bouncesSlider->setMaximum(20);
 	bouncesSlider->setMinimum(0);
-	bouncesSlider->setValue(10);
 	l->addWidget(bouncesSlider);
 	connect(bouncesSlider, &QAbstractSlider::sliderReleased, [this, bouncesSlider]{
 		this->_bounces = bouncesSlider->value();
 	});
+	bouncesSlider->setValue(10);
+	_bounces = 10;
 
 	// Render Button
 	QPushButton* renderButton = new QPushButton(tr("Render"));
@@ -86,6 +87,7 @@ void	Window::render(int width, int height)
 	_progressBar.setMinimum(0);
 	_progressBar.setMaximum(height * 2);
 	_progressBar.setValue(0);
+	std::cout << _bounces << std::endl;
 	QFuture<Image*> renderTask = QtConcurrent::run([this, width, height](){
 		Image* im = new Image(width, height);
 		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
