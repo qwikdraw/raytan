@@ -56,7 +56,6 @@ inline std::vector<Edge> Subtraction::generateEdges(const SmallVector<Intersect>
 		const auto& i = p[index];
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
-		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 		edge.positive = true;
 		out.push_back(edge);
 	}
@@ -66,7 +65,6 @@ inline std::vector<Edge> Subtraction::generateEdges(const SmallVector<Intersect>
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
 		edge.inter.positive = !edge.inter.positive;
-		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 		edge.positive = false;
 		out.push_back(edge);
 	}
@@ -114,6 +112,7 @@ SmallVector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 		switch(event)
 		{
 		case(0b1001):
+			edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 			out.push_back(edge.inter);
 			insideN = true;
 			break;
@@ -121,6 +120,7 @@ SmallVector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 			insideN = true;
 			break;
 		case(0b0011):
+			edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 			out.push_back(edge.inter);
 			insideN = false;
 			break;
@@ -131,6 +131,7 @@ SmallVector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 			insideP = true;
 			break;
 		case(0b1100):
+			edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 			out.push_back(edge.inter);
 			insideP = true;
 			break;
@@ -138,6 +139,7 @@ SmallVector<Intersect>	Subtraction::findIntersections(const Ray& ray) const
 			insideP = false;
 			break;
 		case(0b0101):
+			edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 			out.push_back(edge.inter);
 			insideP = false;
 			break;

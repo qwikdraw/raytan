@@ -48,7 +48,6 @@ inline std::vector<Edge> Addition::generateEdges(const SmallVector<Intersect>& s
 		const auto& i = s1[index];
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
-		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 		edge.positive = true;
 		out.push_back(edge);
 	}
@@ -57,7 +56,6 @@ inline std::vector<Edge> Addition::generateEdges(const SmallVector<Intersect>& s
 		const auto& i = s2[index];
 		edge.inter = i;
 		edge.forwardFacing = isFacing(i, ray);
-		edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 		edge.positive = false;
 		out.push_back(edge);
 	}
@@ -114,10 +112,12 @@ SmallVector<Intersect>	Addition::findIntersections(const Ray& ray) const
 			inside1 = true;
 			break;
 		case(0b0110):
+			edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 			out.push_back(edge.inter);
 			inside2 = false;
 			break;
 		case(0b0001):
+			edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 			out.push_back(edge.inter);
 			inside1 = false;
 			break;
@@ -125,10 +125,12 @@ SmallVector<Intersect>	Addition::findIntersections(const Ray& ray) const
 			inside2 = true;
 			break;
 		case(0b1000):
+			edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 			out.push_back(edge.inter);
 			inside1 = true;
 			break;
 		case(0b1100):
+			edge.inter.transform = CompoundTransform(edge.inter.transform, transform);
 			out.push_back(edge.inter);
 			inside2 = true;
 			break;
