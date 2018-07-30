@@ -48,7 +48,7 @@
 	},
 	{
 		"type": "cylinder",
-		"position" : [0.0, 0.1, 0.2],
+		"position" : [0.0, 0.0, 0.0],
 		"rotation" : [-10.0, -30.0, 20.0],
 		"material": "plastic"
 	},

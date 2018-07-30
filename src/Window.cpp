@@ -93,7 +93,7 @@ void	Window::render(int width, int height)
 		//RenderPipeline::MotionBlur(im);
 		//RenderPipeline::Tint(im, glm::dvec3(1, 0.8, 0.7), 0.65);
 		//RenderPipeline::Cartoon(im, 5);
-		//RenderPipeline::SobelEdge(im, glm::dvec3(0.5, 0.5, 0.5));
+		RenderPipeline::SobelEdge(im, glm::dvec3(0.0, 1.0, 0.0));
 		//RenderPipeline::Anaglyph(im);
 		//RenderPipeline::Cartoon(im, 5);
 		//RenderPipeline::SobelEdge(im, glm::dvec3(0.5, 0.5, 0.5));
