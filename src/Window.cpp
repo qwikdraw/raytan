@@ -42,10 +42,15 @@ Window::Window(Scene* s, Camera* c) :
 	bouncesSlider->setValue(10);
 	_bounces = 10;
 
+	QCheckBox* aa = new QCheckBox(tr("Supersample"));
+	l->addWidget(aa);
 	// Render Button
 	QPushButton* renderButton = new QPushButton(tr("Render"));
-	connect(renderButton, &QPushButton::clicked, [this]() {
-		render(2048, 2048);
+	connect(renderButton, &QPushButton::clicked, aa, [=]() {
+		if (aa->isChecked())
+			render(2048, 2048);
+		else
+			render(1024, 1024);
 	});
 	l->addWidget(renderButton);
 
@@ -208,10 +213,10 @@ void	Window::render(int width, int height)
 		Image* im = new Image(width, height);
 		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
 		RenderPipeline::NormalizeColor(im, 0.5, 1);
-		if (_filters.tint.enabled)
-			RenderPipeline::Tint(im, _filters.tint.color, _filters.tint.saturation);
 		if (_filters.cartoon.enabled)
 			RenderPipeline::Cartoon(im, _filters.cartoon.palette);
+		if (_filters.tint.enabled)
+			RenderPipeline::Tint(im, _filters.tint.color, _filters.tint.saturation);
 		if (_filters.edge.enabled)
 			RenderPipeline::SobelEdge(im, _filters.edge.color);
 		if (_filters.motion.enabled)

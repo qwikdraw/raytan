@@ -19,12 +19,12 @@ struct Filters
 	} cartoon;
 	struct tint {
 		bool enabled = false;
-		glm::dvec3 color = glm::dvec3(1, 0.8, 0.7);
+		glm::dvec3 color = glm::dvec3(1.0, 0.8, 0.7);
 		double saturation = 1.0;
 	} tint;
 	struct edge {
 		bool enabled = false;
-		glm::dvec3 color;
+		glm::dvec3 color = glm::dvec3(1.0);
 	} edge;
 	struct motion {
 		bool enabled;

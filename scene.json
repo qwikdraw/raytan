@@ -2,7 +2,7 @@
 "scene": {
 	"ambient": [0.001, 0.0001, 0.0001],
 	"camera": {
-		"position": [0.0, 0.0, 0.0]
+		"position": [-4.0, 0.0, 0.0]
 	},
 	"lights": [
 		{"position": [0.0, 0.0, 0.5], "color": [1.0, 1.0, 1.0]}

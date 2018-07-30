@@ -196,9 +196,9 @@ std::unordered_map<std::string, object_parser> object_parsers = {
 /* Section Parsers */
 
 
-static void	parseScene(const json& scene_json, Scene* scene)
+static void	parseScene(const json& scene_json, RT* rt)
 {
-	scene->SetAmbient(get_dvec3(scene_json, "ambient", glm::dvec3(0.0001)));
+	rt->scene.SetAmbient(get_dvec3(scene_json, "ambient", glm::dvec3(0.0001)));
 
 	if (scene_json.count("lights") && scene_json["lights"].is_array())
 	{
@@ -212,9 +212,20 @@ static void	parseScene(const json& scene_json, Scene* scene)
 			Light tmp;
 			tmp.position = get_dvec3(light, "position");
 			tmp.color = get_dvec3(light, "color", glm::dvec3(1.0));
-			scene->lights.push_back(tmp);
+			rt->scene.lights.push_back(tmp);
 		}
 	}
+	if (scene_json.count("camera") && scene_json["camera"].is_object())
+	{
+		auto& camera_json = scene_json["camera"];
+		glm::dvec3 pos = get_dvec3(camera_json, "position", glm::dvec3(-2.0, 0.0, 0.0));
+		glm::dvec3 dir = get_dvec3(camera_json, "direction", glm::dvec3(1.0, 0.0, 0.0));
+		glm::dvec3 up = get_dvec3(camera_json, "up", glm::dvec3(0.0, 1.0, 0.0));
+		double fov = get_double(camera_json, "fov", 45.0);
+		double aspectRatio = get_double(camera_json, "aspectRatio", 1.0);
+		rt->camera = Camera(pos, dir, up, fov, aspectRatio);
+	}
+	// Action..
 }
 
 static void	parseMaterials(const json& materials_json, material_map& materials)
@@ -301,7 +312,7 @@ RT*	ParseSceneFile(std::string sceneFile)
     glm::dvec3 dir = {1.0, 0.0, 0.0};
 	RT* rt = new RT{Camera(pos, dir, glm::dvec3(0, 1, 0), 45, 1.0), Scene()};
 	if (j.count("scene") && j["scene"].is_object())
-		parseScene(j["scene"], &rt->scene);
+		parseScene(j["scene"], rt);
 	if (j.count("materials") && j["materials"].is_array())
 		parseMaterials(j["materials"], materials);
 	parseObjects(j["objects"], materials, &rt->scene);
