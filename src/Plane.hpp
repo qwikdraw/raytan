@@ -6,7 +6,7 @@
 // defines a plane centered at the origin and facing the direction of constexpr IObject::direction
 class	Plane : public IObject
 {
-	std::vector<double> findDistances(const Ray& ray) const;
+	SmallVector<double> findDistances(const Ray& ray) const;
 	glm::dvec3 findNormal(const glm::dvec3& intersection) const;
 	glm::dvec2 uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const;
 };
