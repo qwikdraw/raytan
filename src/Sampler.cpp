@@ -1,6 +1,6 @@
 #include "Sampler.hpp"
 
-Sampler::Sampler(const std::string& filepath)
+Sampler::Sampler(const std::string& filepath) : _hasEquation(false)
 {
 	unsigned error = lodepng::decode(_imageData, _width, _height, filepath.c_str());
 
@@ -23,6 +23,10 @@ Sampler::Sampler(const std::function<glm::dvec4(double, double, double)>& formul
 {
 	_hasFormula2D = false;
 	_hasFormula3D = true;
+}
+
+Sampler::Sampler(std::function<glm::dvec4(double, double)> f) : _hasEquation(true), _equation(f)
+{
 }
 
 glm::dvec4	Sampler::Color(double x, double y) const
