@@ -43,15 +43,15 @@ glm::dvec3		Ellipse::findNormal(const glm::dvec3& intersection) const
 
 glm::dvec2		Ellipse::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const
 {
-	glm::dvec2	out;
+	glm::dvec2 out;
 
-	out.x = 0.5;
-	out.y = 0.5;
+	out.x = glm::atan(normal.x, normal.z) / (2 * 3.1415) + 0.5;
+	out.y = normal.y / 2.0 + 0.5;
+
 	return out;
 }
 
-std::vector<double> Ellipse::findDistances(const Ray& ray) const
-
+SmallVector<double> Ellipse::findDistances(const Ray& ray) const
 {
 	// Old, algorithmically-correct, version
 	// glm::dvec3 e2(constant.x * constant.x, constant.y * constant.y, constant.z * constant.z);
@@ -91,7 +91,7 @@ std::vector<double> Ellipse::findDistances(const Ray& ray) const
 	// Return all distances
 	glm::dvec2 root = solveQuadratic(a, b, c);
 	
-	std::vector<double> out;
+	SmallVector<double> out;
 	if (root.x)
 		out.push_back(root.x);
 	if (root.y && root.x != root.y)
