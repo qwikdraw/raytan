@@ -55,7 +55,7 @@ glm::dvec2		Cone::uvMap(const glm::dvec3& intersection, const glm::dvec3& normal
 	return out;
 }
 
-std::vector<double> Cone::findDistances(const Ray& ray) const
+SmallVector<double> Cone::findDistances(const Ray& ray) const
 {
 	// Get a
 	double tmpA = glm::dot(ray.direction, direction);
@@ -74,7 +74,7 @@ std::vector<double> Cone::findDistances(const Ray& ray) const
 	// Return all distances
 	glm::dvec2 root = solveQuadratic(a, b, c);
 
-	std::vector<double> out;
+	SmallVector<double> out;
 	if (root.x)
 		out.push_back(root.x);
 	if (root.y && root.x != root.y)

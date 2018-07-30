@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/27 13:44:07 by lkaser           ###   ########.fr        #
+#    Updated: 2018/07/29 17:40:20 by lkaser           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,7 @@ CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
 
 LDFLAGS = -framework OpenGl \
 $(shell pkg-config --libs glm Qt5Core Qt5Gui Qt5Widgets Qt5Concurrent) \
--L lib/lodepng -llodepng -flto=thin \
+-L lib/lodepng -llodepng -flto=thin -OPT:LLDLTO=3 -pipe \
 #-fsanitize=undefined -fsanitize=address
 
 all: $(OBJ_DIR) $(NAME)
