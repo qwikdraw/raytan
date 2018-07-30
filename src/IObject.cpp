@@ -78,10 +78,20 @@ RayResult	IObject::MakeRayResult(const Intersect& intersect, const Ray& ray) con
 	if (intersect.hitRef->material.materialSampler)
 	{
 		glm::dvec4 sample = intersect.hitRef->material.materialSampler->Color(uv.x, uv.y);
-		out.diffuse = sample.r;
-		out.reflect = sample.g;
-		out.refract = sample.b;
-		out.refractiveIndex = sample.a;
+		double materialSum = sample.r + sample.g + sample.b;
+		if (materialSum == 0)
+		{
+			out.diffuse = 1;
+			out.reflect = 0;
+			out.refract = 0;
+		}
+		else
+		{
+			out.diffuse = sample.r / materialSum;
+			out.reflect = sample.g / materialSum;
+			out.refract = sample.b / materialSum;
+		}
+		out.refractiveIndex = 1.0 + sample.a;
 	}
 	else
 	{
@@ -101,10 +111,13 @@ RayResult	IObject::MakeRayResult(const Intersect& intersect, const Ray& ray) con
 		out.color = intersect.hitRef->material.color;
 	}
 
-//	if (ref->normalSampler)
-//	{
-//		//stuff
-//	}
+	if (intersect.hitRef->material.normalSampler)
+	{
+		glm::dvec3 p = glm::mod(relativePos, 1.0);
+		glm::dvec3 sample = glm::dvec3(intersect.hitRef->material.normalSampler->Color(p.x, p.y, p.z));
+		sample = glm::normalize(sample - glm::dvec3(0.5));
+		out.normal = glm::normalize(out.normal + sample);
+	}
 
 	if (!intersect.positive)
 		out.normal = -out.normal;
