@@ -8,6 +8,8 @@ class	Sampler
 	std::vector<unsigned char> _imageData;
 	unsigned _width;
 	unsigned _height;
+	bool _hasEquation;
+	std::function<glm::dvec4(double, double)> _equation;
 
 	std::function<glm::dvec4(double, double)> _formula2D;
 	bool _hasFormula2D;

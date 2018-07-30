@@ -55,25 +55,19 @@ glm::dvec2		Cylinder::uvMap(const glm::dvec3& intersection, const glm::dvec3& no
 SmallVector<double> Cylinder::findDistances(const Ray& ray) const
 {
 	// Get a
-	// double dot = glm::dot(ray.direction, direction);
-	// glm::dvec3 tmp = direction * dot;
-	// glm::dvec3 a_temp = ray.direction - tmp;
-	// double a = glm::dot(a_temp, a_temp);
-
-	// Ray equation center + dir * dist
-
-	double c = ray.origin.z * ray.origin.z + (0.001) - (ray.origin.x * ray.origin.x) - (ray.origin.y * ray.origin.y);
-	double b = 2.0 * ((ray.origin.z * ray.direction.z) - (ray.origin.x * ray.direction.x) - (ray.origin.y * ray.direction.y));
-	double a = (ray.direction.z * ray.direction.z) - (ray.direction.x * ray.direction.x) - (ray.direction.y * ray.direction.y);
+	double dot = glm::dot(ray.direction, direction);
+	glm::dvec3 tmp = direction * dot;
+	glm::dvec3 a_temp = ray.direction - tmp;
+	double a = glm::dot(a_temp, a_temp);
 
 	// Get b
-	// glm::dvec3 delta_p = ray.origin;
-	// tmp = direction * glm::dot(delta_p, direction);
-	// glm::dvec3 b_temp = delta_p - tmp;
-	// double b = 2 * glm::dot(a_temp, b_temp);
+	glm::dvec3 delta_p = ray.origin;
+	tmp = direction * glm::dot(delta_p, direction);
+	glm::dvec3 b_temp = delta_p - tmp;
+	double b = 2 * glm::dot(a_temp, b_temp);
 
 	// Get c
-	// double c = glm::dot(b_temp, b_temp) - (radius * radius);
+	double c = glm::dot(b_temp, b_temp) - (radius * radius);
 
 	// Return all distances
 	glm::dvec2 root = solveQuadratic(a, b, c);

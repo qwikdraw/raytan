@@ -3,6 +3,7 @@
 #include "parse.hpp"
 #include "json.hpp"
 #include "Sphere.hpp"
+#include "Ellipse.hpp"
 #include "Plane.hpp"
 #include "Sheet.hpp"
 #include "Cylinder.hpp"
@@ -10,6 +11,8 @@
 #include "Cube.hpp"
 #include "Subtraction.hpp"
 #include "Addition.hpp"
+#include "Sampler.hpp"
+#include "Noise2D.hpp"
 
 /* Default Materials */
 
@@ -34,6 +37,16 @@ material_map default_materials = {
 		.color = glm::dvec3(1.0, 0.3, 0.3),
 		.colorSampler = nullptr,
 		.materialSampler = nullptr,
+		.normalSampler = nullptr
+	}},
+	{"checkerboard", { // Is this really a material!!???????
+		.diffuse = 1.0,
+		.reflect = 0.0,
+		.refract = 0.0,
+		.refractiveIndex = 0.0,
+		.color = glm::dvec3(1.0, 1.0, 1.0),
+		.colorSampler = nullptr,
+		.materialSampler = new Sampler(Noise2D::checkerboard),
 		.normalSampler = nullptr
 	}}
 };
@@ -102,6 +115,11 @@ std::unordered_map<std::string, object_parser> object_parsers = {
 	{"sphere", [](const json& o, const material_map&) {
 		Sphere* tmp = new Sphere;
 		tmp->radius = get_double(o, "radius", 0.1);
+		return tmp;
+	}},
+	{"ellipse", [](const json& o, const material_map&) {
+		Ellipse* tmp = new Ellipse;
+		tmp->constant = get_dvec3(o, "constant", glm::dvec3(1.0, 1.0, 1.0));
 		return tmp;
 	}},
 	{"cylinder", [](const json& o, const material_map&) {

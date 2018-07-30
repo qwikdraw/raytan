@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/29 17:40:20 by lkaser           ###   ########.fr        #
+#    Updated: 2018/07/30 15:50:41 by bpierce          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,11 +19,13 @@ RenderPipeline \
 Plane \
 Scene \
 Sphere \
+Ellipse \
 Cylinder \
 Cone \
 Cube \
 Sheet \
 Sampler \
+Noise2D \
 IObject \
 Subtraction \
 Addition \

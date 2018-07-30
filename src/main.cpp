@@ -37,7 +37,11 @@ int	main(int argc, char **argv)
 	if (optind < argc)
 		rt = ParseSceneFile(argv[optind]);
 	else
-		rt = ParseSceneFile("scene.json");
+		scene = ParseSceneFile("scene.json");
+
+	glm::dvec3 pos = {-2.0, 0, 0};
+	glm::dvec3 dir = {1, 0, 0};
+	Camera camera(pos, glm::normalize(dir), glm::dvec3(0, 1, 0), 45, 1.0);
 
 	if (!headless)
 	{
