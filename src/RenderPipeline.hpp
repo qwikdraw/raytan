@@ -13,7 +13,7 @@ class Window;
 namespace	RenderPipeline
 {
 	void    RenderSquare(const Scene* scene, const Camera* camera, Image* image, Window* win,
-		int recursionLvl, int startx, int starty);
+		int recursionLvl, int startx);
 
 	// fills the image with raw color values
 	void	SceneToImage(const Scene*, const Camera*, Image* im, Window* win, int recursionLvl = 10);
@@ -31,7 +31,7 @@ namespace	RenderPipeline
 	void	Tint(Image*, glm::dvec3 color, double saturation);
 
 	// uses the depth value of the image to draw edges onto the image
-	void	SobelEdge(Image*, glm::dvec3 color = glm::dvec3(1));
+	void	SobelEdge(Image*, glm::dvec3 color = glm::dvec3(1.0));
 
 	// applies a horizontal blur on the image as if each object moved 'distance' amount
 	void	MotionBlur(Image*, double distance = 0.05);
