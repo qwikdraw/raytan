@@ -231,6 +231,7 @@ static void	parseMaterials(const json& materials_json, material_map& materials)
 		tmp.colorSampler = nullptr;
 		tmp.materialSampler = nullptr;
 		tmp.normalSampler = nullptr;
+		tmp.refractiveIndex = get_double(m, "refractiveIndex", 1.0);
 		materials.insert({m["name"], tmp});
 	}
 }
@@ -262,7 +263,7 @@ static void parseObjects(const json& objects_json, material_map& materials, Scen
 ** it reads from standard input.
 */
 
-Scene*	ParseSceneFile(std::string sceneFile)
+RT*	ParseSceneFile(std::string sceneFile)
 {
 	std::stringstream buffer;
 	json j;
@@ -289,13 +290,20 @@ Scene*	ParseSceneFile(std::string sceneFile)
 		exit(1);
 	}
 	material_map materials;
-	Scene* scene = new Scene();
 	if (!j.count("objects") || !j["objects"].is_array())
-		return scene;
+	{
+		std::cerr << "Scene requires objects" << std::endl;
+		exit(1);
+	}
+
+	// Default camera;
+    glm::dvec3 pos = {-2.0, 0.0, 0.0};
+    glm::dvec3 dir = {1.0, 0.0, 0.0};
+	RT* rt = new RT{Camera(pos, dir, glm::dvec3(0, 1, 0), 45, 1.0), Scene()};
 	if (j.count("scene") && j["scene"].is_object())
-		parseScene(j["scene"], scene);
+		parseScene(j["scene"], &rt->scene);
 	if (j.count("materials") && j["materials"].is_array())
 		parseMaterials(j["materials"], materials);
-	parseObjects(j["objects"], materials, scene);
-	return scene;
+	parseObjects(j["objects"], materials, &rt->scene);
+	return rt;
 }

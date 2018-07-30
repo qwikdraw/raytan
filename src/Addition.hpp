@@ -10,14 +10,14 @@ class	Addition : public IObject
 	IObject const* _shape2;
 
 	bool isFacing(const Intersect& i, const Ray& ray) const;
-	std::vector<Edge> generateEdges(const std::vector<Intersect>& s1,
-					const std::vector<Intersect>& s2,
+	inline std::vector<Edge> generateEdges(const SmallVector<Intersect>& s1,
+					const SmallVector<Intersect>& s2,
 					const Ray& ray) const;
-	std::vector<Intersect> getIntersectionsFrom(const IObject*, const Ray&) const;
-	std::vector<Intersect> findIntersections(const Ray&) const;
+	SmallVector<Intersect> getIntersectionsFrom(const IObject*, const Ray&) const;
+	SmallVector<Intersect> findIntersections(const Ray&) const;
 
 	// will have dummy implementation
-	std::vector<double> findDistances(const Ray&) const;
+	SmallVector<double> findDistances(const Ray&) const;
 public:
 	Addition(IObject* shape1, IObject* shape2);
 	~Addition(void);

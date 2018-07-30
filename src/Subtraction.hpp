@@ -17,14 +17,14 @@ class	Subtraction : public IObject
 	IObject const* _negative;
 
 	bool isFacing(const Intersect&, const Ray&) const;
-	std::vector<Edge> generateEdges(const std::vector<Intersect>&,
-					const std::vector<Intersect>&,
+	inline std::vector<Edge> generateEdges(const SmallVector<Intersect>&,
+					const SmallVector<Intersect>&,
 					const Ray&) const;
-	std::vector<Intersect> getIntersectionsFrom(const IObject*, const Ray&) const;
-	std::vector<Intersect> findIntersections(const Ray&) const;
+	SmallVector<Intersect> getIntersectionsFrom(const IObject*, const Ray&) const;
+	SmallVector<Intersect> findIntersections(const Ray&) const;
 	
 	// will have dummy implementation
-	std::vector<double> findDistances(const Ray&) const;
+	SmallVector<double> findDistances(const Ray&) const;
 public:
 	Subtraction(IObject *positive, IObject *negative);
 	~Subtraction(void);

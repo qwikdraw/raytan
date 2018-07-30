@@ -1,9 +1,9 @@
 #include "Sheet.hpp"
 
-std::vector<double> Sheet::findDistances(const Ray& ray) const
+SmallVector<double> Sheet::findDistances(const Ray& ray) const
 {
 	double dist = glm::dot(ray.direction, direction);
-	std::vector<double> out;
+	SmallVector<double> out;
 	if (dist == 0)
 		return out;
 	dist = glm::dot(-ray.origin, direction) / dist;

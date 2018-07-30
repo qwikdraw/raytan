@@ -1,18 +1,18 @@
 #include "Sphere.hpp"
 
-std::vector<double> Sphere::findDistances(const Ray& ray) const
+SmallVector<double> Sphere::findDistances(const Ray& ray) const
 {
 	double dist1 = dot(ray.direction, ray.origin);
 	double dist2;
 	double discrim = dist1 * dist1 - glm::dot(ray.origin, ray.origin) + radius * radius;
 
 	if (discrim < 0)
-		return std::vector<double>();
+		return SmallVector<double>();
 	discrim = sqrt(discrim);
 	dist2 = -dist1 - discrim;
 	dist1 = -dist1 + discrim;
 
-	std::vector<double> out;
+	SmallVector<double> out;
 
 	out.push_back(dist1);
 	if (dist1 != dist2)

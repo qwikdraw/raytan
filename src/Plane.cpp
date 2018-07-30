@@ -1,13 +1,13 @@
 #include "Plane.hpp"
 
-std::vector<double> Plane::findDistances(const Ray& ray) const
+SmallVector<double> Plane::findDistances(const Ray& ray) const
 {
 	double dist = glm::dot(ray.direction, direction);
 	if (dist == 0)
-		return std::vector<double>();
+		return SmallVector<double>();
 	dist = glm::dot(-ray.origin, direction) / dist;
 
-	std::vector<double> out;
+	SmallVector<double> out;
 	out.push_back(dist);
 	return out;
 }

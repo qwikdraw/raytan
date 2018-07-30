@@ -4,30 +4,33 @@
 
 namespace RP = RenderPipeline;
 
-void	RP::RenderSquare(const Scene* scene, const Camera& camera, Image* image, Window* win,
-	int recursionLvl, int startx, int starty)
+void	RP::RenderSquare(const Scene* scene, const Camera* camera, Image* image, Window* win,
+	int recursionLvl, int startx)
 {
-	for (int y = starty; y < starty + image->height / 2; y++)
+	for (int y = 0; y < image->height; ++y)
 	{
-		for (int x = startx; x < startx + image->width / 2; x++)
+		for (int x = startx; x < image->width; x += 4)
 		{
 			double normalizedX = (2 * x - image->width) / (double)image->width;
 			double normalizedY = (2 * y - image->height) / (double)image->height;
-			RawColor c = scene->TraceRay(camera.GetRay(normalizedX, normalizedY), recursionLvl);
+			RawColor c = scene->TraceRay(camera->GetRay(normalizedX, normalizedY), recursionLvl);
 			image->raw[x + y * image->width] = c;
 		}
-		if (win)
-			emit win->progressUpdate();
+		// Only first thread reports progress, which makes progressbar much smoother with little accuracy
+		// reduction.
+		//if (win && (y + startx) % 4 == 0)
+		if (win && !startx)
+			emit win->progressUpdate(1 + 100.0 * (y / (double)image->height));
 	}
 }
 
-void	RP::SceneToImage(const Scene* scene, const Camera& camera, Image* image, Window* win, int recursionLvl)
+void	RP::SceneToImage(const Scene* scene, const Camera* camera, Image* image, Window* win, int recursionLvl)
 {
 	image->raw.resize(image->width * image->height);
-	std::thread one(RP::RenderSquare, scene, camera, image, win, recursionLvl, 0, 0);
-	std::thread two(RP::RenderSquare, scene, camera, image, win, recursionLvl, image->width / 2, 0);
-	std::thread three(RP::RenderSquare, scene, camera, image, win, recursionLvl, image->width / 2, image->height / 2);
-	std::thread four(RP::RenderSquare, scene, camera, image, win, recursionLvl, 0, image->height / 2);
+	std::thread one(RP::RenderSquare, scene, camera, image, win, recursionLvl, 0);
+	std::thread two(RP::RenderSquare, scene, camera, image, win, recursionLvl, 1);
+	std::thread three(RP::RenderSquare, scene, camera, image, win, recursionLvl, 2);
+	std::thread four(RP::RenderSquare, scene, camera, image, win, recursionLvl, 3);
 	one.join();
 	two.join();
 	three.join();
