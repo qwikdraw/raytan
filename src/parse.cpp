@@ -12,7 +12,7 @@
 #include "Subtraction.hpp"
 #include "Addition.hpp"
 #include "Sampler.hpp"
-#include "Noise2D.hpp"
+#include "Formula.hpp"
 
 /* Default Materials */
 
@@ -39,14 +39,14 @@ material_map default_materials = {
 		.materialSampler = nullptr,
 		.normalSampler = nullptr
 	}},
-	{"checkerboard", { // Is this really a material!!???????
+	{"checkerboard", { // For testing samples - will delete later
 		.diffuse = 1.0,
 		.reflect = 0.0,
 		.refract = 0.0,
 		.refractiveIndex = 0.0,
 		.color = glm::dvec3(1.0, 1.0, 1.0),
-		.colorSampler = nullptr,
-		.materialSampler = new Sampler(Noise2D::checkerboard),
+		.colorSampler = new Sampler(Formula2D::checkerboard),
+		.materialSampler = nullptr,
 		.normalSampler = nullptr
 	}}
 };

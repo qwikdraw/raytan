@@ -25,7 +25,7 @@ Cone \
 Cube \
 Sheet \
 Sampler \
-Noise2D \
+Formula \
 IObject \
 Subtraction \
 Addition \

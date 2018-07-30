@@ -34,10 +34,7 @@ int	main(int argc, char **argv)
 			default:
 				abort();
 		}
-	if (optind < argc)
-		rt = ParseSceneFile(argv[optind]);
-	else
-		scene = ParseSceneFile("scene.json");
+	rt = ParseSceneFile((optind < argc) ? argv[optind] : "scene.json");
 
 	glm::dvec3 pos = {-2.0, 0, 0};
 	glm::dvec3 dir = {1, 0, 0};
