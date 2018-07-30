@@ -128,6 +128,7 @@ void	RP::Cartoon(Image* image, int palette_size)
 	{
 		double grey = (raw.color.r + raw.color.g + raw.color.b) / 3.0;
 		raw.color *= (glm::round(grey * palette_size) / palette_size) / grey;
+		raw.color = glm::clamp(raw.color, 0.0, 1.0);
 	}
 }
 
@@ -182,7 +183,7 @@ void	RP::Tint(Image* image, glm::dvec3 color, double saturation)
 	{
 		double grey = (raw.color.r + raw.color.g + raw.color.b) / 3.0;
 		glm::dvec3 adjustedColor = grey * color;
-		raw.color = raw.color * (1 - saturation) + adjustedColor * saturation;
+		raw.color = glm::clamp(raw.color * (1 - saturation) + adjustedColor * saturation, 0.0, 1.0);
 	}
 }
 
@@ -201,7 +202,9 @@ void	RP::MotionBlur(Image* image, double distance)
 	{
 		for (int y = 0; y < image->height; y++)
 		{
-			double depthShift = shift / (image->raw[x + y * image->width].depth + 0.1);
+			if (!std::isfinite(image->raw[x + y * image->width].depth))
+				image->raw[x + y * image->width].depth = 1000;
+			double depthShift = glm::max(shift / (image->raw[x + y * image->width].depth + 0.1), 1.0);
 			glm::dvec3 colShare = image->raw[x + y * image->width].color / depthShift;
 
 			for (int s = -depthShift/2; s < depthShift - depthShift/2; s++)
@@ -214,5 +217,5 @@ void	RP::MotionBlur(Image* image, double distance)
 	}
 	for (int x = 0; x < image->width; x++)
 		for (int y = 0; y < image->height; y++)
-			image->raw[x + y * image->width].color = temp.raw[x + y * image->width].color;
+			image->raw[x + y * image->width].color = glm::clamp(temp.raw[x + y * image->width].color, 0.0, 1.0);
 }
