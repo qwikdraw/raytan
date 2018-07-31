@@ -1,0 +1,152 @@
+
+{
+    "scene": {
+	"ambient": [0.03, 0.03, 0.04],
+	"camera": {
+	    "position": [0, 0, 0],
+	    "direction": [0, 0, -1],
+	    "up": [0, 1, 0]
+	},
+	"lights": [
+	    {"position": [0.3, 1, 0], "color": [2, 2, 2]}
+	]
+    },
+    "materials": [
+	{
+	    "name": "glass_texture",
+	    "color": [0.2, 0.2, 0.3],
+	    "color_sampler": "assets/glass_color.png",
+	    "material_sampler": "assets/glass_material.png"
+	},
+	{
+	    "name": "bumpy",
+	    "color": [1, 1, 1],
+	    "diffuse": 1,
+	    "refract": 0,
+	    "reflect": 0
+	},
+	{
+	    "name": "chess",
+	    "color": [0.7, 0.8, 1],
+	    "diffuse": 1,
+	    "refract": 0,
+	    "refract": 0
+	}
+    ],
+    "objects": [
+	{
+	    "type": "subtraction",
+	    "positive":
+	    {
+		"type": "subtraction",
+		"positive":
+		{
+		    "type": "plane",
+		    "position": [0, -0.2, 0],
+		    "rotation": [0, 0, 0],
+		    "material": "bumpy"
+		},
+		"negative":
+		{
+		    "type": "plane",
+		    "position": [0, 0, -2],
+		    "rotation": [-90, 0, 0]
+		}
+	    },
+	    "negative":
+	    {
+		"type": "cube",
+		"position": [0.2, -0.2, -2],
+		"rotation": [0, 0, 0],
+		"size": [0.6, 0.6, 0.6],
+		"material": "chess"
+	    }
+	},
+	{
+	    "type": "subtraction",
+	    "positive":
+	    {
+		"type": "sphere",
+		"position": [0, 0, 0],
+		"rotation": [0, 0, 0],
+		"radius": 0.2,
+		"material": "plastic"
+	    },
+	    "negative":
+	    {
+		"type": "plane",
+		"position": [0, 0.04, 0],
+		"rotation": [0, 30, 20],
+		"material": "plastic"
+	    },
+	    "position": [-0.5, 0, -3],
+	    "rotation": [0, 0, 0]
+	},
+	{
+	    "type": "subtraction",
+	    "positive":
+	    {
+		"type": "subtraction",
+		"positive":
+		{
+		    "type": "cylinder",
+		    "position": [0, 0, 0],
+		    "rotation": [0, 0, 0],
+		    "radius": 0.2,
+		    "material": "plastic"
+		},
+		"negative":
+		{
+		    "type": "plane",
+		    "position": [0, -0.1, 0],
+		    "rotation": [0, 20, 10],
+		    "material": "plastic"
+		},
+		"position": [0, 0, 0],
+		"rotation": [0, 0, 0]
+	    },
+	    "negative":
+	    {
+		"type": "plane",
+                "position": [0, 0.1, 0],
+                "rotation": [0, 0, 180],
+                "material": "plastic"
+	    },
+	    "position": [0, 0, -3],
+	    "rotation": [-30, 0, 0]
+	},
+	{
+	    "type": "subtraction",
+	    "positive":
+	    {
+		"type": "subtraction",
+		"positive":
+		{
+		    "type": "cone",
+		    "position": [0, 0.1, 0],
+		    "rotation": [0, 0, 0],
+		    "angle": 30,
+		    "material": "plastic"
+		},
+		"negative":
+		{
+		    "type": "plane",
+		    "position": [0, -0.1, 0],
+		    "rotation": [-20, 20, 10],
+		    "material": "plastic"
+		},
+		"position": [0, 0, 0],
+		"rotation": [0, 0, 0]
+	    },
+	    "negative":
+	    {
+		"type": "plane",
+                "position": [0, 0.1, 0],
+                "rotation": [0, 0, 180],
+                "material": "plastic"
+	    },
+	    "position": [0.5, 0.04, -3],
+	    "rotation": [-30, 0, 0]
+	}
+    ]
+}
