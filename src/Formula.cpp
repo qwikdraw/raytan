@@ -148,8 +148,8 @@ glm::dvec4		Formula2D::julia(double x, double y)
 	{
 		o_r = x;
 		o_i = y;
-		x = o_r * o_r - o_i * o_i + 0.38;
-		y = 2.0 * o_r * o_i + -0.19;
+		x = o_r * o_r - o_i * o_i + 0.38;	// Real Constant
+		y = 2.0 * o_r * o_i + -0.19;		// Imaginary Constant
 		if ((x * x + y * y) > diameter)
 			break ;
 	}
