@@ -20,7 +20,7 @@ struct Filters
 	struct tint {
 		bool enabled = false;
 		glm::dvec3 color = glm::dvec3(1.0, 0.8, 0.7);
-		double saturation = 1.0;
+		double strength = 1.0;
 	} tint;
 	struct edge {
 		bool enabled = false;
@@ -43,7 +43,7 @@ class Window : public QWidget
 	Scene* _scene;
 	Camera* _camera;
 	Image* _raw_image;
-	Image* _image;
+	QPixmap _image;
 	QFutureWatcher<Image*>* _watcher;
 	QLabel _label;
 	QProgressBar _progressBar;
