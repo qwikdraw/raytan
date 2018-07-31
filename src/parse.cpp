@@ -14,6 +14,18 @@
 #include "Sampler.hpp"
 #include "Formula.hpp"
 
+/* Samplers */
+
+typedef std::unordered_map<std::string, Sampler> sampler_map;
+
+sampler_map samplers = {
+	{"checkerboard", Sampler(Formula2D::checkerboard)},
+	{"sineWave", Sampler(Formula2D::sineWave)},
+	{"perlinNoise", Sampler(Formula3D::perlinNoise)},
+};
+
+//{"customComplicatedAlgorithm", Sampler(Formula2D::customComplicatedAlgorithm)},
+
 /* Default Materials */
 
 typedef std::unordered_map<std::string, Material> material_map;
@@ -89,6 +101,22 @@ static Material get_material(const json& j, const material_map& m)
 			return default_materials.at(j["material"]);
 	}
 	return default_materials.at("plastic");
+}
+
+static Sampler* get_sampler(const json& j, std::string key)
+{
+	if (j.count(key) && j[key].is_string())
+	{
+		if (samplers.count(j[key]) > 0)
+			return &samplers.at(j[key]);
+		std::string path = j[key];
+		if (path.find(".png") != std::string::npos)
+		{
+			std::cout << path << std::endl;
+			return new Sampler(path);
+		}
+	}
+	return nullptr;
 }
 
 static double get_double(const json& j, const std::string key, double def = 0.0)
@@ -193,6 +221,7 @@ std::unordered_map<std::string, object_parser> object_parsers = {
 	}}
 };
 
+
 /* Section Parsers */
 
 
@@ -228,6 +257,7 @@ static void	parseScene(const json& scene_json, RT* rt)
 	// Action..
 }
 
+
 static void	parseMaterials(const json& materials_json, material_map& materials)
 {
 	for (auto& m : materials_json)
@@ -239,9 +269,9 @@ static void	parseMaterials(const json& materials_json, material_map& materials)
 		tmp.diffuse = get_double(m, "diffuse");
 		tmp.reflect = get_double(m, "reflect");
 		tmp.refract = get_double(m, "refract");
-		tmp.colorSampler = nullptr;
-		tmp.materialSampler = nullptr;
-		tmp.normalSampler = nullptr;
+		tmp.colorSampler = get_sampler(m, "color_sampler");
+		tmp.materialSampler = get_sampler(m, "material_sampler");
+		tmp.normalSampler = get_sampler(m, "normal_sampler");
 		tmp.refractiveIndex = get_double(m, "refractiveIndex", 1.0);
 		materials.insert({m["name"], tmp});
 	}
