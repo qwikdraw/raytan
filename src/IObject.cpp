@@ -91,7 +91,7 @@ RayResult	IObject::MakeRayResult(const Intersect& intersect, const Ray& ray) con
 			out.reflect = sample.g / materialSum;
 			out.refract = sample.b / materialSum;
 		}
-		out.refractiveIndex = 1.0 + sample.a;
+		out.refractiveIndex = 2 - sample.a;
 	}
 	else
 	{
