@@ -42,6 +42,7 @@ class Window : public QWidget
 	QGridLayout _layout;
 	Scene* _scene;
 	Camera* _camera;
+	Image* _raw_image;
 	Image* _image;
 	QFutureWatcher<Image*>* _watcher;
 	QLabel _label;
@@ -50,6 +51,8 @@ class Window : public QWidget
 	Filters _filters;
 	void	render(int width, int height);
 	void    saveRender(void);
+	void	createFilterWidgets(QVBoxLayout* l);
+	void	applyFilters(void);
 public slots:
 	void	setImage(void);
 signals:

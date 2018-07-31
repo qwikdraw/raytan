@@ -2,7 +2,7 @@
 "scene": {
 	"ambient": [0.001, 0.0001, 0.0001],
 	"camera": {
-		"position": [$delta, 0.0, 0.0]
+		"position": [-2.0, 0.0, 0.0]
 	},
 	"lights": [
 		{"position": [0.0, 0.0, 0.5], "color": [1.0, 1.0, 1.0]}
@@ -45,12 +45,6 @@
 		"position" : [0.0, 0.1, 0.2],
 		"rotation" : [0.0, 30.0, -20.0],
 		"size" : [0.4, 1.1],
-		"material": "plastic"
-	},
-	{
-		"type": "cylinder",
-		"position" : [0.0, 0.0, 0.0],
-		"rotation" : [-10.0, -30.0, 20.0],
 		"material": "plastic"
 	},
 	{

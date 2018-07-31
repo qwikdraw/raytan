@@ -35,12 +35,16 @@ int	main(int argc, char **argv)
 				break;
 			case '?':
 				if (optopt == 'o')
+				{
 					std::cerr << "Option -" << static_cast<char>(optopt)
 						<< " requires a filepath argument" << std::endl;
+				}
 				else
+				{
 					std::cerr << "usage error, unknown option: -" 
 						<< static_cast<char>(optopt) << std::endl;
 					std::cout << "usage: ./RT [-d, -h] <scenefile> -o <outfile>";
+				}
 				return 1;
 			default:
 				abort();

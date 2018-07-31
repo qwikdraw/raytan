@@ -16,7 +16,7 @@
 
 Window::Window(Scene* s, Camera* c) :
 	QWidget(), _layout(), _scene(s), _camera(c),
-	_image(NULL), _watcher(NULL), _label(), _progressBar()
+	_raw_image(nullptr), _image(nullptr), _watcher(nullptr), _label(), _progressBar()
 {
 	setLayout(&_layout);
 
@@ -29,7 +29,6 @@ Window::Window(Scene* s, Camera* c) :
 
 	QLabel* bouncesLabel = new QLabel(tr("Maximum Ray Bounces"));
 	l->addWidget(bouncesLabel);
-
 	QSlider* bouncesSlider = new QSlider(Qt::Horizontal);
 	bouncesSlider->setTickInterval(5);
 	bouncesSlider->setSingleStep(1);
@@ -44,6 +43,7 @@ Window::Window(Scene* s, Camera* c) :
 
 	QCheckBox* aa = new QCheckBox(tr("Supersample"));
 	l->addWidget(aa);
+
 	// Render Button
 	QPushButton* renderButton = new QPushButton(tr("Render"));
 	connect(renderButton, &QPushButton::clicked, aa, [=]() {
@@ -57,9 +57,7 @@ Window::Window(Scene* s, Camera* c) :
 	// Ambient Light Picker
 	QPushButton* ambientButton = new QPushButton(tr("Set Ambient Light"));
 	connect(ambientButton, &QPushButton::clicked, [this]() {
-		QColor newAmbient = QColorDialog::getColor(
-			QColor(255, 255, 255),
-			this,
+		QColor newAmbient = QColorDialog::getColor(QColor(255, 255, 255), this,
 			tr("Ambient Color")
 		);
 		glm::dvec3 tmp;
@@ -75,6 +73,19 @@ Window::Window(Scene* s, Camera* c) :
 	});
 	l->addWidget(saveButton);
 
+	createFilterWidgets(l);
+	_progressBar.setMinimum(0);
+	_progressBar.setMaximum(100);
+	_progressBar.setValue(0);
+
+	// Main layout
+	_layout.addWidget(&_label, 0, 0);
+	_layout.addWidget(rightColumn, 0, 1);
+	_layout.addWidget(&_progressBar, 1, 0);
+}
+
+void	Window::createFilterWidgets(QVBoxLayout* l)
+{
 	QLabel* filter_label = new QLabel(tr("Filters"));
 	l->addWidget(filter_label);
 
@@ -92,6 +103,7 @@ Window::Window(Scene* s, Camera* c) :
 	filters->addTab(cartoon, tr("Cartoon"));
 	connect(cartoon_enabled, &QCheckBox::clicked, this, [=]{
 		_filters.cartoon.enabled = cartoon_enabled->isChecked();
+		applyFilters();
 	});
 
 	QLabel* cartoon_palette_label = new QLabel(tr("Palette Size"));
@@ -116,6 +128,7 @@ Window::Window(Scene* s, Camera* c) :
 	filters->addTab(tint, tr("Tint"));
 	connect(tint_enabled, &QCheckBox::clicked, this, [=]{
 		_filters.tint.enabled = tint_enabled->isChecked();
+		applyFilters();
 	});
 	QPushButton* tint_color = new QPushButton(tr("Set Tint Color"));
 	connect(tint_color, &QPushButton::clicked, this, [=]{
@@ -150,6 +163,7 @@ Window::Window(Scene* s, Camera* c) :
 	filters->addTab(edge, tr("Edge"));
 	connect(edge_enabled, &QCheckBox::clicked, this, [=]{
 		_filters.edge.enabled = edge_enabled->isChecked();
+		applyFilters();
 	});
 	QPushButton* edge_color = new QPushButton(tr("Set Edge Color"));
 	connect(edge_color, &QPushButton::clicked, this, [=]{
@@ -173,6 +187,7 @@ Window::Window(Scene* s, Camera* c) :
 	filters->addTab(motion, tr("Motion Blur"));
 	connect(motion_enabled, &QCheckBox::clicked, this, [=]{
 		_filters.motion.enabled = motion_enabled->isChecked();
+		applyFilters();
 	});
 
 	// Anaglyph
@@ -185,17 +200,8 @@ Window::Window(Scene* s, Camera* c) :
 	filters->addTab(anaglyph, tr("Anaglyph"));
 	connect(anaglyph_enabled, &QCheckBox::clicked, this, [=](){
 		_filters.anaglyph.enabled = anaglyph_enabled->isChecked();
+		applyFilters();
 	});
-
-	// Progress bar
-	_progressBar.setMinimum(0);
-	_progressBar.setMaximum(100);
-	_progressBar.setValue(0);
-
-	// Main layout
-	_layout.addWidget(&_label, 0, 0);
-	_layout.addWidget(rightColumn, 0, 1);
-	_layout.addWidget(&_progressBar, 1, 0);
 }
 
 void	Window::render(int width, int height)
@@ -213,17 +219,6 @@ void	Window::render(int width, int height)
 		Image* im = new Image(width, height);
 		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
 		RenderPipeline::NormalizeColor(im, 0.5, 1);
-		if (_filters.cartoon.enabled)
-			RenderPipeline::Cartoon(im, _filters.cartoon.palette);
-		if (_filters.tint.enabled)
-			RenderPipeline::Tint(im, _filters.tint.color, _filters.tint.saturation);
-		if (_filters.edge.enabled)
-			RenderPipeline::SobelEdge(im, _filters.edge.color);
-		if (_filters.motion.enabled)
-			RenderPipeline::MotionBlur(im);
-		if (_filters.anaglyph.enabled)
-			RenderPipeline::Anaglyph(im);
-		RenderPipeline::ImageToRGB32(im);
 		return im;
 	});
 
@@ -233,14 +228,36 @@ void	Window::render(int width, int height)
 	connect(this, SIGNAL(progressUpdate(int)), &_progressBar, SLOT(setValue(int)), Qt::QueuedConnection);
 }
 
-void	Window::setImage(void)
+void	Window::applyFilters(void)
 {
-	Image* im = _watcher->result();
+	if (!_raw_image)
+		return;
+	Image* im = new Image(_raw_image->width, _raw_image->height);
+	im->raw = _raw_image->raw;
+	if (_filters.cartoon.enabled)
+		RenderPipeline::Cartoon(im, _filters.cartoon.palette);
+	if (_filters.tint.enabled)
+		RenderPipeline::Tint(im, _filters.tint.color, _filters.tint.saturation);
+	if (_filters.edge.enabled)
+		RenderPipeline::SobelEdge(im, _filters.edge.color);
+	if (_filters.motion.enabled)
+		RenderPipeline::MotionBlur(im);
+	if (_filters.anaglyph.enabled)
+		RenderPipeline::Anaglyph(im);
+	RenderPipeline::ImageToRGB32(im);
 	QImage qim(im->colors.data(), im->width, im->height, QImage::Format_RGBA8888);
 	_label.setPixmap(QPixmap::fromImage(qim.scaledToWidth(1024, Qt::SmoothTransformation)));
 	if (_image)
 		delete _image;
 	_image = im;
+}
+
+void	Window::setImage(void)
+{
+	if (_raw_image)
+		delete _raw_image;
+	_raw_image = _watcher->result();
+	applyFilters();
 	_progressBar.setValue(0);
 }
 
