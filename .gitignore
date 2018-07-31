@@ -15,6 +15,7 @@ docs/html
 *.pyc
 *.moc.cpp
 render.png
+*~
 
 # Compiled Object files
 *.slo
