@@ -34,10 +34,7 @@ int	main(int argc, char **argv)
 			default:
 				abort();
 		}
-	if (optind < argc)
-		rt = ParseSceneFile(argv[optind]);
-	else
-		rt = ParseSceneFile("scene.json");
+	rt = ParseSceneFile((optind < argc) ? argv[optind] : "scene.json");
 
 	if (!headless)
 	{

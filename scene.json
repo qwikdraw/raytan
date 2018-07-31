@@ -48,6 +48,12 @@
 		"material": "plastic"
 	},
 	{
+		"type": "cylinder",
+		"position" : [0.0, 0.0, 0.0],
+		"rotation" : [-10.0, -30.0, 20.0],
+		"material": "plastic"
+	},
+	{
 		"type": "subtraction",
 		"positive":
 		{

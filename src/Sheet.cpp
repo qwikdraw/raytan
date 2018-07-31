@@ -30,7 +30,7 @@ glm::dvec2 Sheet::uvMap(const glm::dvec3& intersection, const glm::dvec3&) const
 {
 	glm::dvec2	out;
 
-	out.x = intersection.x;
-	out.y = intersection.z;
-	return glm::mod(out, 1.0);
+	out.x = (intersection.x / (size.x / 2.0)) / 2 + 0.5;
+	out.y = (intersection.z / (size.y / 2.0)) / 2 + 0.5;
+	return out;
 }
