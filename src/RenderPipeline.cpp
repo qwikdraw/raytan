@@ -55,23 +55,26 @@ void	RP::NormalizeColor(Image* image, double gamma, double exposure)
 
 void	RP::ImageToRGB32(Image* image)
 {
-	for (auto& raw : image->raw)
+	std::vector<uint8_t> tmp;
+	int x;	
+
+	x = 0;
+	for (auto raw = image->raw.end(); raw != image->raw.begin();)
 	{
-		image->colors.push_back(raw.color.r * 255);
-		image->colors.push_back(raw.color.g * 255);
-		image->colors.push_back(raw.color.b * 255);
-		image->colors.push_back(255);
+		--raw;
+		++x;
+		tmp.push_back(255);
+		tmp.push_back(raw->color.b * 255);
+		tmp.push_back(raw->color.g * 255);
+		tmp.push_back(raw->color.r * 255);
+		if (x >= image->width)
+		{
+			std::reverse(tmp.begin(), tmp.end());
+			image->colors.insert(image->colors.end(), tmp.begin(), tmp.end());
+			tmp.clear();
+			x = 0;
+		}
 	}
-/*
-	for (auto raw = image.raw.end(); raw != image.raw.begin();)
-	{
-	    --raw;
-		image.colors.push_back(raw->color.b * 255);
-		image.colors.push_back(raw->color.g * 255);
-		image.colors.push_back(raw->color.r * 255);
-		image.colors.push_back(255);
-	}
-*/
 	image->raw.clear();
 }
 
