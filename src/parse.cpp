@@ -51,15 +51,15 @@ material_map default_materials = {
 		.materialSampler = nullptr,
 		.normalSampler = nullptr
 	}},
-	{"checkerboard", { // For testing samples - will delete later
-		.diffuse = 1.0,
-		.reflect = 0.0,
+	{"test", { // For testing samples - will delete later
+		.diffuse = 0.9,
+		.reflect = 0.1,
 		.refract = 0.0,
 		.refractiveIndex = 0.0,
 		.color = glm::dvec3(1.0, 1.0, 1.0),
-		.colorSampler = new Sampler(Formula2D::checkerboard),
+		.colorSampler = new Sampler(Formula3D::vortex),
 		.materialSampler = nullptr,
-		.normalSampler = nullptr
+		.normalSampler = nullptr//new Sampler(Formula3D::perlinNoise)
 	}}
 };
 

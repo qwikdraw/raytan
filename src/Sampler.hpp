@@ -9,10 +9,10 @@ class	Sampler
 	unsigned _width;
 	unsigned _height;
 
-	std::function<glm::dvec4(double, double)> _formula2D;
 	bool _hasFormula2D;
-	std::function<glm::dvec4(double, double, double)> _formula3D;
+	std::function<glm::dvec4(double, double)> _formula2D;
 	bool _hasFormula3D;
+	std::function<glm::dvec4(double, double, double)> _formula3D;
 
 public:
 
