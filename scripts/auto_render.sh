@@ -13,7 +13,7 @@ do
 	if [ "$checksum" != "$old_checksum" ]
 	then
 		echo "Rendering scene: $1"
-		./RT -h $1
+		./RT -d $1
 		printf "Done.\n\n"
 	fi
 	old_checksum=$checksum

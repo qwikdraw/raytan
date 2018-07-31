@@ -6,7 +6,7 @@
 /*   By: bpierce <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 16:08:11 by bpierce           #+#    #+#             */
-/*   Updated: 2018/07/26 19:11:43 by lkaser           ###   ########.fr       */
+/*   Updated: 2018/07/30 18:52:41 by lkaser           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ glm::dvec3	Scene::getDirectLight(const Ray& ray, const RayResult& rayResult) con
 	return outputCol / (double)repeat;
 }
 
-RawColor	Scene::TraceRay(const Ray & ray, int recursionLevel) const
+RawColor	Scene::TraceRay(const Ray& ray, int recursionLevel) const
 {
 	if (recursionLevel == -1)
 		return (RawColor){_ambient, INFINITY};

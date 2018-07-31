@@ -14,6 +14,18 @@
 #include "Sampler.hpp"
 #include "Formula.hpp"
 
+/* Samplers */
+
+typedef std::unordered_map<std::string, Sampler> sampler_map;
+
+sampler_map samplers = {
+	{"checkerboard", Sampler(Formula2D::checkerboard)},
+	{"sineWave", Sampler(Formula2D::sineWave)},
+	{"perlinNoise", Sampler(Formula3D::perlinNoise)},
+};
+
+//{"customComplicatedAlgorithm", Sampler(Formula2D::customComplicatedAlgorithm)},
+
 /* Default Materials */
 
 typedef std::unordered_map<std::string, Material> material_map;
@@ -89,6 +101,22 @@ static Material get_material(const json& j, const material_map& m)
 			return default_materials.at(j["material"]);
 	}
 	return default_materials.at("plastic");
+}
+
+static Sampler* get_sampler(const json& j, std::string key)
+{
+	if (j.count(key) && j[key].is_string())
+	{
+		if (samplers.count(j[key]) > 0)
+			return &samplers.at(j[key]);
+		std::string path = j[key];
+		if (path.find(".png") != std::string::npos)
+		{
+			std::cout << path << std::endl;
+			return new Sampler(path);
+		}
+	}
+	return nullptr;
 }
 
 static double get_double(const json& j, const std::string key, double def = 0.0)
@@ -193,12 +221,13 @@ std::unordered_map<std::string, object_parser> object_parsers = {
 	}}
 };
 
+
 /* Section Parsers */
 
 
-static void	parseScene(const json& scene_json, Scene* scene)
+static void	parseScene(const json& scene_json, RT* rt)
 {
-	scene->SetAmbient(get_dvec3(scene_json, "ambient", glm::dvec3(0.0001)));
+	rt->scene.SetAmbient(get_dvec3(scene_json, "ambient", glm::dvec3(0.0001)));
 
 	if (scene_json.count("lights") && scene_json["lights"].is_array())
 	{
@@ -212,10 +241,22 @@ static void	parseScene(const json& scene_json, Scene* scene)
 			Light tmp;
 			tmp.position = get_dvec3(light, "position");
 			tmp.color = get_dvec3(light, "color", glm::dvec3(1.0));
-			scene->lights.push_back(tmp);
+			rt->scene.lights.push_back(tmp);
 		}
 	}
+	if (scene_json.count("camera") && scene_json["camera"].is_object())
+	{
+		auto& camera_json = scene_json["camera"];
+		glm::dvec3 pos = get_dvec3(camera_json, "position", glm::dvec3(-2.0, 0.0, 0.0));
+		glm::dvec3 dir = get_dvec3(camera_json, "direction", glm::dvec3(1.0, 0.0, 0.0));
+		glm::dvec3 up = get_dvec3(camera_json, "up", glm::dvec3(0.0, 1.0, 0.0));
+		double fov = get_double(camera_json, "fov", 45.0);
+		double aspectRatio = get_double(camera_json, "aspectRatio", 1.0);
+		rt->camera = Camera(pos, dir, up, fov, aspectRatio);
+	}
+	// Action..
 }
+
 
 static void	parseMaterials(const json& materials_json, material_map& materials)
 {
@@ -228,9 +269,9 @@ static void	parseMaterials(const json& materials_json, material_map& materials)
 		tmp.diffuse = get_double(m, "diffuse");
 		tmp.reflect = get_double(m, "reflect");
 		tmp.refract = get_double(m, "refract");
-		tmp.colorSampler = nullptr;
-		tmp.materialSampler = nullptr;
-		tmp.normalSampler = nullptr;
+		tmp.colorSampler = get_sampler(m, "color_sampler");
+		tmp.materialSampler = get_sampler(m, "material_sampler");
+		tmp.normalSampler = get_sampler(m, "normal_sampler");
 		tmp.refractiveIndex = get_double(m, "refractiveIndex", 1.0);
 		materials.insert({m["name"], tmp});
 	}
@@ -301,7 +342,7 @@ RT*	ParseSceneFile(std::string sceneFile)
     glm::dvec3 dir = {1.0, 0.0, 0.0};
 	RT* rt = new RT{Camera(pos, dir, glm::dvec3(0, 1, 0), 45, 1.0), Scene()};
 	if (j.count("scene") && j["scene"].is_object())
-		parseScene(j["scene"], &rt->scene);
+		parseScene(j["scene"], rt);
 	if (j.count("materials") && j["materials"].is_array())
 		parseMaterials(j["materials"], materials);
 	parseObjects(j["objects"], materials, &rt->scene);
