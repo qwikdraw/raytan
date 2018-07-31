@@ -5,7 +5,7 @@
 	"camera": {
 	    "position": [0, 0, 0],
 	    "direction": [0, 0, -1],
-	    "up": [0, -1, 0]
+	    "up": [0, 1, 0]
 	},
 	"lights": [
 	    {"position": [0.3, 1, 0], "color": [2, 2, 2]}
