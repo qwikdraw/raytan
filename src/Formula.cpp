@@ -32,9 +32,34 @@ glm::dvec4 Formula2D::sineWave(double x, double y)
 {
 	x = (0.55 * x) + 0.5;
 	y = (-0.55 * y) + 0.5;
-	double newX = glm::sin( 25.0 * y + 30.0 * x + 2.183) * 0.05;
-	double newY = glm::sin( 25.0 * y + 30.0 * x + 4.9) * 0.05;
-    return glm::dvec4(x + newX, y + newY, 0.0, 0.0);
+	double newX = glm::sin(25.0 * y + 55.0 * x + 2.183) * 0.05;
+	double newY = glm::sin(25.0 * y + 55.0 * x + 4.9) * 0.05;
+    return glm::dvec4(glm::mod(x + newX, 1.0), glm::mod(y + newY, 1.0), 0.0, 0.0);
+}
+
+
+// The Julia fractal
+glm::dvec4		Formula2D::julia(double x, double y)
+{
+	double	numIterations = 60.0;
+	double	diameter = 5.0;
+
+	double o_r;
+	double o_i;
+	double i = 0;
+	x = (x - 0.5) * 3.0;
+	y = (y - 0.5) * 3.0;
+	while (i++ < numIterations)
+	{
+		o_r = x;
+		o_i = y;
+		x = o_r * o_r - o_i * o_i + 0.38;	// Real Constant
+		y = 2.0 * o_r * o_i + -0.19;		// Imaginary Constant
+		if ((x * x + y * y) > diameter)
+			break ;
+	}
+	double color = i / numIterations;
+	return glm::dvec4(1.0 - color, color, color * (i < numIterations), 0.0);
 }
 
 static double	perlinGrad(int hash, double x, double y, double z)
@@ -133,26 +158,12 @@ glm::dvec4		Formula3D::perlinNoise(double x, double y, double z)
 	return out;
 }
 
-// The Julia fractal
-glm::dvec4		Formula2D::julia(double x, double y)
+// A wood grain effect
+glm::dvec4		Formula3D::vortex(double x, double y, double z)
 {
-	double	numIterations = 60.0;
-	double	diameter = 5.0;
+	glm::dvec4 g = Formula3D::perlinNoise(x, y, z) * 0.5;
 
-	double o_r;
-	double o_i;
-	double i = 0;
-	x = (x - 0.5) * 3.0;
-	y = (y - 0.5) * 3.0;
-	while (i++ < numIterations)
-	{
-		o_r = x;
-		o_i = y;
-		x = o_r * o_r - o_i * o_i + 0.38;	// Real Constant
-		y = 2.0 * o_r * o_i + -0.19;		// Imaginary Constant
-		if ((x * x + y * y) > diameter)
-			break ;
-	}
-	double color = i / numIterations;
-	return glm::dvec4(1.0 - color, color, color * (i < numIterations), 0.0);
+	g -= glm::floor(g);
+	return glm::dvec4(0.5 * g.r, 0.3 * g.g, 1.0 - g.b, 0.0);
 }
+

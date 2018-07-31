@@ -15,6 +15,7 @@ namespace Formula2D {
 
 namespace Formula3D {
 	glm::dvec4 perlinNoise(double x, double y, double z);
+    glm::dvec4 vortex(double x, double y, double z);
 };
 
 static int perlinPerm[] = {
