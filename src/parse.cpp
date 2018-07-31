@@ -57,9 +57,9 @@ material_map default_materials = {
 		.refract = 0.0,
 		.refractiveIndex = 0.0,
 		.color = glm::dvec3(1.0, 1.0, 1.0),
-		.colorSampler = nullptr,
+		.colorSampler = new Sampler(Formula2D::julia),
 		.materialSampler = nullptr,
-		.normalSampler = new Sampler(Formula3D::perlinNoise)
+		.normalSampler = nullptr//new Sampler(Formula3D::perlinNoise)
 	}}
 };
 

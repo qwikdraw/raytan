@@ -1,40 +1,41 @@
 #include "Formula.hpp"
 
+glm::dvec4 Formula2D::basicGradientRed(double x, double y)
+{
+	return glm::dvec4(x, y, 0.0, 0.0);
+}
+
+glm::dvec4 Formula2D::basicGradientGreen(double x, double y)
+{
+	return glm::dvec4(0.0, x, 0.0, 0.0);
+}
+
+glm::dvec4 Formula2D::basicGradientBlue(double x, double y)
+{
+	return glm::dvec4(0.0, 0.0, x, 0.0);
+}
+
+static double	checkerboardModulo(double x)
+{
+	// if x is -0.4 then the result is -0.4 - -1.0 = 0.6! A positive number! YAY!
+	return x - glm::floor(x);
+}
+
 glm::dvec4 Formula2D::checkerboard(double x, double y)
 {
-	if (x < 0.5)
-	{
-		if (y < 0.5)
-			return glm::dvec4(0.001, 0.001, 0.001, 0.0);
-		return glm::dvec4(1.0, 1.0, 1.0, 0.1);
-	}
-	if (y < 0.5)
-		return glm::dvec4(1.0, 1.0, 1.0, 0.1);
-	return glm::dvec4(0.001, 0.001, 0.001, 0.0);
+	// The '4's are for the checkerboard scaling - adjust to have different checkerboard values
+	double res = (checkerboardModulo(y * 4) < 0.5) ^ (checkerboardModulo(x * 4) < 0.5);
+	return res == 1 ? glm::dvec4(1.0, 1.0, 1.0, 0.0) : glm::dvec4(0.0, 0.0, 0.0, 0.0);
 }
 
 glm::dvec4 Formula2D::sineWave(double x, double y)
 {
-	(void)x;
-	(void)y;
-	return glm::dvec4(0, 0, 0, 0);
+	x = (0.55 * x) + 0.5;
+	y = (-0.55 * y) + 0.5;
+	double newX = glm::sin( 25.0 * y + 30.0 * x + 2.183) * 0.05;
+	double newY = glm::sin( 25.0 * y + 30.0 * x + 4.9) * 0.05;
+    return glm::dvec4(x + newX, y + newY, 0.0, 0.0);
 }
-
-// static double	perlinGrad(int hash, double x, double y, double z)
-// {
-// 	int h = hash & 15;
-
-// 	double u = h < 8 ? x : y;
-// 	double v;
-
-// 	if (h < 4)
-// 		v = y;
-// 	else if (h == 12)
-// 		v = x;
-// 	else
-// 		v = z;
-// 	return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
-// }
 
 static double	perlinGrad(int hash, double x, double y, double z)
 {
@@ -58,16 +59,17 @@ static double	perlinGrad(int hash, double x, double y, double z)
         case 15: return -y - z;
         default: return 0; // shouldn't happen
     }
+    return 0;
 }
 
-// 
+// Linear Interpolation
 static double	perlinLerp(double t, double a, double b) {
     return a + t * (b - a);
 }
 
 //	Smoothes the final output
 static double	perlinFade(double t) {
-	return t * t * t * (t * (t * 6 - 15) + 10);
+	return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
 }
 
 static double	perlinCalc(double x, double y, double z)
@@ -101,7 +103,7 @@ static double	perlinCalc(double x, double y, double z)
 							perlinGrad(aba, x, y - 1.0, z),
 							perlinGrad(bba, x - 1.0, y - 1.0, z));
 	double y1 = perlinLerp(v, x1, x2);
-	
+
 	x1 = perlinLerp( u,
 					 perlinGrad(aab, x, y, z - 1.0),
 					 perlinGrad(bab, x - 1.0, y, z - 1.0));
@@ -114,10 +116,11 @@ static double	perlinCalc(double x, double y, double z)
 
 }
 
+// Normal Sampling
 glm::dvec4		Formula3D::perlinNoise(double x, double y, double z)
 {
 	glm::dvec4 out;
-	double scale = 25.0;
+	double scale = 20.0;
 
 	x *= scale;
 	y *= scale;
@@ -128,4 +131,28 @@ glm::dvec4		Formula3D::perlinNoise(double x, double y, double z)
 	out.w = 0.0;
 
 	return out;
+}
+
+// The Julia fractal
+glm::dvec4		Formula2D::julia(double x, double y)
+{
+	double	numIterations = 60.0;
+	double	diameter = 5.0;
+
+	double o_r;
+	double o_i;
+	double i = 0;
+	x = (x - 0.5) * 3.0;
+	y = (y - 0.5) * 3.0;
+	while (i++ < numIterations)
+	{
+		o_r = x;
+		o_i = y;
+		x = o_r * o_r - o_i * o_i + 0.38;
+		y = 2.0 * o_r * o_i + -0.19;
+		if ((x * x + y * y) > diameter)
+			break ;
+	}
+	double color = i / numIterations;
+	return glm::dvec4(1.0 - color, color, color * (i < numIterations), 0.0);
 }

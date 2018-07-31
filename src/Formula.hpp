@@ -4,11 +4,13 @@
 
 namespace Formula2D {
 
+    glm::dvec4 basicGradientRed(double x, double y);
+    glm::dvec4 basicGradientGreen(double x, double y);
+    glm::dvec4 basicGradientBlue(double x, double y);
 	glm::dvec4 checkerboard(double x, double y);
 	glm::dvec4 sineWave(double x, double y);
-	glm::dvec4 customComplicatedAlgorithm(double x, double y);
 	glm::dvec4 perlinNoise(double x, double y);
-
+    glm::dvec4 julia(double x, double y);
 };
 
 namespace Formula3D {
