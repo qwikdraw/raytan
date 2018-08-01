@@ -62,7 +62,7 @@ Window::Window(Scene* s, Camera* c) :
 	radiusSlider->setMinimum(0);
 	l->addWidget(radiusSlider);
 	connect(radiusSlider, &QAbstractSlider::sliderReleased, this, [=]() {
-		_scene->lightRadius = radiusSlider->value() / 300.0;
+		_scene->lightRadius = radiusSlider->value() / 200.0;
 	});
 	sampleSlider->setValue(10);
 
