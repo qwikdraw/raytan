@@ -8,7 +8,7 @@ fi
 
 FRAME=0
 VALUE=$2
-while (test "$FRAME" -le "120")
+while (test "$FRAME" -le "150")
 do
 	NUMBER=$(printf "%04i" "$FRAME")
 	echo "Rendering to: $(basename -s '.json' $1)-$NUMBER.png"
