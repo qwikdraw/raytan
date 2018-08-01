@@ -248,6 +248,7 @@ void	Window::render(int width, int height)
 		Image* im = new Image(width, height);
 		RenderPipeline::SceneToImage(_scene, _camera, im, this, _bounces);
 		RenderPipeline::NormalizeColor(im, 0.5, 1);
+		RenderPipeline::ImageToRGB32(im);
 		return im;
 	});
 
@@ -263,6 +264,7 @@ void	Window::applyFilters(void)
 		return;
 	Image* im = new Image();
 	*im = *_raw_image;
+	im->colors.clear();
 	if (_filters.cartoon.enabled)
 		RenderPipeline::Cartoon(im, _filters.cartoon.palette);
 	if (_filters.tint.enabled)
@@ -293,7 +295,7 @@ void	Window::setImage(void)
 
 void	Window::saveRender(void)
 {
-	if (!_image)
+	if (!_raw_image)
 		return;
 	lodepng::State state;
 	state.encoder.text_compression = 1;
