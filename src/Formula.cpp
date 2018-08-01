@@ -163,7 +163,6 @@ static double	perlinCalc(double x, double y, double z)
 	double y2 = perlinLerp(v, x1, x2);
 
 	return perlinLerp(w, y1, y2);
-
 }
 
 // Normal Sampling
@@ -183,7 +182,7 @@ glm::dvec4		formula3d::perlinNoise(double x, double y, double z)
 	return out;
 }
 
-// A wood grain effect
+// A weird effect
 glm::dvec4		formula3d::vortex(double x, double y, double z)
 {
 	glm::dvec4 g = formula3d::perlinNoise(x, y, z) * 0.5;
