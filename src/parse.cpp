@@ -24,8 +24,6 @@ sampler_map samplers = {
 	{"perlinNoise", Sampler(Formula3D::perlinNoise)},
 };
 
-//{"customComplicatedAlgorithm", Sampler(Formula2D::customComplicatedAlgorithm)},
-
 /* Default Materials */
 
 typedef std::unordered_map<std::string, Material> material_map;
@@ -36,7 +34,7 @@ material_map default_materials = {
 		.reflect = 0.0,
 		.refract = 0.99,
 		.refractiveIndex = 1.5168,
-		.color = glm::dvec3(1.0, 1.0, 1.0),
+		.color = glm::dvec3(0.96, 0.96, 1.0),
 		.colorSampler = nullptr,
 		.materialSampler = nullptr,
 		.normalSampler = nullptr
@@ -46,18 +44,8 @@ material_map default_materials = {
 		.reflect = 0.3,
 		.refract = 0.0,
 		.refractiveIndex = 0.0,
-		.color = glm::dvec3(1.0, 0.3, 0.3),
+		.color = glm::dvec3(1.0, 0.3, 0.4),
 		.colorSampler = nullptr,
-		.materialSampler = nullptr,
-		.normalSampler = nullptr
-	}},
-	{"checkerboard", { // For testing samples - will delete later
-		.diffuse = 1.0,
-		.reflect = 0.0,
-		.refract = 0.0,
-		.refractiveIndex = 0.0,
-		.color = glm::dvec3(1.0, 1.0, 1.0),
-		.colorSampler = new Sampler(Formula2D::checkerboard),
 		.materialSampler = nullptr,
 		.normalSampler = nullptr
 	}}
@@ -111,10 +99,7 @@ static Sampler* get_sampler(const json& j, std::string key)
 			return &samplers.at(j[key]);
 		std::string path = j[key];
 		if (path.find(".png") != std::string::npos)
-		{
-			std::cout << path << std::endl;
 			return new Sampler(path);
-		}
 	}
 	return nullptr;
 }
