@@ -6,14 +6,20 @@ then
 	exit 1
 fi
 
+trap catch 1 2 3 6
+catch()
+{
+    exit 1
+}
+
 FRAME=0
 VALUE=$2
 while (test "$FRAME" -le "150")
 do
 	NUMBER=$(printf "%04i" "$FRAME")
-	echo "Rendering to: $(basename -s '.json' $1)-$NUMBER.png"
+	echo "Rendering: $NUMBER.png"
 	VALUE=$(echo "$VALUE + $3" | bc)
-	sed -e "s/\$delta/""$VALUE""/g" $1 | ./RT -d -o "render/$(basename -s '.json' $1)-$NUMBER.png" -
+	sed -e "s/\$delta/""$VALUE""/g" $1 | ./RT -d -o "render/$NUMBER.png" -
 	FRAME=$((FRAME + 1))
 done
 
