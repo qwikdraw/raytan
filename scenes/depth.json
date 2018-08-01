@@ -1,0 +1,116 @@
+{
+    "scene": {
+	"ambient": [0.03, 0.03, 0.04],
+	"camera": {
+	    "position": [0, 0, 0],
+	    "direction": [0, 0, -1],
+	    "up": [0, 1, 0],
+	    "fov": 80.0
+	},
+	"lights": [
+	    {"position": [0.3, 1, 0], "color": [2, 2, 2]}
+	]
+    },
+    "materials": [
+	{
+	    "name": "bumpy",
+	    "diffuse": 1,
+	    "reflect": 0,
+	    "reflect": 0,
+	    "color_sampler": "assets/metal_seamless.png"
+	}
+    ],
+    "objects": [
+	{
+	    "type": "sphere",
+	    "position": [-0.2, 0, -0.4],
+	    "rotation": [0, 0, 20],
+	    "radius": 0.02,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [0.5, 0, -1.2],
+	    "rotation": [0, 30, 0],
+	    "radius": 0.1,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [0, 0, -1.7],
+	    "rotation": [20, 60, 0],
+	    "radius": 0.1,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [-0.7, 0, -2.3],
+	    "rotation": [0, 40, 0],
+	    "radius": 0.1,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [-0.2, 0, -0.4],
+	    "rotation": [0, 0, 20],
+	    "radius": 0.02,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [0.5, 0, -1.2],
+	    "rotation": [0, 30, 0],
+	    "radius": 0.1,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [0, 0, -1.7],
+	    "rotation": [20, 60, 0],
+	    "radius": 0.1,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [-0.7, 0, -2.3],
+	    "rotation": [0, 40, 0],
+	    "radius": 0.1,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [-0.2, 0.1, -0.4],
+	    "rotation": [0, 0, 20],
+	    "radius": 0.02,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [0.5, 0.3, -1.2],
+	    "rotation": [0, 30, 0],
+	    "radius": 0.1,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [0, 0.4, -1.7],
+	    "rotation": [20, 60, 0],
+	    "radius": 0.1,
+	    "material": "plastic"
+	},
+	{
+	    "type": "sphere",
+	    "position": [-0.7, 0.6, -2.3],
+	    "rotation": [0, 40, 0],
+	    "radius": 0.12,
+	    "material": "plastic"
+	},
+	{
+	    "type": "cube",
+	    "position": [0, -0.4, -1],
+	    "rotation": [13, 45, 0],
+	    "size": [1, 0.1, 1],
+	    "material": "bumpy"
+	}
+    ]
+}
