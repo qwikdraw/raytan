@@ -58,7 +58,7 @@ RayResult	Scene::getRayResult(const Ray& ray) const
 RawColor	Scene::getDiffuse(const Ray& ray, const RayResult& rayResult) const
 {
 	RawColor 	pixelColor = {{0.0, 0.0, 0.0}, 0};
-	Ray		lightRay;
+	Ray			lightRay;
 	glm::dvec3	lightVector;
 
 	int repeat = lightRadius ? lightSample : 1;

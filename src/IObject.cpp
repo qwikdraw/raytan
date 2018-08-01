@@ -113,10 +113,14 @@ RayResult	IObject::MakeRayResult(const Intersect& intersect, const Ray& ray) con
 
 	if (intersect.hitRef->material.normalSampler)
 	{
-		glm::dvec3 p = glm::mod(relativePos, 1.0);
+		glm::dvec3 p = relativePos;
 		glm::dvec3 sample = glm::dvec3(intersect.hitRef->material.normalSampler->Color(p.x, p.y, p.z));
-		sample = glm::normalize(sample - glm::dvec3(0.5));
-		out.normal = glm::normalize(out.normal + sample);
+		sample = sample - glm::dvec3(0.5);
+		if (sample.x != 0 || sample.y != 0 || sample.z != 0)
+		{
+			sample = glm::normalize(sample);
+			out.normal = glm::normalize(out.normal + sample  * 0.65);
+		}
 	}
 
 	if (!intersect.positive)
