@@ -1,0 +1,68 @@
+{
+    "scene": {
+	"ambient": [0.03, 0.03, 0.04],
+	"camera": {
+	    "position": [0, 0, 0],
+	    "direction": [0, 0, -1],
+	    "up": [0, 1, 0],
+	    "fov": 80.0
+	},
+	"parallel_lights": [
+    	{"color": [0.4,0.4,0.4], "direction": [0,0,-1]}
+	]
+	},
+    "materials": [
+	{
+	    "name": "bumpy",
+	    "diffuse": 1,
+	    "reflect": 0,
+	    "reflect": 0,
+	    "color_sampler": "assets/metal_seamless.png"
+	},
+	{
+		"name": "perlin",
+		"color": [1, 1, 1],
+		"diffuse": 1,
+		"normal_sampler": "perlinNoise"
+	}
+    ],
+    "objects": [
+	{
+		"type": "addition",
+		"object_a": {
+		    "type": "sphere",
+		    "position": [0, 0.4, -1.0],
+		    "rotation": [0, 0, 0],
+		    "radius": 0.2,
+		    "material": "glass"
+		},
+		"object_b": {
+		    "type": "cylinder",
+		    "position": [0.0, 0.5, -1.0],
+		    "rotation": [0, 0, 0],
+		    "radius": 0.1,
+		    "material": "plastic"
+		}
+	},
+	{
+	    "type": "cube",
+	    "position": [0, -0.4, -1],
+	    "rotation": [13, 45, 0],
+	    "size": [1, 0.1, 1],
+	    "material": "bumpy"
+	},
+	{
+	    "type": "sphere",
+	    "position": [0, -0.3, -1.0],
+	    "rotation": [0, 0, 0],
+	    "radius": 0.15,
+	    "material": "glass"
+	},
+	{
+		"type": "plane",
+		"position": [0, 0, -2],
+		"rotation": [90, 0, 0],
+		"material": "perlin"
+	}
+    ]
+}
