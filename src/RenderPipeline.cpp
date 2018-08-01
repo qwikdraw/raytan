@@ -75,7 +75,6 @@ void	RP::ImageToRGB32(Image* image)
 			x = 0;
 		}
 	}
-	image->raw.clear();
 }
 
 void	RP::SobelEdge(Image* image, glm::dvec3 color)
