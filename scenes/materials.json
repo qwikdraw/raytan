@@ -8,7 +8,7 @@
 	    "fov": 80.0
 	},
 	"lights": [
-	    {"position": [0.3, 1, 0], "color": [2, 2, 2]}
+	    {"position": [0.3, 1, 0], "color": [2.0, 2.0, 2.0]}
 	]
     },
     "materials": [
@@ -49,7 +49,7 @@
 	{
 	    "type": "cylinder",
 	    "position": [0, 0, -2],
-	    "rotation": [20, 60, 0],
+	    "rotation": [20, 60.0, 0],
 	    "radius": 0.2,
 	    "material": "slice"
 	},

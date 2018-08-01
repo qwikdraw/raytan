@@ -229,6 +229,20 @@ static void	parseScene(const json& scene_json, RT* rt)
 			rt->scene.lights.push_back(tmp);
 		}
 	}
+	if (scene_json.count("parallel_lights") && scene_json["parallel_lights"].is_array())
+	{
+		for (auto& light : scene_json["parallel_lights"])
+		{
+			if (!light.is_object())
+			{
+				std::cerr << "Invalid parallel light: " << light << std::endl;
+				exit(1);
+			}
+			glm::dvec3 dir = get_dvec3(light, "direction");
+			glm::dvec3 color = get_dvec3(light, "color", glm::dvec3(1.0));
+			rt->scene.lights.push_back(rt->scene.Parallel(dir, color));
+		}
+	}
 	if (scene_json.count("camera") && scene_json["camera"].is_object())
 	{
 		auto& camera_json = scene_json["camera"];
