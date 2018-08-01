@@ -1,18 +1,27 @@
 #include "Formula.hpp"
 
-glm::dvec4 Formula2D::basicGradientRed(double x, double y)
+glm::dvec4 formula2d::gradientRed(double x, double y)
 {
-	return glm::dvec4(x, y, 0.0, 0.0);
+	x -= 0.5;
+	y -= 0.5;
+	double radius = glm::sqrt(x * x + y * y) / 1.41421;
+	return glm::dvec4(glm::pow(radius, 1.5), 0.0, 0.0, 0.0);
 }
 
-glm::dvec4 Formula2D::basicGradientGreen(double x, double y)
+glm::dvec4 formula2d::gradientGreen(double x, double y)
 {
-	return glm::dvec4(0.0, x, 0.0, 0.0);
+	x -= 0.5;
+	y -= 0.5;
+	double radius = glm::sqrt(x * x + y * y) / 1.41421;
+	return glm::dvec4(0.0, glm::pow(radius, 1.5), 0.0, 0.0);
 }
 
-glm::dvec4 Formula2D::basicGradientBlue(double x, double y)
+glm::dvec4 formula2d::gradientBlue(double x, double y)
 {
-	return glm::dvec4(0.0, 0.0, x, 0.0);
+	x -= 0.5;
+	y -= 0.5;
+	double radius = glm::sqrt(x * x + y * y) / 1.41421;
+	return glm::dvec4(0.0, 0.0, glm::pow(radius, 1.5), 0.0);
 }
 
 static double	checkerboardModulo(double x)
@@ -21,25 +30,41 @@ static double	checkerboardModulo(double x)
 	return x - glm::floor(x);
 }
 
-glm::dvec4 Formula2D::checkerboard(double x, double y)
+glm::dvec4 formula2d::checkerboard(double x, double y)
 {
 	// The '4's are for the checkerboard scaling - adjust to have different checkerboard values
 	double res = (checkerboardModulo(y * 4) < 0.5) ^ (checkerboardModulo(x * 4) < 0.5);
 	return res == 1 ? glm::dvec4(1.0, 1.0, 1.0, 0.0) : glm::dvec4(0.0, 0.0, 0.0, 0.0);
 }
 
-glm::dvec4 Formula2D::sineWave(double x, double y)
+glm::dvec4 formula2d::sineWave(double x, double y)
 {
-	x = (0.55 * x) + 0.5;
-	y = (-0.55 * y) + 0.5;
-	double newX = glm::sin(25.0 * y + 55.0 * x + 2.183) * 0.05;
-	double newY = glm::sin(25.0 * y + 55.0 * x + 4.9) * 0.05;
-    return glm::dvec4(glm::mod(x + newX, 1.0), glm::mod(y + newY, 1.0), 0.0, 0.0);
+	x *= 2;
+	x *= glm::pi<double>() * 2.0 * 2.0;
+	y *= glm::pi<double>() * 2.0 * 2.0;
+
+	double a = (sin(x * 2.0) + 1.0) / 2.0;
+	double b = (sin(y * 3.0) + 1.0) / 2.0;
+	double c = (cos(x * 5.0) + 1.0) / 2.0;
+	double d = (cos(y * 8.0) + 1.0) / 2.0;
+
+	glm::dvec4 out = glm::dvec4(1);
+
+	if (a > b && a > c)
+		out.r = a;
+	if (a > b * 2.0 + c - d)
+		out.g = b;
+	if (b - d + c * 3.0 > a)
+		out.b = c * b;
+	if  (a + d * 7.0 > c + b * 2.0)
+		out *= 0.8;
+	out *= (a + b + c + d) / 4.0;
+
+	return glm::dvec4(glm::dvec3((out.x + out.y + out.z) / 3.0), 1.0);
 }
 
-
 // The Julia fractal
-glm::dvec4		Formula2D::julia(double x, double y)
+glm::dvec4		formula2d::julia(double x, double y)
 {
 	double	numIterations = 60.0;
 	double	diameter = 5.0;
@@ -142,7 +167,7 @@ static double	perlinCalc(double x, double y, double z)
 }
 
 // Normal Sampling
-glm::dvec4		Formula3D::perlinNoise(double x, double y, double z)
+glm::dvec4		formula3d::perlinNoise(double x, double y, double z)
 {
 	glm::dvec4 out;
 	double scale = 20.0;
@@ -159,9 +184,9 @@ glm::dvec4		Formula3D::perlinNoise(double x, double y, double z)
 }
 
 // A wood grain effect
-glm::dvec4		Formula3D::vortex(double x, double y, double z)
+glm::dvec4		formula3d::vortex(double x, double y, double z)
 {
-	glm::dvec4 g = Formula3D::perlinNoise(x, y, z) * 0.5;
+	glm::dvec4 g = formula3d::perlinNoise(x, y, z) * 0.5;
 
 	g -= glm::floor(g);
 	return glm::dvec4(0.5 * g.r, 0.3 * g.g, 1.0 - g.b, 0.0);

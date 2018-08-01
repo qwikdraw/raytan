@@ -19,9 +19,14 @@
 typedef std::unordered_map<std::string, Sampler> sampler_map;
 
 sampler_map samplers = {
-	{"checkerboard", Sampler(Formula2D::checkerboard)},
-	{"sineWave", Sampler(Formula2D::sineWave)},
-	{"perlinNoise", Sampler(Formula3D::perlinNoise)},
+	{"gradientRed", Sampler(formula2d::gradientRed)},
+	{"gradientGreen", Sampler(formula2d::gradientGreen)},
+	{"gradientBlue", Sampler(formula2d::gradientBlue)},
+	{"checkerboard", Sampler(formula2d::checkerboard)},
+	{"sineWave", Sampler(formula2d::sineWave)},
+	{"julia", Sampler(formula2d::julia)},
+	{"perlinNoise", Sampler(formula3d::perlinNoise)},
+	{"vortex", Sampler(formula3d::vortex)}
 };
 
 /* Default Materials */

@@ -2,18 +2,19 @@
 
 #include "Raytan.hpp"
 
-namespace Formula2D {
+namespace formula2d {
 
-    glm::dvec4 basicGradientRed(double x, double y);
-    glm::dvec4 basicGradientGreen(double x, double y);
-    glm::dvec4 basicGradientBlue(double x, double y);
+    glm::dvec4 gradientRed(double x, double y);
+    glm::dvec4 gradientGreen(double x, double y);
+    glm::dvec4 gradientBlue(double x, double y);
+    glm::dvec4 refractiveBlue(double x, double y);
 	glm::dvec4 checkerboard(double x, double y);
 	glm::dvec4 sineWave(double x, double y);
 	glm::dvec4 perlinNoise(double x, double y);
     glm::dvec4 julia(double x, double y);
 };
 
-namespace Formula3D {
+namespace formula3d {
 	glm::dvec4 perlinNoise(double x, double y, double z);
     glm::dvec4 vortex(double x, double y, double z);
 };

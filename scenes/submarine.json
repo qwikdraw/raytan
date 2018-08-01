@@ -1,0 +1,151 @@
+{
+"scene": {
+	"ambient": [0.001, 0.0001, 0.0001],
+	"camera": {
+		"position": [0.0, 0.0, 0.0],
+		"direction": [-1.0, 0.0, 0.0]
+	},
+	"lights": [
+		{
+			"position": [1.1, 0.5, 0.5],
+			"color": [4.0, 26.0, 26.0]
+		}
+	]
+},
+"materials": [
+	{
+		"name": "orangething",
+		"color": [0.9, 0.35, 0.0],
+		"diffuse": 0.2,
+		"reflect": 0.6,
+		"refract": 0.2,
+		"refractiveIndex": 1.0,
+		"material_sampler": "checkerboard"
+	},
+	{
+		"name": "seagreen",
+		"color": [0.2, 0.6, 0.8],
+		"diffuse": 0.9,
+		"reflect": 0.1,
+		"refract": 0.0,
+		"refractiveIndex": 0.0,
+		"normal_sampler": "perlinNoise"
+	},
+	{
+		"name": "submariny",
+		"color": [0.2, 0.1, 0.2],
+		"diffuse": 0.80,
+		"reflect": 0.20,
+		"refract": 0.0,
+		"refractiveIndex": 0.0
+	},
+	{
+		"name": "greenstuff",
+		"diffuse": 0.20,
+		"reflect": 0.40,
+		"refract": 0.40,
+		"refractiveIndex": 0.5,
+		"color_sampler": "gradientGreen"
+	},
+	{
+		"name": "bluestuff",
+		"diffuse": 0.20,
+		"reflect": 0.40,
+		"refract": 0.40,
+		"refractiveIndex": 0.8,
+		"color_sampler": "gradientBlue"
+	},
+	{
+		"name": "redstuff",
+		"diffuse": 0.20,
+		"reflect": 0.40,
+		"refract": 0.40,
+		"refractiveIndex": 0.8,
+		"color": [1.0, 0.0, 0.0]
+	}
+],
+"objects" : [
+	{
+		"type": "plane",
+		"position" : [-10.0, 0.0, 0.0],
+		"rotation" : [0.0, 0.0, 90.0],
+		"material": "seagreen"
+	},
+	{
+		"type": "subtraction",
+		"positive":
+		{
+			"type": "addition",
+			"object_a":
+			{
+				"type": "cylinder",
+				"rotation" : [110, -30, 0],
+				"radius" : 0.3,
+				"material": "submariny"
+			},
+			"object_b":
+			{
+				"type": "sphere",
+				"radius" : 0.3
+			},
+			"position" : [-4.0, -0.3, 0.0]
+		},
+		"negative":
+		{
+			"type": "cylinder",
+			"rotation" : [20, -30, 0],
+			"radius" : 0.5,
+			"position": [-4.0, -0.3, 0.0]
+		}
+	},
+	{
+		"type": "sheet",
+		"position" : [-4.0, 0.8, 0.8],
+		"rotation" : [20, 20, 20],
+		"material" : "greenstuff",
+		"size" : [1.0, 1.0]
+	},
+	{
+		"type": "sheet",
+		"position" : [-4.0, 0.95, 0.75],
+		"rotation" : [15, 50, 45],
+		"material" : "redstuff",
+		"size" : [1.0, 1.0]
+	},
+	{
+		"type": "sheet",
+		"position" : [-4.0, 0.50, 0.60],
+		"rotation" : [76, 76, 32],
+		"material" : "greenstuff",
+		"size" : [1.0, 1.0]
+	},
+	{
+		"type": "sheet",
+		"position" : [-4.0, 0.8, 0.25],
+		"rotation" : [15, 15, 15],
+		"material" : "bluestuff",
+		"size" : [1.0, 1.0]
+	},
+	{
+		"type": "sheet",
+		"position" : [-4.0, 0.8, 0.0],
+		"rotation" : [45, 45, 45],
+		"material" : "bluestuff",
+		"size" : [1.0, 1.0]
+	},
+	{
+		"type": "sheet",
+		"position" : [-4.0, 0.8, -0.4],
+		"rotation" : [90, 90, 45],
+		"material" : "greenstuff",
+		"size" : [2.2, 1.4]
+	},
+	{
+		"type": "cube",
+		"size": [10.2, 0.2, 0.8],
+		"position": [-5.0, -1.4, -2.2],
+		"rotation": [20, 20, 155],
+		"material": "orangething"
+	}
+]
+}
