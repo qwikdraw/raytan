@@ -19,12 +19,15 @@
 typedef std::unordered_map<std::string, Sampler> sampler_map;
 
 sampler_map samplers = {
-	{"checkerboard", Sampler(Formula2D::checkerboard)},
-	{"sineWave", Sampler(Formula2D::sineWave)},
-	{"perlinNoise", Sampler(Formula3D::perlinNoise)},
+	{"gradientRed", Sampler(formula2d::gradientRed)},
+	{"gradientGreen", Sampler(formula2d::gradientGreen)},
+	{"gradientBlue", Sampler(formula2d::gradientBlue)},
+	{"checkerboard", Sampler(formula2d::checkerboard)},
+	{"sineWave", Sampler(formula2d::sineWave)},
+	{"julia", Sampler(formula2d::julia)},
+	{"perlinNoise", Sampler(formula3d::perlinNoise)},
+	{"vortex", Sampler(formula3d::vortex)}
 };
-
-//{"customComplicatedAlgorithm", Sampler(Formula2D::customComplicatedAlgorithm)},
 
 /* Default Materials */
 
@@ -50,16 +53,6 @@ material_map default_materials = {
 		.colorSampler = nullptr,
 		.materialSampler = nullptr,
 		.normalSampler = nullptr
-	}},
-	{"test", { // For testing samples - will delete later
-		.diffuse = 0.9,
-		.reflect = 0.1,
-		.refract = 0.0,
-		.refractiveIndex = 0.0,
-		.color = glm::dvec3(1.0, 1.0, 1.0),
-		.colorSampler = new Sampler(Formula3D::vortex),
-		.materialSampler = nullptr,
-		.normalSampler = nullptr//new Sampler(Formula3D::perlinNoise)
 	}}
 };
 
