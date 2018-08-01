@@ -41,6 +41,31 @@ Window::Window(Scene* s, Camera* c) :
 	bouncesSlider->setValue(10);
 	_bounces = 10;
 
+	QLabel* sampleLabel = new QLabel(tr("Soft Shadow Samples"));
+	l->addWidget(sampleLabel);
+	QSlider* sampleSlider = new QSlider(Qt::Horizontal);
+	sampleSlider->setTickInterval(5);
+	sampleSlider->setSingleStep(1);
+	sampleSlider->setMaximum(30);
+	sampleSlider->setMinimum(5);
+	l->addWidget(sampleSlider);
+	connect(sampleSlider, &QAbstractSlider::sliderReleased, this, [=]() {
+		_scene->lightSample = sampleSlider->value();
+	});
+	sampleSlider->setValue(10);
+
+	QLabel* radiusLabel = new QLabel(tr("Soft Shadow Radius"));
+	l->addWidget(radiusLabel);
+	QSlider* radiusSlider = new QSlider(Qt::Horizontal);
+	radiusSlider->setSingleStep(1);
+	radiusSlider->setMaximum(10);
+	radiusSlider->setMinimum(0);
+	l->addWidget(radiusSlider);
+	connect(radiusSlider, &QAbstractSlider::sliderReleased, this, [=]() {
+		_scene->lightRadius = radiusSlider->value() / 300.0;
+	});
+	sampleSlider->setValue(10);
+
 	QCheckBox* aa = new QCheckBox(tr("Supersample"));
 	l->addWidget(aa);
 

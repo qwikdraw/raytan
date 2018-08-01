@@ -3,8 +3,8 @@
     "scene": {
 	"ambient": [0.03, 0.03, 0.04],
 	"camera": {
-	    "position": [0, 0, 0],
-	    "direction": [0, 0, -1],
+	    "position": [0, 0.2, 0],
+	    "direction": [0, -0.1, -1],
 	    "up": [0, 1, 0]
 	},
 	"lights": [
@@ -27,7 +27,7 @@
 	},
 	{
 	    "name": "chess",
-	    "color": [0.7, 0.8, 1],
+	    "color_sampler": "checkerboard",
 	    "diffuse": 1,
 	    "refract": 0,
 	    "refract": 0
@@ -61,7 +61,7 @@
 		"type": "cube",
 		"position": [0, 0, 0],
 		"rotation": [0, 0, 0],
-		"size": [0.4, 0.05, 0.4],
+		"size": [0.6, 0.05, 0.6],
 		"material": "plastic"
 	    },
 	    "negative":
@@ -69,7 +69,7 @@
 		"type": "cube",
 		"position": [0, 0.043, 0],
 		"rotation": [0, 0, 0],
-		"size": [0.35, 0.05, 0.35],
+		"size": [0.55, 0.05, 0.55],
 		"material": "chess"
 	    },
 	    "position": [-0.3, -0.175, -1.8],
