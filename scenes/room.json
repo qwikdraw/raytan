@@ -79,13 +79,26 @@
 		"color_sampler": "gradientBlue"
 	},
 	{
-		"name": "perl",
+		"name": "perlin",
+		"diffuse": 0.6,
+		"reflect": 0.2,
+		"refract": 0.2,
+		"refractiveIndex": 2.0,
+		"color": [0.6, 0.2, 0.9],
+		"normal_sampler": "perlinNoise"
+	},
+	{
+		"name": "mirror",
+		"diffuse": 0.0,
+		"reflect": 1.0,
+		"refract": 0.0
+	},
+	{
+		"name": "smiley",
 		"diffuse": 1.0,
 		"reflect": 0.0,
 		"refract": 0.0,
-		"refractiveIndex": 1.5,
-		"color": [0.6, 0.2, 0.9],
-		"normal_sampler": "perlinNoise"
+		"color_sampler": "assets/smiley.png"
 	}
 ],
 "objects" : [
@@ -136,7 +149,20 @@
 		"type": "sphere",
 		"radius": 0.01,
 		"position": [0.025, 0.006, -0.12],
-		"material": "perl"
+		"material": "perlin"
+	},
+	{
+		"type": "sphere",
+		"radius": 0.02,
+		"position": [-0.04, -0.025, -0.32],
+		"material": "mirror"
+	},
+	{
+		"type": "sphere",
+		"radius": 0.056,
+		"position": [-0.14, 0.115, -0.50],
+		"rotation": [45, 25, -30],
+		"material": "smiley"
 	}
 ]
 }
