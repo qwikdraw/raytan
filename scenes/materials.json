@@ -14,15 +14,16 @@
     "materials": [
 	{
 	    "name": "bumpy",
-	    "color": [1, 1, 1],
 	    "diffuse": 1,
-	    "refract": 0,
-	    "reflect": 0
+	    "reflect": 0,
+	    "reflect": 0,
+	    "color_sampler": "sineWave"
 	},
 	{
 	    "name": "slice",
 	    "color_sampler": "assets/metal_seamless.png",
-	    "material_sampler": "assets/segment.png"
+	    "material_sampler": "assets/segment.png",
+	    "normal_sampler": "perlinNoise"
 	},
 	{
 	    "name": "plastic_slice",
