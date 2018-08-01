@@ -30,20 +30,62 @@
 		"color_sampler": "gradientGreen"
 	},
 	{
-		"name": "bluestuff",
-		"diffuse": 0.20,
-		"reflect": 0.40,
-		"refract": 0.40,
-		"refractiveIndex": 0.8,
+		"name": "refractive",
+		"diffuse": 0.2,
+		"reflect": 0.0,
+		"refract": 0.8,
+		"color": [0.2, 0.6, 0.8],
+		"refractiveIndex": 1.4
+	},
+	{
+		"name": "vortexy",
+		"diffuse": 1.0,
+		"reflect": 0.0,
+		"refract": 0.0,
+		"refractiveIndex": 0.0,
+		"color": [0.6, 0.4, 0.1],
+		"color_sampler": "vortex"
+	},
+	{
+		"name": "gold",
+		"diffuse": 1.0,
+		"reflect": 0.0,
+		"refract": 0.0,
+		"refractiveIndex": 0.0,
+		"color": [1.0, 0.843, 0.0]
+	},
+	{
+		"name": "redGrad",
+		"diffuse": 0.8,
+		"reflect": 0.0,
+		"refract": 0.2,
+		"refractiveIndex": 1.5,
+		"color_sampler": "gradientRed"
+	},
+	{
+		"name": "greenGrad",
+		"diffuse": 0.8,
+		"reflect": 0.0,
+		"refract": 0.2,
+		"refractiveIndex": 1.5,
+		"color_sampler": "gradientGreen"
+	},
+	{
+		"name": "blueGrad",
+		"diffuse": 0.8,
+		"reflect": 0.0,
+		"refract": 0.2,
+		"refractiveIndex": 1.5,
 		"color_sampler": "gradientBlue"
 	},
 	{
-		"name": "redstuff",
-		"diffuse": 0.20,
-		"reflect": 0.40,
-		"refract": 0.40,
-		"refractiveIndex": 0.8,
-		"color": [1.0, 0.0, 0.0]
+		"name": "perl",
+		"diffuse": 1.0,
+		"reflect": 0.0,
+		"refract": 0.0,
+		"refractiveIndex": 1.5,
+		"color": [0.6, 0.2, 0.9],
+		"normal_sampler": "perlinNoise"
 	}
 ],
 "objects" : [
@@ -58,7 +100,43 @@
 		"type": "sphere",
 		"radius": 0.024,
 		"position": [0.035, -0.025, -0.24],
-		"material": "bluestuff"
+		"material": "refractive"
+	},
+	{
+		"type": "sphere",
+		"radius": 0.025,
+		"position": [-0.095, 0.015, -0.30],
+		"material": "vortexy"
+	},
+	{
+		"type": "sphere",
+		"radius": 0.025,
+		"position": [0.065, 0.095, -0.30],
+		"material": "gold"
+	},
+	{
+		"type": "sphere",
+		"radius": 0.025,
+		"position": [0.055, 0.095, -0.40],
+		"material": "redGrad"
+	},
+	{
+		"type": "sphere",
+		"radius": 0.020,
+		"position": [-0.055, -0.050, -0.20],
+		"material": "greenGrad"
+	},
+	{
+		"type": "sphere",
+		"radius": 0.1,
+		"position": [0.015, -0.040, -0.75],
+		"material": "blueGrad"
+	},
+	{
+		"type": "sphere",
+		"radius": 0.01,
+		"position": [0.025, 0.006, -0.12],
+		"material": "perl"
 	}
 ]
 }
