@@ -99,8 +99,9 @@ static Sampler* get_sampler(const json& j, std::string key)
 			return &samplers.at(j[key]);
 		std::string path = j[key];
 		if (path.find(".png") != std::string::npos)
-			return new Sampler(path);
-	}
+    {
+      return new Sampler(path);
+	  }
 	return nullptr;
 }
 

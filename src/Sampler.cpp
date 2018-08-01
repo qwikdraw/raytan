@@ -8,6 +8,7 @@ Sampler::Sampler(const std::string& filepath)
 	{
 		std::cout << filepath << std::endl;
 		std::cout << "error: " << lodepng_error_text(error) << std::endl;
+		exit(1);
 	}
 	_hasFormula2D = false;
 	_hasFormula3D = false;
