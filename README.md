@@ -19,5 +19,4 @@ Advanced Raytracer in C++
 ## Authors
 - Logan Kaser
 - Theo Walton
-- Michael Lu
 - Brendan Pierce
