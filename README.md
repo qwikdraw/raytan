@@ -2,17 +2,21 @@
 Advanced Raytracer in C++
 
 ## About
-Raytan is a fast raytracer written in C++ with a focus on practical effects. It supports primitive spheres, cones, cylinders, elipsoids, planes, cubes and sheets. It also supports compound shapes that result from addition and subtraction of 2 shapes. The color, material properties (diffuse, reflection, refraction, refractive index) and normals can all be changed using textures, which lets you create realistic 3D sprites that can seamlessly fit into scenes.
+Raytan is a fast raytracer written in C++ with a focus on practical effects. It supports spheres, cones, cylinders, elipsoids, planes, cubes and sheets. It also supports compound shapes that result from addition and subtraction of two shapes.  
+This is implemented using a distance field algorithm.  
+The color, material properties (diffuse, reflection, refraction, refractive index) and normals can all be mapped to textures, to allow the creation of realistic 3D sprites that can seamlessly fit into scenes.
 
-Raytan has a GUI written with QT that gives you control over ambient, shadow softness, light samples, recursion level and antialiasing. The GUI also lets you choose various post effects such as cartoon, tint + saturation, motion blur, edge detection and 3D, and lets you save your image.
+Raytan has a QT GUI that gives you control over ambient, shadow softness, light samples, recursion level and antialiasing. The GUI allows for the application of various post effects such as cartoon, tint + saturation, motion blur, edge detection without re-rendering.
 
-# example of a 3D sprite interacting with a scene
-![alt text](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/sprite_showcase.png)
+# Screenshots
+![animation gif](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/animation.gif)
+![post-processing gif](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/beach_cartoon.gif)
+![sprite in scene](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/sprite_showcase.png)
 
 ## Dependencies
 - lodepng
 - glm
-- Qt 5.11
+- Qt 5.1
 
 ## Building
 ### Requires
@@ -22,6 +26,8 @@ Raytan has a GUI written with QT that gives you control over ambient, shadow sof
 - pkg-config
 
 ### Instructions
+Install dependencies, on macOS with brew you can do this with `make deps`
+
 `make`
 
 ## Authors
