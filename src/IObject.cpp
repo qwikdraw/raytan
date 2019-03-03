@@ -1,6 +1,6 @@
 #include "IObject.hpp"
 
-constexpr glm::dvec3 IObject::direction;
+//constexpr glm::dvec3 IObject::direction;
 
 SmallVector<Intersect>	IObject::findIntersections(const Ray&) const
 {

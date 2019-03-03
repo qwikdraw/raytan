@@ -59,7 +59,7 @@ protected:
 	virtual glm::dvec2 uvMap(const glm::dvec3& intersection, const glm::dvec3& normal) const;
 	
 public:
-	IObject() {}
+	IObject() {direction = glm::dvec3(0, 1, 0);}
 	virtual ~IObject() {}
 
 	virtual bool IsPrimitive(void) const;
@@ -74,7 +74,7 @@ public:
 	static Transform CompoundTransform(const Transform&, const Transform&);
 	
 	// used to define the direction of things like planes, cones ect
-	static constexpr glm::dvec3 direction = {0, 1, 0};
+	glm::dvec3 direction;
 
 	Transform transform;	
 	Material material;

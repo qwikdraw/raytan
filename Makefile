@@ -6,7 +6,7 @@
 #    By: logan  <logan@42.us.org>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/13 10:03:24 by logan             #+#    #+#              #
-#    Updated: 2018/07/31 10:02:14 by lkaser           ###   ########.fr        #
+#    Updated: 2019/03/02 15:38:22 by lkaser           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,8 +42,8 @@ INCLUDES = $(shell pkg-config --cflags glm Qt5Core Qt5Gui Qt5Widgets Qt5Concurre
 -I lib/lodepng \
 -I lib/json
 
-CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter\
--O3 -flto=thin -march=native $(INCLUDES)\
+CPPFLAGS = -std=c++14 -Wall -Wextra -Werror -Wno-unused-parameter \
+-O3 -flto=thin -march=native $(INCLUDES) \
 #-g -fsanitize=undefined -fsanitize=address
 
 LDFLAGS = -framework OpenGl \
