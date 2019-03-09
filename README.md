@@ -9,6 +9,7 @@ The color, material properties (diffuse, reflection, refraction, refractive inde
 Raytan has a QT GUI that gives you control over ambient, shadow softness, light samples, recursion level and antialiasing. The GUI allows for the application of various post effects such as cartoon, tint + saturation, motion blur, edge detection without re-rendering.
 
 # Screenshots
+![gui](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/gui.png)
 ![animation gif](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/animation.gif)
 ![post-processing gif](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/beach_cartoon.gif)
 ![sprite in scene](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/sprite_showcase.png)
