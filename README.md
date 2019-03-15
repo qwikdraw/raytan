@@ -6,8 +6,7 @@ Raytan is a fast raytracer written in C++ with a focus on practical effects. It 
 This is implemented using a distance field algorithm.  
 The color, material properties (diffuse, reflection, refraction, refractive index) and normals can all be mapped to textures, to allow the creation of realistic 3D sprites that can seamlessly fit into scenes.
 
-Raytan has a QT GUI that gives you control over ambient, shadow softness, light samples, recursion level and antialiasing. The GUI allows for the application of various post effects such as cartoon, tint + saturation, motion blur, edge detection without re-rendering.
-
+Raytan has a QT GUI that gives you control over ambient, shadow softness, light samples, recursion level and antialiasing. The GUI allows for the application of various post effects such as cartoon, tint + saturation, motion blur, and edge detection.
 # Screenshots
 ![gui](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/gui.png)
 ![animation gif](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/animation.gif)
