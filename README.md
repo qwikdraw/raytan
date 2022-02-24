@@ -4,9 +4,9 @@ Advanced Raytracer in C++
 ## About
 Raytan is a fast raytracer written in C++ with a focus on practical effects. It supports spheres, cones, cylinders, elipsoids, planes, cubes and sheets. It also supports compound shapes that result from addition and subtraction of two shapes.  
 This is implemented using a distance field algorithm.  
-The color, material properties (diffuse, reflection, refraction, refractive index) and normals can all be mapped to textures, to allow the creation of realistic 3D sprites that can seamlessly fit into scenes.
+The color, material properties (diffuse, reflection, refraction, refractive index) and normals can all be mapped to textures, to allow the creation of realistic 3D sprites that can seamlessly mesh into a scene.
 
-Raytan has a QT GUI that gives you control over ambient, shadow softness, light samples, recursion level and antialiasing. The GUI allows for the application of various post effects such as cartoon, tint + saturation, motion blur, and edge detection.
+Raytan has a Qt GUI that gives you control over ambient, shadow softness, light samples, recursion level and antialiasing. The GUI allows for the application of various post effects such as cartoon, tint + saturation, motion blur, and edge detection.
 # Screenshots
 ![gui](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/gui.png)
 ![animation gif](https://raw.githubusercontent.com/logankaser/Raytan/master/screenshots/animation.gif)
